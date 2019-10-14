@@ -8,7 +8,11 @@
 /bazel-out
 
 # dependencies
+<<<<<<< HEAD
 frontend/node_modules
+=======
+/node_modules
+>>>>>>> 63431c0... .gitignore modified.
 
 # profiling files
 chrome-profiler-events.json
