@@ -1,1 +1,7 @@
-<p>posts-section works!</p>
+<div id="posts">
+  <div class="offset-md-3 col-md-6 border border-light rounded mb-1">
+    <app-post *ngFor="let post of posts" [post]="post"></app-post>
+  </div>
+</div>
+
+

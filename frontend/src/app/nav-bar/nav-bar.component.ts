@@ -1,7 +1,7 @@
 import {Component, HostBinding, OnInit} from '@angular/core';
-import {fromEvent} from "rxjs";
-import {distinctUntilChanged, filter, map, pairwise, share, throttleTime} from "rxjs/operators";
-import {animate, state, style, transition, trigger} from "@angular/animations";
+import {fromEvent} from 'rxjs';
+import {distinctUntilChanged, filter, map, pairwise, share, throttleTime} from 'rxjs/operators';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 
 enum Direction {
   Up = 'Up',
@@ -14,7 +14,7 @@ enum VisibilityState {
 }
 
 @Component({
-  selector: 'nav-bar',
+  selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css'],
   animations: [
