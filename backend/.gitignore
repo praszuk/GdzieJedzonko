@@ -77,12 +77,12 @@ docs/_build/
 # PyBuilder
 target/
 
+# VirtualEnv
+.venv
 
 ### Django ###
 *.log
-*.pot
 *.pyc
-__pycache__/
 local_settings.py
 
 
