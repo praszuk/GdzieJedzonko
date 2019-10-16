@@ -32,7 +32,7 @@ enum VisibilityState {
   ]
 })
 export class NavBarComponent implements OnInit {
-  loggedIn: boolean = false;
+  loggedIn: boolean = true;
   username: string = 'Test username';
   private isVisible = true;
   constructor() { }
