@@ -1,0 +1,6 @@
+.idea
+.venv
+.gitignore
+.dockerignore
+*Dockerfile*
+*docker-compose*
