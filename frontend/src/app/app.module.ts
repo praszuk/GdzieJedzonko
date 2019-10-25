@@ -10,6 +10,7 @@ import { PostComponent } from './post/post.component';
 import { FooterComponent } from './footer/footer.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ArticleComponent } from './article/article.component';
+import { CommentSectionComponent } from './comment-section/comment-section.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ArticleComponent } from './article/article.component';
     PostComponent,
     FooterComponent,
     PageNotFoundComponent,
-    ArticleComponent
+    ArticleComponent,
+    CommentSectionComponent
   ],
   imports: [
     BrowserModule,
