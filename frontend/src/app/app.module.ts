@@ -9,6 +9,9 @@ import { PostsSectionComponent } from './posts-section/posts-section.component';
 import { PostComponent } from './post/post.component';
 import { FooterComponent } from './footer/footer.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { ArticleComponent } from './article/article.component';
+import { CommentSectionComponent } from './comment-section/comment-section.component';
+import { CommentComponent } from './comment/comment.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +20,10 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     PostsSectionComponent,
     PostComponent,
     FooterComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    ArticleComponent,
+    CommentSectionComponent,
+    CommentComponent
   ],
   imports: [
     BrowserModule,
