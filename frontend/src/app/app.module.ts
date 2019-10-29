@@ -11,6 +11,7 @@ import { FooterComponent } from './footer/footer.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ArticleComponent } from './article/article.component';
 import { CommentSectionComponent } from './comment-section/comment-section.component';
+import { CommentComponent } from './comment/comment.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { CommentSectionComponent } from './comment-section/comment-section.compo
     FooterComponent,
     PageNotFoundComponent,
     ArticleComponent,
-    CommentSectionComponent
+    CommentSectionComponent,
+    CommentComponent
   ],
   imports: [
     BrowserModule,
