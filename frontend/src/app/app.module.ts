@@ -12,6 +12,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { ArticleComponent } from './article/article.component';
 import { CommentSectionComponent } from './comment-section/comment-section.component';
 import { CommentComponent } from './comment/comment.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { CommentComponent } from './comment/comment.component';
     PageNotFoundComponent,
     ArticleComponent,
     CommentSectionComponent,
-    CommentComponent
+    CommentComponent,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,
