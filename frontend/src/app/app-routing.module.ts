@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import {PostsSectionComponent} from './posts-section/posts-section.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {ArticleComponent} from './article/article.component';
+import {UserProfileComponent} from './user-profile/user-profile.component';
 
 
 
@@ -16,6 +17,9 @@ const routes: Routes = [ {
   }, {
     path: 'article/:id',
     component: ArticleComponent
+  }, {
+    path: 'userprofile/:id',
+    component: UserProfileComponent
   }, {
     path: '404',
     component: PageNotFoundComponent
