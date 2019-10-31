@@ -10,4 +10,4 @@ done
 # Start server
 echo "Starting server"
 # python manage.py runserver 0.0.0.0:8000
-gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+gunicorn backend.wsgi:application --bind 0.0.0.0:8000 $( (( $DEV == 1 )) && printf %s '--reload' )
