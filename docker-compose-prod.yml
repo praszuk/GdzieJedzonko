@@ -20,8 +20,9 @@ services:
         links:
             - db
         environment:
+            DEV: 0
             SECRET_KEY: "${SECRET_KEY}"
-    
+
     frontend:
         build:
             context: .
