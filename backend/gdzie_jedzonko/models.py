@@ -45,6 +45,8 @@ class User(AbstractBaseUser):
     last_name = models.TextField(max_length=50, blank=True)
     birth_date = models.DateField(blank=True, null=True)
 
+    date_joined = models.DateTimeField(auto_now=True)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'

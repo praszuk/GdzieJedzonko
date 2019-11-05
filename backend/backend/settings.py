@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True # TODO WARNING
+DEBUG = False
 
 ALLOWED_HOSTS = ['0.0.0.0']
 
@@ -52,7 +52,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+
 REST_FRAMEWORK = {
+    'DATETIME_FORMAT': DATETIME_FORMAT,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
@@ -126,7 +129,7 @@ TIME_ZONE = 'Europe/Warsaw'
 
 USE_I18N = True
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
