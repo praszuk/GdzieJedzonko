@@ -6,6 +6,9 @@ from rest_framework_simplejwt.views import (
 from django.urls import path
 from .views import UserList
 
+
+app_name = 'gdzie_jedzonko'
+
 urlpatterns = [
     path('sessions/token/',
          TokenObtainPairView.as_view(),
@@ -15,5 +18,5 @@ urlpatterns = [
          TokenRefreshView.as_view(),
          name='token_refresh'),
 
-    path('users/', UserList.as_view(),)
+    path('users/', UserList.as_view(), name='user-list')
 ]
