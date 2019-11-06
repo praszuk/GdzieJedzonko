@@ -1,5 +1,8 @@
+from rest_framework.views import status
 from rest_framework.test import APITestCase, APIClient
+
 from django.test import TestCase
+from django.urls import reverse
 
 from .models import Role, User
 
@@ -51,3 +54,7 @@ class GetAllUsersTest(BaseViewTest):
             birth_date='1970-09-22',
             role=Role.ADMIN
         )
+
+    def test_unauthenticated_user(self):
+        response = self.client.get(reverse('gdzie_jedzonko:user-list'))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
