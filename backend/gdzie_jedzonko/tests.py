@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .models import Role, User
+from .serializers import UserListSerializer
 
 
 class UserModelTest(TestCase):
@@ -88,3 +89,17 @@ class GetAllUsersTest(BaseViewTest):
 
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_authorized_admin(self):
+        credentials = self.generate_credentials(
+            self.USERS[3]['email'],
+            self.USERS[3]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.get(reverse('gdzie_jedzonko:user-list'))
+        expected = User.objects.all()
+        serialized = UserListSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
