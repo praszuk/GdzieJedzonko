@@ -78,3 +78,13 @@ class GetAllUsersTest(BaseViewTest):
 
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_unauthorized_mod(self):
+        credentials = self.generate_credentials(
+            self.USERS[2]['email'],
+            self.USERS[2]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.get(reverse('gdzie_jedzonko:user-list'))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
