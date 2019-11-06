@@ -1,17 +1,15 @@
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from django.urls import path
-from .views import UserList
+
+from .views import MyTokenObtainPairView, UserList
 
 
 app_name = 'gdzie_jedzonko'
 
 urlpatterns = [
     path('sessions/token/',
-         TokenObtainPairView.as_view(),
+         MyTokenObtainPairView.as_view(),
          name='token_obtain_pair'),
 
     path('sessions/refresh/',
