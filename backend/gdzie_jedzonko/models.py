@@ -1,5 +1,19 @@
+from django_enumfield import enum
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+
+
+class Role(enum.Enum):
+    USER = 1
+    MODERATOR = 2
+    ADMIN = 3
+
+    __labels__ = {
+        USER: 'User',
+        MODERATOR: 'Moderator',
+        ADMIN: 'Admin',
+    }
 
 
 class UserManager(BaseUserManager):
