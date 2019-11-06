@@ -1,1 +1,40 @@
-<p>register works!</p>
+<form>
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input required minlength="3" maxlength="254" ngModel name="email" #email="ngModel" (change)="log(email)" id="email" type="text" class="form-control">
+    <div class="alert alert-danger" *ngIf="email.touched && !email.valid">
+      <div *ngIf="email.errors.required">Email is required</div>
+      <div *ngIf="email.errors.minlength">Min length of email is 3 characters</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input required minlength="3" maxlength="128" ngModel name="password" #password="ngModel" id="password" type="password" class="form-control">
+    <div class="alert alert-danger" *ngIf="password.touched && !password.valid">
+      <div *ngIf="password.errors.required">Password is required</div>
+      <div *ngIf="password.errors.minlength">Min length of password is 3 characters</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="first_name">First Name</label>
+    <input required maxlength="50" id="first_name" type="text" ngModel name="first_name" #first_name="ngModel" class="form-control">
+    <div class="alert alert-danger" *ngIf="first_name.touched && !first_name.valid">
+      <div *ngIf="first_name.errors.required">First name is required</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="last_name">Last Name</label>
+    <input required maxlength="50" id="last_name" type="text" ngModel name="last_name" #last_name="ngModel" class="form-control">
+    <div class="alert alert-danger" *ngIf="last_name.touched && !last_name.valid">
+      <div *ngIf="last_name.errors.required">Last name is required</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="birth_date">Birth date</label>
+    <input required placeholder="yyyy-MM-dd" id="birth_date" type="date" ngModel name="birth_date" #birth_date="ngModel" class="form-control">
+    <div class="alert alert-danger" *ngIf="birth_date.touched && !birth_date.valid">
+      <div *ngIf="birth_date.errors.required">Birth date is required</div>
+    </div>
+  </div>
+  <button class="btn btn-primary">Submit</button>
+</form>
