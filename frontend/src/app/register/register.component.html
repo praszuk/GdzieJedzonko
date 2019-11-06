@@ -1,40 +1,44 @@
-<form>
-  <div class="form-group">
-    <label for="email">Email</label>
-    <input required minlength="3" maxlength="254" ngModel name="email" #email="ngModel" (change)="log(email)" id="email" type="text" class="form-control">
-    <div class="alert alert-danger" *ngIf="email.touched && !email.valid">
-      <div *ngIf="email.errors.required">Email is required</div>
-      <div *ngIf="email.errors.minlength">Min length of email is 3 characters</div>
+<div class="container-fluid border border-light rounded shadow-sm shadow offset-md-4 col-md-4">
+  <h2 class= "text-center mt-2 form-text"> Zarejestruj się </h2>
+  <span class="clearfix"></span>
+  <form  #registerForm="ngForm" name="registerForm" class="my-4" (ngSubmit)="onSubmit(registerForm.value)">
+    <div class="form-group" id="a">
+      <label for="email">Email</label>
+      <input required minlength="3" maxlength="254" ngModel #email="ngModel" name="email" id="email" type="text"
+             class="form-control">
+      <div class="alert alert-danger" *ngIf="email.touched && !email.valid">
+        <div *ngIf="email.errors.required">Email jest wymagany</div>
+        <div *ngIf="email.errors.minlength">Minimalna długośc: 3</div>
+      </div>
     </div>
-  </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input required minlength="3" maxlength="128" ngModel name="password" #password="ngModel" id="password" type="password" class="form-control">
-    <div class="alert alert-danger" *ngIf="password.touched && !password.valid">
-      <div *ngIf="password.errors.required">Password is required</div>
-      <div *ngIf="password.errors.minlength">Min length of password is 3 characters</div>
+    <div class="form-group">
+      <label for="password">Hasło</label>
+      <input required minlength="6" maxlength="128" ngModel name="password" #password="ngModel" id="password" type="password" class="form-control">
+      <div class="alert alert-danger" *ngIf="password.touched && !password.valid">
+        <div *ngIf="password.errors.required">Hasło jest wymagane</div>
+        <div *ngIf="password.errors.minlength">Minimalna długośc: 6</div>
+      </div>
     </div>
-  </div>
-  <div class="form-group">
-    <label for="first_name">First Name</label>
-    <input required maxlength="50" id="first_name" type="text" ngModel name="first_name" #first_name="ngModel" class="form-control">
-    <div class="alert alert-danger" *ngIf="first_name.touched && !first_name.valid">
-      <div *ngIf="first_name.errors.required">First name is required</div>
+    <div class="form-group">
+      <label for="first_name">Imie</label>
+      <input required maxlength="50" id="first_name" type="text" ngModel name="first_name" #first_name="ngModel" class="form-control">
+      <div class="alert alert-danger" *ngIf="first_name.touched && !first_name.valid">
+        <div *ngIf="first_name.errors.required">Imie jest wymagane</div>
+      </div>
     </div>
-  </div>
-  <div class="form-group">
-    <label for="last_name">Last Name</label>
-    <input required maxlength="50" id="last_name" type="text" ngModel name="last_name" #last_name="ngModel" class="form-control">
-    <div class="alert alert-danger" *ngIf="last_name.touched && !last_name.valid">
-      <div *ngIf="last_name.errors.required">Last name is required</div>
+    <div class="form-group">
+      <label for="last_name">Nazwisko</label>
+      <input required maxlength="50" id="last_name" type="text" ngModel name="last_name" #last_name="ngModel" class="form-control">
+      <div class="alert alert-danger" *ngIf="last_name.touched && !last_name.valid">
+        <div *ngIf="last_name.errors.required">Nazwisko jest wymagane</div>
+      </div>
     </div>
-  </div>
-  <div class="form-group">
-    <label for="birth_date">Birth date</label>
-    <input required placeholder="yyyy-MM-dd" id="birth_date" type="date" ngModel name="birth_date" #birth_date="ngModel" class="form-control">
-    <div class="alert alert-danger" *ngIf="birth_date.touched && !birth_date.valid">
-      <div *ngIf="birth_date.errors.required">Birth date is required</div>
+    <div class="form-group">
+      <label for="birth_date">Data urodzin</label>
+      <input placeholder="yyyy-MM-dd" id="birth_date" type="date" ngModel name="birth_date" #birth_date="ngModel" class="form-control">
     </div>
-  </div>
-  <button class="btn btn-primary">Submit</button>
-</form>
+    <div class="container text-center">
+      <button class="btn btn-primary shadow-lg" [disabled]="registerForm.form.invalid" [ngClass]="{'btn-danger': registerForm.form.invalid && (!registerForm.form.untouched) == true}">Zarejestruj</button>
+    </div>
+  </form>
+</div>
