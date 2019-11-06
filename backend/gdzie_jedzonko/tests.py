@@ -24,37 +24,57 @@ class BaseViewTest(APITestCase):
 class GetAllUsersTest(BaseViewTest):
 
     def setUp(self):
-        User.objects.create_user(
-            email='user1@gdziejedzonko.pl',
-            password='1234',
-        )
+        self.USERS = [
+            {
+                'email': 'user1@gdziejedzonko.pl',
+                'password': '1234'
+            },
+            {
+                'email': 'user2@gdziejedzonko.pl',
+                'password': '1234',
+                'first_name': 'John',
+                'last_name': 'Smith',
+                'birth_date': '1978-02-12'
+            },
+            {
+                'email': 'mod@gdziejedzonko.pl',
+                'password': '1234',
+                'first_name': 'Micheal',
+                'last_name': 'Johnson',
+                'birth_date': '1970-09-22',
+                'role': Role.MODERATOR
+            },
+            {
+                'email': 'admin@gdziejedzonko.pl',
+                'password': '1234',
+                'first_name': 'Adam',
+                'last_name': 'Williams',
+                'birth_date': '1970-09-22',
+                'role': Role.ADMIN
+            }
+        ]
 
-        User.objects.create_user(
-            email='user2@gdziejedzonko.pl',
-            password='1234',
-            first_name='John',
-            last_name='Smith',
-            birth_date='1978-02-12'
-        )
+        for user in self.USERS:
+            User.objects.create_user(**user)
 
-        User.objects.create_user(
-            email='mod@gdziejedzonko.pl',
-            password='1234',
-            first_name='Micheal',
-            last_name='Johnson',
-            birth_date='1970-09-22',
-            role=Role.MODERATOR
+    def generate_credentials(self, email, password):
+        data = {'email': email, 'password': password}
+        response = self.client.post(
+            reverse('gdzie_jedzonko:token_obtain_pair'),
+            data=data
         )
-
-        User.objects.create_user(
-            email='admin@gdziejedzonko.pl',
-            password='1234',
-            first_name='Adam',
-            last_name='Williams',
-            birth_date='1970-09-22',
-            role=Role.ADMIN
-        )
+        return 'Bearer ' + response.data['access']
 
     def test_unauthenticated_user(self):
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_unauthorized_user(self):
+        credentials = self.generate_credentials(
+            self.USERS[0]['email'],
+            self.USERS[0]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.get(reverse('gdzie_jedzonko:user-list'))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
