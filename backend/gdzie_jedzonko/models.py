@@ -1,5 +1,19 @@
+from django_enumfield import enum
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+
+
+class Role(enum.Enum):
+    USER = 1
+    MODERATOR = 2
+    ADMIN = 3
+
+    __labels__ = {
+        USER: 'User',
+        MODERATOR: 'Moderator',
+        ADMIN: 'Admin',
+    }
 
 
 class UserManager(BaseUserManager):
@@ -7,6 +21,7 @@ class UserManager(BaseUserManager):
     def create_user(self,
                     email,
                     password,
+                    role=Role.USER,
                     first_name=None,
                     last_name=None,
                     birth_date=None,
@@ -18,6 +33,9 @@ class UserManager(BaseUserManager):
         if not password:
             raise ValueError('Password is required!')
 
+        if not role:
+            raise ValueError('Role is required!')
+
         if not first_name:
             first_name = ''
 
@@ -26,6 +44,7 @@ class UserManager(BaseUserManager):
 
         user = self.model(
             email=self.normalize_email(email),
+            role=role,
             first_name=first_name,
             last_name=last_name,
             birth_date=birth_date
@@ -40,6 +59,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     email = models.EmailField(unique=True)
+    role = enum.EnumField(Role, default=Role.USER)
 
     first_name = models.TextField(max_length=50, blank=True)
     last_name = models.TextField(max_length=50, blank=True)
