@@ -14,6 +14,7 @@ import { ArticleComponent } from './article/article.component';
 import { CommentSectionComponent } from './comment-section/comment-section.component';
 import { CommentComponent } from './comment/comment.component';
 import { RegisterComponent } from './register/register.component';
+import { HomeComponent } from './home/home.component';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { RegisterComponent } from './register/register.component';
     ArticleComponent,
     CommentSectionComponent,
     CommentComponent,
-    RegisterComponent
+    RegisterComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
