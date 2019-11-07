@@ -6,6 +6,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {RouterModule} from "@angular/router";
 import {AuthGuard} from "./guards/AuthGuard";
+import {TokenInterceptor} from "./token-interceptor";
 
 
 
