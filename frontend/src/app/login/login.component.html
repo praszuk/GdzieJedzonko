@@ -1,1 +1,25 @@
-<p>login works!</p>
+<div id="loginContainer" class="container-fluid border border-light rounded shadow-lg shadow offset-md-4 col-md-4">
+  <h2 class= "text-center mt-2 form-text"> Log In </h2>
+  <span class="clearfix"></span>
+  <form  #loginForm="ngForm" name="loginForm" class="my-4" (ngSubmit)="onSubmit(loginForm.value)">
+    <div class="form-group" id="a">
+      <label for="email">Email</label>
+      <input required maxlength="254" ngModel #email="ngModel" email="true" name="email" id="email" type="text"
+             class="form-control">
+      <div class="alert alert-danger" *ngIf="email.touched && !email.valid">
+        <div *ngIf="email.errors.required">Email jest wymagany</div>
+        <div *ngIf="email.errors.email">Składnia maila jest niepoprawna. Przykład: kowalski@op.pl</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password">Hasło</label>
+      <input required maxlength="128" ngModel name="password" #password="ngModel" id="password" type="password" class="form-control">
+      <div class="alert alert-danger" *ngIf="password.touched && !password.valid">
+        <div *ngIf="password.errors.required">Hasło jest wymagane</div>
+      </div>
+    </div>
+    <div class="container text-center">
+      <button class="btn btn-primary shadow-lg" [disabled]="loginForm.form.invalid" [ngClass]="{'btn-danger': loginForm.form.invalid && (!loginForm.form.untouched) == true}">Zaloguj</button>
+    </div>
+  </form>
+</div>
