@@ -5,14 +5,17 @@ import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {ArticleComponent} from './article/article.component';
 import {RegisterComponent} from './register/register.component';
 import {HomeComponent} from "./home/home.component";
-import {AppComponent} from "./app.component";
+import {LoginComponent} from "./login/login.component";
 
 
 
-const routes: Routes = [{
+const routes: Routes = [ {
+  path:'login',
+  component: LoginComponent,
+  }, {
   path:'register',
   component: RegisterComponent,
-  },{
+  }, {
   path: '',
   component: HomeComponent,
   children:[{
@@ -35,7 +38,7 @@ const routes: Routes = [{
     path: '**',
     redirectTo: '/404'
   }]
-}
+  }
 ];
 
 @NgModule({

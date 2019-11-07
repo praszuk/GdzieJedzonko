@@ -15,6 +15,7 @@ import { CommentSectionComponent } from './comment-section/comment-section.compo
 import { CommentComponent } from './comment/comment.component';
 import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './login/login.component';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { HomeComponent } from './home/home.component';
     CommentSectionComponent,
     CommentComponent,
     RegisterComponent,
-    HomeComponent
+    HomeComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
