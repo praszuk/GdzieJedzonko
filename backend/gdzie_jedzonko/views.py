@@ -1,18 +1,16 @@
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
-
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import viewsets
 
 from .models import User
-from .permissions import IsAdminUser
-from .serializers import MyTokenObtainPairSerializer, UserListSerializer
+from .permissions import UserPermission
+from .serializers import MyTokenObtainPairSerializer, UserSerializer
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
-class UserList(generics.ListAPIView):
-    permission_classes = (IsAuthenticated, IsAdminUser)
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserListSerializer
+    serializer_class = UserSerializer
+    permission_classes = [UserPermission]

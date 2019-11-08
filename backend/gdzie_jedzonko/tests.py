@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .models import Role, User
-from .serializers import UserListSerializer
+from .serializers import UserSerializer
 
 
 class UserModelTest(TestCase):
@@ -20,9 +20,6 @@ class BaseViewTest(APITestCase):
     client = APIClient()
     DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
     DATE_FORMAT = '%Y-%m-%d'
-
-
-class GetAllUsersTest(BaseViewTest):
 
     def setUp(self):
         self.USERS = [
@@ -66,6 +63,9 @@ class GetAllUsersTest(BaseViewTest):
         )
         return 'Bearer ' + response.data['access']
 
+
+class GetAllUsersTest(BaseViewTest):
+
     def test_unauthenticated_user(self):
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -99,7 +99,51 @@ class GetAllUsersTest(BaseViewTest):
 
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         expected = User.objects.all()
-        serialized = UserListSerializer(expected, many=True)
+        serialized = UserSerializer(expected, many=True)
 
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class GetDetailUserTest(BaseViewTest):
+
+    def test_unauthenticated_user(self):
+        response = self.client.get(
+            reverse('gdzie_jedzonko:user-detail', args=[1])
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_user_success(self):
+        user_sample_data_id = 0
+        user = User.objects.get(email=self.USERS[user_sample_data_id]['email'])
+
+        credentials = self.generate_credentials(
+            self.USERS[user_sample_data_id]['email'],
+            self.USERS[user_sample_data_id]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.get(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id])
+        )
+
+        expected = User.objects.get(pk=user.id)
+        serialized = UserSerializer(expected, many=False)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_authenticated_user_not_found(self):
+        user_sample_data_id = 0
+
+        credentials = self.generate_credentials(
+            self.USERS[user_sample_data_id]['email'],
+            self.USERS[user_sample_data_id]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.get(
+            reverse('gdzie_jedzonko:user-detail', args=[999])
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
