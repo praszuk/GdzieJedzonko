@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {User} from "../../user";
-import {Token} from "../token.model";
+import {Tokens} from "../tokens.model";
 import {Observable, of} from "rxjs";
 import {config} from "../../config"
 import {catchError, concatAll, flatMap, mapTo, mergeAll, switchMap, tap} from "rxjs/operators";
@@ -19,10 +19,10 @@ export class AuthService {
 
 
   login(credentials: {email: string, password: string}): Observable<boolean> {
-    return this.http.post<Token>(`${config.apiUrl}/api/sessions/token/`, credentials)
+    return this.http.post<Tokens>(`${config.apiUrl}/api/sessions/token/`, credentials)
       .pipe(
-        tap((tokens: Token) => this.storeTokens(tokens)),
-        switchMap((tokens: Token) => this.http.get<User>(`${config.apiUrl}/api/users/${this.getUserIdFromToken(tokens.access)}/`)
+        tap((tokens: Tokens) => this.storeTokens(tokens)),
+        switchMap((tokens: Tokens) => this.http.get<User>(`${config.apiUrl}/api/users/${this.getUserIdFromTokens(tokens.access)}/`)
           .pipe(
             tap(user => this.user = user)
           )),
@@ -42,20 +42,20 @@ export class AuthService {
 
   }
 
-  refreshToken() {
+  refreshTokens() {
     return this.http.post<any>(`${config.apiUrl}/api/sessions/refresh/`, {
-      'refresh': this.getRefreshToken()})
+      'refresh': this.getRefreshTokens()})
       .pipe(
-        tap((tokens: Token) => {
-        this.storeAccessToken(tokens.access);
+        tap((tokens: Tokens) => {
+        this.storeAccessTokens(tokens.access);
     }));
   }
 
-  getToken() {
+  getTokens() {
     return localStorage.getItem(this.ACCESS_TOKEN);
   }
 
-  getUserIdFromToken(token: string): number{
+  getUserIdFromTokens(token: string): number{
     return JSON.parse(atob(token.split('.')[1])).user_id
   }
 
@@ -68,17 +68,17 @@ export class AuthService {
     this.removeTokens();
   }
 
-  private getRefreshToken() {
+  private getRefreshTokens() {
     return localStorage.getItem(this.REFRESH_TOKEN);
   }
 
-  private storeAccessToken(accessToken: string) {
-    localStorage.setItem(this.ACCESS_TOKEN, accessToken);
+  private storeAccessTokens(accessTokens: string) {
+    localStorage.setItem(this.ACCESS_TOKEN, accessTokens);
   }
 
-  private storeTokens(token: Token) {
-    localStorage.setItem(this.ACCESS_TOKEN, token.access);
-    localStorage.setItem(this.REFRESH_TOKEN, token.refresh);
+  private storeTokens(tokens: Tokens) {
+    localStorage.setItem(this.ACCESS_TOKEN, tokens.access);
+    localStorage.setItem(this.REFRESH_TOKEN, tokens.refresh);
   }
 
   private removeTokens() {

@@ -11,8 +11,8 @@ export class TokenInterceptor implements HttpInterceptor{
   constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (this.authService.getToken()) {
-      request = this.addToken(request, this.authService.getToken());
+    if (this.authService.getTokens()) {
+      request = this.addToken(request, this.authService.getTokens());
     }
 
     return next.handle(request)
@@ -40,7 +40,7 @@ export class TokenInterceptor implements HttpInterceptor{
       this.isRefreshing = true;
       this.refreshTokenSubject.next(null);
 
-      return this.authService.refreshToken().pipe(
+      return this.authService.refreshTokens().pipe(
         switchMap((token: any) => {
           this.isRefreshing = false;
           this.refreshTokenSubject.next(token.jwt);

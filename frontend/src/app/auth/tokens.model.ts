@@ -1,4 +1,4 @@
-export class Token{
+export class Tokens{
   access: string;
   refresh: string;
 }
