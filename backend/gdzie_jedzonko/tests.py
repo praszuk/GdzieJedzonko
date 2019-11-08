@@ -132,3 +132,18 @@ class GetDetailUserTest(BaseViewTest):
 
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_authenticated_user_not_found(self):
+        user_sample_data_id = 0
+
+        credentials = self.generate_credentials(
+            self.USERS[user_sample_data_id]['email'],
+            self.USERS[user_sample_data_id]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.get(
+            reverse('gdzie_jedzonko:user-detail', args=[999])
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
