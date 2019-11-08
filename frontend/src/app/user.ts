@@ -1,5 +1,3 @@
-import {Token} from "./auth/token.model";
-
 export class User {
   id: number;
   email: string;
@@ -7,5 +5,4 @@ export class User {
   lastName: string;
   birthDate: string;
   joinDate: string;
-  token: Token;
 }
