@@ -11,7 +11,12 @@ from .serializers import UserSerializer
 class UserModelTest(TestCase):
 
     def test_create_user_and_check_is_password_hashed(self):
-        user = User.objects.create_user(email='test@test.com', password='123')
+        user = User.objects.create_user(
+            email='test@test.com',
+            password='123',
+            first_name='test',
+            last_name='test'
+        )
         self.assertNotEqual(user.password, '123')
         self.assertTrue(user.check_password('123'))
 
@@ -25,7 +30,9 @@ class BaseViewTest(APITestCase):
         self.USERS = [
             {
                 'email': 'user1@gdziejedzonko.pl',
-                'password': '1234'
+                'password': '1234',
+                'first_name': 'David',
+                'last_name': 'Davis'
             },
             {
                 'email': 'user2@gdziejedzonko.pl',

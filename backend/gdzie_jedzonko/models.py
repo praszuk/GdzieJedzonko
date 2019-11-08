@@ -60,8 +60,8 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     email = models.EmailField(unique=True)
     role = enum.EnumField(Role, default=Role.USER)
-    first_name = models.TextField(max_length=50)
-    last_name = models.TextField(max_length=50)
+    first_name = models.CharField(max_length=50, blank=False, default=None)
+    last_name = models.CharField(max_length=50, blank=False, default=None)
 
     birth_date = models.DateField(blank=True, null=True)
 
