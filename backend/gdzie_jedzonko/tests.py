@@ -161,3 +161,19 @@ class GetAllRolesTest(BaseViewTest):
     def test_unauthenticated_user(self):
         response = self.client.get(reverse('gdzie_jedzonko:role-list'))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_user_success(self):
+        user_sample_data_id = 0
+
+        credentials = self.generate_credentials(
+            self.USERS[user_sample_data_id]['email'],
+            self.USERS[user_sample_data_id]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        response = self.client.get(reverse('gdzie_jedzonko:role-list'))
+
+        expected = Role.items()
+        serialized = RoleSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
