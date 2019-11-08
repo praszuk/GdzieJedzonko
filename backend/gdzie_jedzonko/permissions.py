@@ -28,3 +28,11 @@ class UserPermission(BasePermission):
                 IsAuthenticated.has_permission(None, request, view) and
                 IsAdminUser.has_permission(None, request, view)
             )
+
+        if view.action == 'retrieve':
+            '''
+            Workaround for using exists permissions class
+            None=self - context is incorrect but required to work
+            '''
+            # noinspection PyTypeChecker
+            return IsAuthenticated.has_permission(None, request, view)
