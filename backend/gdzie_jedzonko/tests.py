@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .models import Role, User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, RoleSerializer
 
 
 class UserModelTest(TestCase):
@@ -154,3 +154,10 @@ class GetDetailUserTest(BaseViewTest):
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class GetAllRolesTest(BaseViewTest):
+
+    def test_unauthenticated_user(self):
+        response = self.client.get(reverse('gdzie_jedzonko:role-list'))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
