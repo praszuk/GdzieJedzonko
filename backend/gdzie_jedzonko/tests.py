@@ -112,3 +112,23 @@ class GetDetailUserTest(BaseViewTest):
             reverse('gdzie_jedzonko:user-detail', args=[1])
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_user_success(self):
+        user_sample_data_id = 0
+        user = User.objects.get(email=self.USERS[user_sample_data_id]['email'])
+
+        credentials = self.generate_credentials(
+            self.USERS[user_sample_data_id]['email'],
+            self.USERS[user_sample_data_id]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.get(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id])
+        )
+
+        expected = User.objects.get(pk=user.id)
+        serialized = UserSerializer(expected, many=False)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
