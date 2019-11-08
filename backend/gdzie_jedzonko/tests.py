@@ -103,3 +103,12 @@ class GetAllUsersTest(BaseViewTest):
 
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class GetDetailUserTest(BaseViewTest):
+
+    def test_unauthenticated_user(self):
+        response = self.client.get(
+            reverse('gdzie_jedzonko:user-detail', args=[1])
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
