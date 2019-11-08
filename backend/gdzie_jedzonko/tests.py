@@ -21,9 +21,6 @@ class BaseViewTest(APITestCase):
     DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
     DATE_FORMAT = '%Y-%m-%d'
 
-
-class GetAllUsersTest(BaseViewTest):
-
     def setUp(self):
         self.USERS = [
             {
@@ -65,6 +62,9 @@ class GetAllUsersTest(BaseViewTest):
             data=data
         )
         return 'Bearer ' + response.data['access']
+
+
+class GetAllUsersTest(BaseViewTest):
 
     def test_unauthenticated_user(self):
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
