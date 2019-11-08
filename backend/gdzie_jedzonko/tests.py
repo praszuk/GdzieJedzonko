@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from .models import Role, User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, RoleSerializer
 
 
 class UserModelTest(TestCase):
@@ -154,3 +154,26 @@ class GetDetailUserTest(BaseViewTest):
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class GetAllRolesTest(BaseViewTest):
+
+    def test_unauthenticated_user(self):
+        response = self.client.get(reverse('gdzie_jedzonko:role-list'))
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_user_success(self):
+        user_sample_data_id = 0
+
+        credentials = self.generate_credentials(
+            self.USERS[user_sample_data_id]['email'],
+            self.USERS[user_sample_data_id]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        response = self.client.get(reverse('gdzie_jedzonko:role-list'))
+
+        expected = Role.items()
+        serialized = RoleSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

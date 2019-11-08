@@ -15,6 +15,19 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
+class RoleSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+
+    def to_representation(self, data):
+        """
+        :param data: Role.items() one item (key, value) pair where value is id
+        :return: dict i.e. {'id': 1, 'name': 'USER'}
+        :rtype: dict[int, str]
+        """
+        return {'id': data[1], 'name': data[0]}
+
+
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
