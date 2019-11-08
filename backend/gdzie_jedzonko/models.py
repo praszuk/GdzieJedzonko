@@ -21,9 +21,9 @@ class UserManager(BaseUserManager):
     def create_user(self,
                     email,
                     password,
+                    first_name,
+                    last_name,
                     role=Role.USER,
-                    first_name=None,
-                    last_name=None,
                     birth_date=None,
                     commit=True):
 
@@ -37,10 +37,10 @@ class UserManager(BaseUserManager):
             raise ValueError('Role is required!')
 
         if not first_name:
-            first_name = ''
+            raise ValueError('First name is required!')
 
         if not last_name:
-            last_name = ''
+            raise ValueError('Last name is required!')
 
         user = self.model(
             email=self.normalize_email(email),
@@ -60,9 +60,9 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     email = models.EmailField(unique=True)
     role = enum.EnumField(Role, default=Role.USER)
+    first_name = models.TextField(max_length=50)
+    last_name = models.TextField(max_length=50)
 
-    first_name = models.TextField(max_length=50, blank=True)
-    last_name = models.TextField(max_length=50, blank=True)
     birth_date = models.DateField(blank=True, null=True)
 
     date_joined = models.DateTimeField(auto_now=True)
