@@ -177,3 +177,12 @@ class GetAllRolesTest(BaseViewTest):
 
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class DeleteUserTest(BaseViewTest):
+
+    def test_unauthenticated_user(self):
+        response = self.client.delete(
+            reverse('gdzie_jedzonko:user-detail', args=[1])
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
