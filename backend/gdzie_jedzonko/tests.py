@@ -177,3 +177,82 @@ class GetAllRolesTest(BaseViewTest):
 
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class DeleteUserTest(BaseViewTest):
+
+    def test_unauthenticated_user(self):
+        response = self.client.delete(
+            reverse('gdzie_jedzonko:user-detail', args=[1])
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_user_but_not_owner(self):
+        user2 = User.objects.get(email=self.USERS[1]['email'])
+
+        credentials = self.generate_credentials(
+            self.USERS[0]['email'],
+            self.USERS[0]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.delete(
+            reverse('gdzie_jedzonko:user-detail', args=[user2.id])
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertIsNotNone(User.objects.get(email=self.USERS[1]['email']))
+
+    def test_authenticated_moderator_but_not_owner(self):
+        user2 = User.objects.get(email=self.USERS[1]['email'])
+
+        credentials = self.generate_credentials(
+            self.USERS[2]['email'],
+            self.USERS[2]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.delete(
+            reverse('gdzie_jedzonko:user-detail', args=[user2.id])
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(
+            User.objects.filter(email=self.USERS[1]['email']).exists()
+        )
+
+    def test_authenticated_user_owner(self):
+        user = User.objects.get(email=self.USERS[0]['email'])
+
+        credentials = self.generate_credentials(
+            self.USERS[0]['email'],
+            self.USERS[0]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.delete(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id])
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(
+            User.objects.filter(email=self.USERS[0]['email']).exists()
+        )
+
+    def test_authenticated_admin(self):
+        user = User.objects.get(email=self.USERS[0]['email'])
+
+        credentials = self.generate_credentials(
+            self.USERS[3]['email'],
+            self.USERS[3]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.delete(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id])
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(
+            User.objects.filter(email=self.USERS[0]['email']).exists()
+        )
