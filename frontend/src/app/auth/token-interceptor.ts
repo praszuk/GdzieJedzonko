@@ -2,6 +2,7 @@ import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest}
 import {BehaviorSubject, Observable, throwError} from "rxjs";
 import {AuthService} from "./services/auth-service";
 import {switchMap, take, catchError, filter} from "rxjs/operators";
+import {config} from "../config";
 
 export class TokenInterceptor implements HttpInterceptor{
 
@@ -11,14 +12,18 @@ export class TokenInterceptor implements HttpInterceptor{
   constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    let loginUrl = '/api/sessions/token/';
+    let requestUrl = request.url.replace(config.apiUrl,"");
+
+
     if (this.authService.getTokens()) {
-      request = this.addToken(request, this.authService.getTokens());
+      request = TokenInterceptor.addToken(request, this.authService.getTokens());
     }
 
     return next.handle(request)
       .pipe(
         catchError(error => {
-      if (error instanceof HttpErrorResponse && error.status === 401) {
+      if (error instanceof HttpErrorResponse && error.status === 401 && loginUrl != requestUrl) {
         return this.handle401Error(request, next);
       } else {
         return throwError(error);
@@ -27,7 +32,7 @@ export class TokenInterceptor implements HttpInterceptor{
   }
 
 
-  private addToken(request: HttpRequest<any>, token: string) {
+  private static addToken(request: HttpRequest<any>, token: string) {
     return request.clone({
       setHeaders: {
         'Authorization': `Bearer ${token}`
@@ -44,7 +49,7 @@ export class TokenInterceptor implements HttpInterceptor{
         switchMap((token: any) => {
           this.isRefreshing = false;
           this.refreshTokenSubject.next(token.jwt);
-          return next.handle(this.addToken(request, token.jwt));
+          return next.handle(TokenInterceptor.addToken(request, token.jwt));
         }));
 
     } else {
@@ -52,7 +57,7 @@ export class TokenInterceptor implements HttpInterceptor{
         filter(token => token != null),
         take(1),
         switchMap(jwt => {
-          return next.handle(this.addToken(request, jwt));
+          return next.handle(TokenInterceptor.addToken(request, jwt));
         }));
     }
   }

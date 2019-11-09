@@ -7,6 +7,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {RouterModule} from "@angular/router";
 import {AuthGuard} from "./guards/AuthGuard";
 import {TokenInterceptor} from "./token-interceptor";
+import {UserService} from "../user.service";
 
 
 

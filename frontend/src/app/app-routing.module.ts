@@ -6,15 +6,18 @@ import {ArticleComponent} from './article/article.component';
 import {RegisterComponent} from './register/register.component';
 import {HomeComponent} from "./home/home.component";
 import {LoginComponent} from "./login/login.component";
+import {AuthGuard} from "./auth/guards/AuthGuard";
 
 
 
 const routes: Routes = [ {
   path:'login',
   component: LoginComponent,
+  canActivate: [AuthGuard]
   }, {
   path:'register',
   component: RegisterComponent,
+  canActivate: [AuthGuard]
   }, {
   path: '',
   component: HomeComponent,

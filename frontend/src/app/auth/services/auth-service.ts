@@ -2,9 +2,9 @@ import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {User} from "../../user";
 import {Tokens} from "../tokens.model";
-import {Observable, of} from "rxjs";
+import {BehaviorSubject, Observable, of} from "rxjs";
 import {config} from "../../config"
-import {catchError, concatAll, flatMap, mapTo, mergeAll, switchMap, tap} from "rxjs/operators";
+import {catchError, mapTo, switchMap, tap} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -13,33 +13,38 @@ export class AuthService {
 
   private readonly ACCESS_TOKEN = "access";
   private readonly REFRESH_TOKEN = "refresh";
-  private user: User;
-
-  constructor(private http: HttpClient) {}
+  private userSubject: BehaviorSubject<User>;
+  user: User;
+  constructor(private http: HttpClient) {
+    this.userSubject = new BehaviorSubject<User>(null);
+  }
 
 
   login(credentials: {email: string, password: string}): Observable<boolean> {
     return this.http.post<Tokens>(`${config.apiUrl}/api/sessions/token/`, credentials)
       .pipe(
         tap((tokens: Tokens) => this.storeTokens(tokens)),
-        switchMap((tokens: Tokens) => this.http.get<User>(`${config.apiUrl}/api/users/${this.getUserIdFromTokens(tokens.access)}/`)
+        switchMap((tokens: Tokens) => this.getUserById(this.getUserIdFromTokens(tokens.access))
           .pipe(
-            tap(user => this.user = user)
+            tap(user => {
+              this.setUser(user);
+              this.userSubject.next(user);})
           )),
         mapTo(true),
         catchError(error => {
-          alert(JSON.stringify(error.error));
           return of(false);
         }));
 
   }
 
   logout() {
-
+    console.log("Logged out");
+    this.setUser(null);
+    this.removeTokens();
   }
 
-  isLoggedIn() {
-
+  isLoggedIn(): boolean {
+    return !!this.getAccessToken();
   }
 
   refreshTokens() {
@@ -51,25 +56,34 @@ export class AuthService {
     }));
   }
 
+  getUserSubject(): Observable<User>{
+    return this.userSubject.asObservable();
+  }
+
   getTokens() {
     return localStorage.getItem(this.ACCESS_TOKEN);
+  }
+
+  getCurrentUserById(): Observable<User>{
+    return this.http.get<User>(`${config.apiUrl}/api/users/${this.getUserIdFromTokens(this.getAccessToken())}/`);
+  }
+
+  getUserById(id: number): Observable<User>{
+    return this.http.get<User>(`${config.apiUrl}/api/users/${id}/`);
   }
 
   getUserIdFromTokens(token: string): number{
     return JSON.parse(atob(token.split('.')[1])).user_id
   }
 
-  private setUser(user: User) {
-    this.user = user;
-  }
 
-  private logoutUser() {
-    this.user = null;
-    this.removeTokens();
-  }
 
   private getRefreshTokens() {
     return localStorage.getItem(this.REFRESH_TOKEN);
+  }
+
+  private getAccessToken() {
+    return localStorage.getItem(this.ACCESS_TOKEN);
   }
 
   private storeAccessTokens(accessTokens: string) {
@@ -84,6 +98,22 @@ export class AuthService {
   private removeTokens() {
     localStorage.removeItem(this.ACCESS_TOKEN);
     localStorage.removeItem(this.REFRESH_TOKEN);
+  }
+
+  getUser() {
+    return this.user;
+  }
+
+  getUserFullName(){
+    return `${this.user.first_name} ${this.user.last_name}`;
+  }
+
+  getUserRole(){
+    return this.user.role;
+  }
+
+  setUser(user: User) {
+    this.user = user;
   }
 
 }
