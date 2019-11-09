@@ -220,3 +220,21 @@ class DeleteUserTest(BaseViewTest):
         self.assertTrue(
             User.objects.filter(email=self.USERS[1]['email']).exists()
         )
+
+    def test_authenticated_user_owner(self):
+        user = User.objects.get(email=self.USERS[0]['email'])
+
+        credentials = self.generate_credentials(
+            self.USERS[0]['email'],
+            self.USERS[0]['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.delete(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id])
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(
+            User.objects.filter(email=self.USERS[0]['email']).exists()
+        )
