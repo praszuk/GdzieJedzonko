@@ -30,20 +30,20 @@ class BaseViewTest(APITestCase):
         self.USERS = [
             {
                 'email': 'user1@gdziejedzonko.pl',
-                'password': '1234',
+                'password': 'password1234',
                 'first_name': 'David',
                 'last_name': 'Davis'
             },
             {
                 'email': 'user2@gdziejedzonko.pl',
-                'password': '1234',
+                'password': 'password1234',
                 'first_name': 'John',
                 'last_name': 'Smith',
                 'birth_date': '1978-02-12'
             },
             {
                 'email': 'mod@gdziejedzonko.pl',
-                'password': '1234',
+                'password': 'password1234',
                 'first_name': 'Micheal',
                 'last_name': 'Johnson',
                 'birth_date': '1970-09-22',
@@ -51,7 +51,7 @@ class BaseViewTest(APITestCase):
             },
             {
                 'email': 'admin@gdziejedzonko.pl',
-                'password': '1234',
+                'password': 'password1234',
                 'first_name': 'Adam',
                 'last_name': 'Williams',
                 'birth_date': '1970-09-22',
@@ -256,3 +256,27 @@ class DeleteUserTest(BaseViewTest):
         self.assertFalse(
             User.objects.filter(email=self.USERS[0]['email']).exists()
         )
+
+
+class CreateUserTest(BaseViewTest):
+    def setUp(self):
+        self.test_user_data = {
+
+            'email': 'testuser@gdziejedzonko.pl',
+            'password': 'password12345',
+            'first_name': 'John',
+            'last_name': 'Smith',
+            'birth_date': '1970-09-22'
+        }
+
+    def test_required_email(self):
+        data = self.test_user_data
+        data.pop('email')
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', response.data)
