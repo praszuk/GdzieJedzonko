@@ -269,6 +269,17 @@ class CreateUserTest(BaseViewTest):
             'birth_date': '1970-09-22'
         }
 
+    def test_create_user(self):
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=self.test_user_data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(
+            User.objects.filter(email=self.test_user_data['email']).exists()
+        )
+
     def test_required_email(self):
         data = self.test_user_data
         data.pop('email')
