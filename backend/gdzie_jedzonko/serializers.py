@@ -1,6 +1,8 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 
+from django.utils import timezone
+
 from .models import User
 
 
@@ -36,6 +38,12 @@ class UserSerializer(serializers.ModelSerializer):
             validated_data.pop('role')
 
         return User.objects.create_user(**validated_data)
+
+    def validate_birth_date(self, birth_date):
+        if birth_date > timezone.now().date():
+            raise serializers.ValidationError("Cannot be greater than today")
+
+        return birth_date
 
     class Meta:
         model = User
