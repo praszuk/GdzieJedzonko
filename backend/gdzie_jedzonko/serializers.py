@@ -33,4 +33,5 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         depth = 1
-        exclude = ('password', 'last_login')
+        exclude = ('last_login',)
+        extra_kwargs = {'password': {'write_only': True, 'min_length': 6}}
