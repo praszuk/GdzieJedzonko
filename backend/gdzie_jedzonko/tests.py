@@ -316,3 +316,15 @@ class CreateUserTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('last_name', response.data)
+
+    def test_not_required_birth_date(self):
+        data = self.test_user_data
+        data.pop('birth_date')
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIsNone(User.objects.get(email=data['email']).birth_date)
