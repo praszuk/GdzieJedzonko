@@ -280,3 +280,15 @@ class CreateUserTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('email', response.data)
+
+    def test_required_password(self):
+        data = self.test_user_data
+        data.pop('password')
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('password', response.data)
