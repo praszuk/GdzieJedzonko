@@ -30,6 +30,13 @@ class RoleSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
 
+    def create(self, validated_data):
+
+        if 'role' in validated_data:
+            validated_data.pop('role')
+
+        return User.objects.create_user(**validated_data)
+
     class Meta:
         model = User
         depth = 1
