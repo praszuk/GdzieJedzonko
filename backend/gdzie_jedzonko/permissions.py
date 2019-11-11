@@ -44,6 +44,9 @@ class UserPermission(BasePermission):
         elif view.action == 'destroy':
             return IsAuthenticated.has_permission(None, request, view)
 
+        elif view.action == 'create':
+            return True
+
     '''
     Workaround for using exists permissions instead of reimplementing. 
     None=self - context is incorrect but required to work
