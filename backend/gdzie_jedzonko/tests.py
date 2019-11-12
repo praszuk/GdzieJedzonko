@@ -1,8 +1,10 @@
 from rest_framework.views import status
 from rest_framework.test import APITestCase, APIClient
 
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from .models import Role, User
 from .serializers import UserSerializer, RoleSerializer
@@ -463,3 +465,21 @@ class CreateUserTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('instead: YYYY-MM-DD', str(response.data['birth_date']))
+
+    def test_incorrect_birth_date_greater_than_today(self):
+        data = self.test_user_data
+        tomorrow = timezone.now().date().today() + timezone.timedelta(days=1)
+
+        data['birth_date'] = tomorrow.strftime(settings.DATE_FORMAT)
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        self.assertIn(
+            'Cannot be greater than today',
+            str(response.data['birth_date'])
+        )
