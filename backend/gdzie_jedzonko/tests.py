@@ -409,3 +409,29 @@ class CreateUserTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('Only letters', response.data['last_name'][0])
+
+    def test_incorrect_names_max_length(self):
+        # first_name and last_name must contain 1-50 characters (inclusive)
+        # tests for at least 1 character are already exist "test_required"
+
+        data = self.test_user_data
+        data['first_name'] = 'toolongfirstname'*5
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('no more than 50', response.data['first_name'][0])
+
+        data = self.test_user_data
+        data['last_name'] = 'toolonglastname' * 5
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('no more than 50', response.data['last_name'][0])
