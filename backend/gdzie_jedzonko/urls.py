@@ -13,6 +13,7 @@ role_list = RoleViewSet.as_view({
 
 user_list = UserViewSet.as_view({
     'get': 'list',
+    'post': 'create'
 })
 
 user_detail = UserViewSet.as_view({

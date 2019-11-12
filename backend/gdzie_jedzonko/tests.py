@@ -30,20 +30,20 @@ class BaseViewTest(APITestCase):
         self.USERS = [
             {
                 'email': 'user1@gdziejedzonko.pl',
-                'password': '1234',
+                'password': 'password1234',
                 'first_name': 'David',
                 'last_name': 'Davis'
             },
             {
                 'email': 'user2@gdziejedzonko.pl',
-                'password': '1234',
+                'password': 'password1234',
                 'first_name': 'John',
                 'last_name': 'Smith',
                 'birth_date': '1978-02-12'
             },
             {
                 'email': 'mod@gdziejedzonko.pl',
-                'password': '1234',
+                'password': 'password1234',
                 'first_name': 'Micheal',
                 'last_name': 'Johnson',
                 'birth_date': '1970-09-22',
@@ -51,7 +51,7 @@ class BaseViewTest(APITestCase):
             },
             {
                 'email': 'admin@gdziejedzonko.pl',
-                'password': '1234',
+                'password': 'password1234',
                 'first_name': 'Adam',
                 'last_name': 'Williams',
                 'birth_date': '1970-09-22',
@@ -256,3 +256,210 @@ class DeleteUserTest(BaseViewTest):
         self.assertFalse(
             User.objects.filter(email=self.USERS[0]['email']).exists()
         )
+
+
+class CreateUserTest(BaseViewTest):
+    def setUp(self):
+        self.test_user_data = {
+
+            'email': 'testuser@gdziejedzonko.pl',
+            'password': 'password12345',
+            'first_name': 'John',
+            'last_name': 'Smith',
+            'birth_date': '1970-09-22'
+        }
+
+    def test_create_user(self):
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=self.test_user_data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(
+            User.objects.filter(email=self.test_user_data['email']).exists()
+        )
+
+    def test_user_already_exists_and_email_unique(self):
+        self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=self.test_user_data
+        )
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=self.test_user_data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(
+            User.objects.filter(email=self.test_user_data['email']).exists()
+        )
+
+    def test_required_email(self):
+        data = self.test_user_data
+        data.pop('email')
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', response.data)
+
+    def test_required_password(self):
+        data = self.test_user_data
+        data.pop('password')
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('password', response.data)
+
+    def test_required_first_name(self):
+        data = self.test_user_data
+        data.pop('first_name')
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('first_name', response.data)
+
+    def test_required_last_name(self):
+        data = self.test_user_data
+        data.pop('last_name')
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('last_name', response.data)
+
+    def test_not_required_birth_date(self):
+        data = self.test_user_data
+        data.pop('birth_date')
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIsNone(User.objects.get(email=data['email']).birth_date)
+
+    def test_incorrect_email(self):
+        data = self.test_user_data
+        data['email'] = 'test'
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', response.data)
+
+    def test_incorrect_password_length(self):
+        # Password must contain 6-128 characters (inclusive both)
+        password_too_short = '55555'
+
+        data = self.test_user_data
+        data['password'] = password_too_short
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn(
+            'at least 6 characters',
+            str(response.data['password'])
+        )
+
+        password_too_long = '1' * 129
+        data = self.test_user_data
+        data['password'] = password_too_long
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn(
+            'no more than 128 characters',
+            str(response.data['password'])
+        )
+
+    def test_incorrect_names_with_numbers(self):
+        # first_name and last_name cannot contain numbers
+
+        data = self.test_user_data
+        data['first_name'] = 'John1'
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Only letters', response.data['first_name'][0])
+
+        data = self.test_user_data
+        data['last_name'] = 'Smith2'
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Only letters', response.data['last_name'][0])
+
+    def test_incorrect_names_max_length(self):
+        # first_name and last_name must contain 1-50 characters (inclusive)
+        # tests for at least 1 character are already exist "test_required"
+
+        data = self.test_user_data
+        data['first_name'] = 'toolongfirstname'*5
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('no more than 50', response.data['first_name'][0])
+
+        data = self.test_user_data
+        data['last_name'] = 'toolonglastname' * 5
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('no more than 50', response.data['last_name'][0])
+
+    def test_incorrect_birth_date_format(self):
+        data = self.test_user_data
+        data['birth_date'] = '2202-2-2-2'
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('instead: YYYY-MM-DD', str(response.data['birth_date']))
