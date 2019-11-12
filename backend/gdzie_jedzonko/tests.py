@@ -351,3 +351,36 @@ class CreateUserTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('email', response.data)
+
+    def test_incorrect_password_length(self):
+        # Password must contain 6-128 characters (inclusive both)
+        password_too_short = '55555'
+
+        data = self.test_user_data
+        data['password'] = password_too_short
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn(
+            'at least 6 characters',
+            str(response.data['password'])
+        )
+
+        password_too_long = '1' * 129
+        data = self.test_user_data
+        data['password'] = password_too_long
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn(
+            'no more than 128 characters',
+            str(response.data['password'])
+        )
