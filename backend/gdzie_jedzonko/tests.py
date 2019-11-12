@@ -280,6 +280,22 @@ class CreateUserTest(BaseViewTest):
             User.objects.filter(email=self.test_user_data['email']).exists()
         )
 
+    def test_user_already_exists_and_email_unique(self):
+        self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=self.test_user_data
+        )
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=self.test_user_data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(
+            User.objects.filter(email=self.test_user_data['email']).exists()
+        )
+
     def test_required_email(self):
         data = self.test_user_data
         data.pop('email')
