@@ -384,3 +384,28 @@ class CreateUserTest(BaseViewTest):
             'no more than 128 characters',
             str(response.data['password'])
         )
+
+    def test_incorrect_names_with_numbers(self):
+        # first_name and last_name cannot contain numbers
+
+        data = self.test_user_data
+        data['first_name'] = 'John1'
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Only letters', response.data['first_name'][0])
+
+        data = self.test_user_data
+        data['last_name'] = 'Smith2'
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('Only letters', response.data['last_name'][0])
