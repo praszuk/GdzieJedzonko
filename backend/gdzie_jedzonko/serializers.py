@@ -45,6 +45,18 @@ class UserSerializer(serializers.ModelSerializer):
 
         return birth_date
 
+    def validate_first_name(self, first_name):
+        if not first_name.isalpha():
+            raise serializers.ValidationError("Only letters are allowed.")
+
+        return first_name
+
+    def validate_last_name(self, last_name):
+        if not last_name.isalpha():
+            raise serializers.ValidationError("Only letters are allowed.")
+
+        return last_name
+
     class Meta:
         model = User
         depth = 1
