@@ -435,3 +435,15 @@ class CreateUserTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('no more than 50', response.data['last_name'][0])
+
+    def test_incorrect_birth_date_format(self):
+        data = self.test_user_data
+        data['birth_date'] = '2202-2-2-2'
+
+        response = self.client.post(
+            reverse('gdzie_jedzonko:user-list'),
+            data=data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('instead: YYYY-MM-DD', str(response.data['birth_date']))
