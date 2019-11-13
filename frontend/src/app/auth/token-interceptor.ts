@@ -13,9 +13,7 @@ export class TokenInterceptor implements HttpInterceptor{
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    let loginUrl = '/api/sessions/token/';
-    let refreshUrl = '/api/sessions/refresh/';
-    let skipUrls = [loginUrl,refreshUrl]
+    let skipUrls = [config.loginUrl,config.refreshUrl];
     let requestUrl = request.url.replace(config.apiUrl,"");
 
 

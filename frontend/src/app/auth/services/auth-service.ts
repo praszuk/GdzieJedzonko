@@ -22,7 +22,7 @@ export class AuthService {
 
 
   login(credentials: {email: string, password: string}): Observable<boolean> {
-    return this.http.post<Tokens>(`${config.apiUrl}/api/sessions/token/`, credentials)
+    return this.http.post<Tokens>(`${config.apiUrl}${config.loginUrl}`, credentials)
       .pipe(
         tap((tokens: Tokens) => this.storeTokens(tokens)),
         switchMap((tokens: Tokens) => this.getUserById(this.getUserIdFromTokens(tokens.access))
@@ -39,7 +39,6 @@ export class AuthService {
   }
 
   logout() {
-    console.log("Logged out");
     this.setUser(null);
     this.removeTokens();
   }
@@ -49,17 +48,17 @@ export class AuthService {
   }
 
   refreshTokens() {
-    return this.http.post<any>(`${config.apiUrl}/api/sessions/refresh/`, {
+    return this.http.post<any>(`${config.apiUrl}${config.refreshUrl}`, {
       'refresh': this.getRefreshTokens()})
       .pipe(
         tap((tokens: Tokens) => {
         this.storeAccessTokens(tokens.access);
     }),catchError((err) => {
       if(err.status == 401) {
-        this.removeTokens();
+        this.logout();
         this.router.navigate(['/login']);
         return of('401 error')
-      };
+      }
       }));
   }
 
