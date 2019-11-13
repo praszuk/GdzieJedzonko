@@ -4,6 +4,6 @@ export class User {
   first_name: string;
   last_name: string;
   birth_date: string;
-  joinDate: string;
+  join_date: string;
   role: number;
 }

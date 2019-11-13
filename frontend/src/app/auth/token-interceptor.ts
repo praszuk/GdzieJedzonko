@@ -1,7 +1,7 @@
 import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
 import {BehaviorSubject, Observable, throwError} from "rxjs";
 import {AuthService} from "./services/auth-service";
-import {switchMap, take, catchError, filter} from "rxjs/operators";
+import {switchMap, take, catchError, filter, tap} from "rxjs/operators";
 import {config} from "../config";
 
 export class TokenInterceptor implements HttpInterceptor{
@@ -12,7 +12,10 @@ export class TokenInterceptor implements HttpInterceptor{
   constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+
     let loginUrl = '/api/sessions/token/';
+    let refreshUrl = '/api/sessions/refresh/';
+    let skipUrls = [loginUrl,refreshUrl]
     let requestUrl = request.url.replace(config.apiUrl,"");
 
 
@@ -23,7 +26,7 @@ export class TokenInterceptor implements HttpInterceptor{
     return next.handle(request)
       .pipe(
         catchError(error => {
-      if (error instanceof HttpErrorResponse && error.status === 401 && loginUrl != requestUrl) {
+      if (error instanceof HttpErrorResponse && error.status === 401 && !skipUrls.includes(requestUrl)) {
         return this.handle401Error(request, next);
       } else {
         return throwError(error);
@@ -46,10 +49,19 @@ export class TokenInterceptor implements HttpInterceptor{
       this.refreshTokenSubject.next(null);
 
       return this.authService.refreshTokens().pipe(
+
         switchMap((token: any) => {
           this.isRefreshing = false;
-          this.refreshTokenSubject.next(token.jwt);
-          return next.handle(TokenInterceptor.addToken(request, token.jwt));
+
+          if(token === '401 error')
+            return next.handle(request);
+          else {
+            this.refreshTokenSubject.next(token.jwt);
+            return next.handle(TokenInterceptor.addToken(request, token.jwt));
+          }
+
+
+
         }));
 
     } else {

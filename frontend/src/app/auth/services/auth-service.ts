@@ -5,6 +5,7 @@ import {Tokens} from "../tokens.model";
 import {BehaviorSubject, Observable, of} from "rxjs";
 import {config} from "../../config"
 import {catchError, mapTo, switchMap, tap} from "rxjs/operators";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class AuthService {
   private readonly REFRESH_TOKEN = "refresh";
   private userSubject: BehaviorSubject<User>;
   user: User;
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     this.userSubject = new BehaviorSubject<User>(null);
   }
 
@@ -53,7 +54,13 @@ export class AuthService {
       .pipe(
         tap((tokens: Tokens) => {
         this.storeAccessTokens(tokens.access);
-    }));
+    }),catchError((err) => {
+      if(err.status == 401) {
+        this.removeTokens();
+        this.router.navigate(['/login']);
+        return of('401 error')
+      };
+      }));
   }
 
   getUserSubject(): Observable<User>{
