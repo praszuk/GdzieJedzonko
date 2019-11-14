@@ -1,8 +1,8 @@
 import {Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {User} from "../../user";
 import {Tokens} from "../tokens.model";
-import {BehaviorSubject, Observable, of} from "rxjs";
+import {BehaviorSubject, Observable, of, throwError} from "rxjs";
 import {config} from "../../config"
 import {catchError, mapTo, switchMap, tap} from "rxjs/operators";
 import {Router} from "@angular/router";
@@ -16,10 +16,14 @@ export class AuthService {
   private readonly REFRESH_TOKEN = "refresh";
   private userSubject: BehaviorSubject<User>;
   user: User;
+
   constructor(private http: HttpClient, private router: Router) {
     this.userSubject = new BehaviorSubject<User>(null);
   }
 
+  register(user) {
+    return this.http.post<User>(`${config.apiUrl}${config.registerUrl}`, user);
+  }
 
   login(credentials: {email: string, password: string}): Observable<boolean> {
     return this.http.post<Tokens>(`${config.apiUrl}${config.loginUrl}`, credentials)
@@ -28,8 +32,10 @@ export class AuthService {
         switchMap((tokens: Tokens) => this.getUserById(this.getUserIdFromTokens(tokens.access))
           .pipe(
             tap(user => {
+              this.register({});
               this.setUser(user);
-              this.userSubject.next(user);})
+              this.userSubject.next(user);
+            })
           )),
         mapTo(true),
         catchError(error => {

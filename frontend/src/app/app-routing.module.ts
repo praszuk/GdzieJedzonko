@@ -32,9 +32,6 @@ const routes: Routes = [ {
     path: 'article/:id',
     component: ArticleComponent
   }, {
-    path: 'register',
-    component: RegisterComponent
-  }, {
     path: '404',
     component: PageNotFoundComponent
   }, {
