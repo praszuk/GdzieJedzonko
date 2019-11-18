@@ -358,6 +358,22 @@ class CreateUserTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIsNone(User.objects.get(email=data['email']).birth_date)
 
+
+class UpdateUserTest(BaseViewTest):
+    pass
+
+
+class UserDataTest(BaseViewTest):
+    def setUp(self):
+        self.test_user_data = {
+
+            'email': 'testuser@gdziejedzonko.pl',
+            'password': 'password12345',
+            'first_name': 'John',
+            'last_name': 'Smith',
+            'birth_date': '1970-09-22'
+        }
+
     def test_incorrect_email(self):
         data = self.test_user_data
         data['email'] = 'test'
