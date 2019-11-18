@@ -360,7 +360,24 @@ class CreateUserTest(BaseViewTest):
 
 
 class UpdateUserTest(BaseViewTest):
-    pass
+
+    def setUp(self):
+        super().setUp()
+        self.new_data = {
+                'email': 'user1new@gdziejedzonko.pl',
+                'password': 'password5432',
+                'first_name': 'James',
+                'last_name': 'Price',
+                'birth_date': '1974-03-14'
+        }
+
+    def test_unauthenticated_user(self):
+        user_id = User.objects.filter(email=self.USERS[0]['email'])[0].id
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user_id]),
+            data=self.new_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class UserDataTest(BaseViewTest):
