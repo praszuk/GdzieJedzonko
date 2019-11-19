@@ -25,8 +25,6 @@ class UserModelTest(TestCase):
 
 class BaseViewTest(APITestCase):
     client = APIClient()
-    DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
-    DATE_FORMAT = '%Y-%m-%d'
 
     def setUp(self):
         self.USERS = [
