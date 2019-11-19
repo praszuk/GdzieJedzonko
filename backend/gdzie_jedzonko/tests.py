@@ -63,6 +63,8 @@ class BaseViewTest(APITestCase):
                 'last_name': 'Smith',
                 'birth_date': '1978-02-12'
             },
+        ]
+        self.MODS = [
             {
                 'email': 'mod@gdziejedzonko.pl',
                 'password': 'password1234',
@@ -71,6 +73,8 @@ class BaseViewTest(APITestCase):
                 'birth_date': '1970-09-22',
                 'role': Role.MODERATOR
             },
+        ]
+        self.ADMINS = [
             {
                 'email': 'admin@gdziejedzonko.pl',
                 'password': 'password1234',
@@ -84,7 +88,18 @@ class BaseViewTest(APITestCase):
         for user in self.USERS:
             User.objects.create_user(**user)
 
-    def generate_credentials(self, email, password):
+        for mod in self.MODS:
+            User.objects.create_user(**mod)
+
+        for admin in self.ADMINS:
+            User.objects.create_user(**admin)
+
+    def generate_credentials(self, email: str, password: str):
+        """
+        Generating credentials string using token_obtain_pair endpoint.
+        :return: Credentials string in format 'Bearer <access token>'
+        :rtype: str
+        """
         data = {'email': email, 'password': password}
         response = self.client.post(
             reverse('gdzie_jedzonko:token_obtain_pair'),
@@ -114,13 +129,13 @@ class GetAllUsersTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_unauthorized_mod(self):
-        self.auth_user(self.USERS[2])
+        self.auth_user(self.MODS[0])
 
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authorized_admin(self):
-        self.auth_user(self.USERS[3])
+        self.auth_user(self.ADMINS[0])
 
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         expected = User.objects.all()
@@ -140,8 +155,8 @@ class GetDetailUserTest(BaseViewTest):
 
     def test_authenticated_user_success(self):
         user = User.objects.get(email=self.USERS[0]['email'])
-        self.auth_user(self.USERS[0])
 
+        self.auth_user(self.USERS[0])
         response = self.client.get(
             reverse('gdzie_jedzonko:user-detail', args=[user.id])
         )
@@ -154,7 +169,6 @@ class GetDetailUserTest(BaseViewTest):
 
     def test_authenticated_user_not_found(self):
         self.auth_user(self.USERS[0])
-
         response = self.client.get(
             reverse('gdzie_jedzonko:user-detail', args=[999])
         )
@@ -191,7 +205,6 @@ class DeleteUserTest(BaseViewTest):
         user2 = User.objects.get(email=self.USERS[1]['email'])
 
         self.auth_user(self.USERS[0])
-
         response = self.client.delete(
             reverse('gdzie_jedzonko:user-detail', args=[user2.id])
         )
@@ -202,8 +215,7 @@ class DeleteUserTest(BaseViewTest):
     def test_authenticated_moderator_but_not_owner(self):
         user2 = User.objects.get(email=self.USERS[1]['email'])
 
-        self.auth_user(self.USERS[2])
-
+        self.auth_user(self.MODS[0])
         response = self.client.delete(
             reverse('gdzie_jedzonko:user-detail', args=[user2.id])
         )
@@ -229,8 +241,7 @@ class DeleteUserTest(BaseViewTest):
     def test_authenticated_admin(self):
         user = User.objects.get(email=self.USERS[0]['email'])
 
-        self.auth_user(self.USERS[3])
-
+        self.auth_user(self.ADMINS[0])
         response = self.client.delete(
             reverse('gdzie_jedzonko:user-detail', args=[user.id])
         )
@@ -410,7 +421,7 @@ class UpdateUserTest(BaseViewTest):
         self.assertEqual(user.role, Role.USER)
 
         # moderator
-        mod_data = self.USERS[2]
+        mod_data = self.MODS[0]
 
         self.auth_user(mod_data)
         response = self.client.patch(
@@ -441,7 +452,7 @@ class UpdateUserTest(BaseViewTest):
         self.assertEqual(user2.last_name, user2_new.last_name)
 
         # moderator
-        mod_data = self.USERS[2]
+        mod_data = self.MODS[0]
 
         self.auth_user(mod_data)
         response = self.client.patch(
@@ -451,7 +462,7 @@ class UpdateUserTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_admin_can_change_role(self):
-        admin_data = self.USERS[3]
+        admin_data = self.ADMINS[0]
         admin = User.objects.filter(email=admin_data['email'])[0]
 
         self.assertEqual(admin.role, Role.ADMIN)
@@ -468,7 +479,7 @@ class UpdateUserTest(BaseViewTest):
         self.assertEqual(admin.role, Role.USER)
 
     def test_admin_can_change_someone_data(self):
-        admin_data = self.USERS[3]
+        admin_data = self.ADMINS[0]
         user = User.objects.filter(email=self.USERS[0]['email'])[0]
 
         self.auth_user(admin_data)
