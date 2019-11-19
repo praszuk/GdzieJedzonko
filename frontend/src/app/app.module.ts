@@ -16,6 +16,7 @@ import { CommentComponent } from './comment/comment.component';
 import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
+import { AdminPanelUserInfoComponent } from './admin-panel-user-info/admin-panel-user-info.component';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { LoginComponent } from './login/login.component';
     CommentComponent,
     RegisterComponent,
     HomeComponent,
-    LoginComponent
+    LoginComponent,
+    AdminPanelUserInfoComponent
   ],
   imports: [
     BrowserModule,
