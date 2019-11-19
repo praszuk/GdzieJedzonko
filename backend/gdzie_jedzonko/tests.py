@@ -438,6 +438,29 @@ class UpdateUserTest(BaseViewTest):
 
         self.assertEqual(user.role, Role.USER)
 
+    def test_user_cannot_change_someone_data(self):
+        user_data = self.USERS[0]
+        user2 = User.objects.filter(email=self.USERS[1]['email'])[0]
+
+        credentials = self.generate_credentials(
+            user_data['email'],
+            user_data['password']
+        )
+
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user2.id]),
+            data=self.new_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # checking if first user haven't changed anything on some fields
+        user2_new = User.objects.filter(email=self.USERS[1]['email'])[0]
+        self.assertEqual(user2.email, user2_new.email)
+        self.assertEqual(user2.first_name, user2_new.first_name)
+        self.assertEqual(user2.last_name, user2_new.last_name)
+
 
 class UserDataTest(BaseViewTest):
     def setUp(self):
