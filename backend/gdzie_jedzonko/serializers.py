@@ -65,3 +65,4 @@ class UserSerializer(serializers.ModelSerializer):
         depth = 1
         exclude = ('last_login',)
         extra_kwargs = {'password': {'write_only': True, 'min_length': 6}}
+        read_only_fields = ('id',)
