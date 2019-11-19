@@ -1,0 +1,10 @@
+p.firstpar {
+  margin-top: 0;
+  text-indent: 2em;
+  padding: 0 5px 0 5px;
+}
+p.nextpar {
+  margin-top: -1em;
+  text-indent: 2em;
+  padding: 0 5px 0 5px;
+}
