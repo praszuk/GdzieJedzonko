@@ -416,6 +416,28 @@ class UpdateUserTest(BaseViewTest):
             user.birth_date.strftime(settings.DATE_FORMAT)
         )
 
+    def test_user_cannot_change_role(self):
+        user_data = self.USERS[0]
+        user = User.objects.filter(email=user_data['email'])[0]
+
+        self.assertEqual(user.role, Role.USER)
+
+        credentials = self.generate_credentials(
+            user_data['email'],
+            user_data['password']
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            data={'role': Role.ADMIN}
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        user.refresh_from_db()
+
+        self.assertEqual(user.role, Role.USER)
+
 
 class UserDataTest(BaseViewTest):
     def setUp(self):
