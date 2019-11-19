@@ -32,17 +32,14 @@ class UserPermission(BasePermission):
     # noinspection PyTypeChecker
     def has_permission(self, request, view):
 
-        if view.action == 'list':
+        if view.action in ('retrieve', 'partial_update', 'destroy'):
+            return IsAuthenticated.has_permission(None, request, view)
+
+        elif view.action == 'list':
             return bool(
                 IsAuthenticated.has_permission(None, request, view) and
                 IsAdminUser.has_permission(None, request, view)
             )
-
-        elif view.action == 'retrieve':
-            return IsAuthenticated.has_permission(None, request, view)
-
-        elif view.action == 'destroy':
-            return IsAuthenticated.has_permission(None, request, view)
 
         elif view.action == 'create':
             return True
@@ -57,7 +54,16 @@ class UserPermission(BasePermission):
         if view.action == 'retrieve':
             return True
 
-        if view.action == 'destroy':
+        elif view.action == 'destroy':
+            return bool(
+                IsOwnerUser.has_object_permission(None, request, view, obj) or
+                IsAdminUser.has_permission(None, request, view)
+            )
+
+        elif view.action == 'partial_update':
+            if 'role' in request.data:
+                return bool(IsAdminUser.has_permission(None, request, view))
+
             return bool(
                 IsOwnerUser.has_object_permission(None, request, view, obj) or
                 IsAdminUser.has_permission(None, request, view)

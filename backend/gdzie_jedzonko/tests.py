@@ -22,11 +22,31 @@ class UserModelTest(TestCase):
         self.assertNotEqual(user.password, '123')
         self.assertTrue(user.check_password('123'))
 
+    def test_update_user_and_check_is_password_hashed(self):
+        old_password = 'password123'
+        user = User.objects.create_user(
+            email='test@test.com',
+            password=old_password,
+            first_name='John',
+            last_name='Smith'
+        )
+
+        new_data = {
+            'email': 'test2@gdziejedzonko.pl',
+            'password': 'Pass1234',
+            'first_name': 'William'
+        }
+
+        User.objects.update_user(user, **new_data)
+
+        self.assertTrue(user.email, new_data['email'])
+        self.assertTrue(user.first_name, new_data['first_name'])
+        self.assertNotEqual(user.password, old_password)
+        self.assertTrue(user.check_password(new_data['password']))
+
 
 class BaseViewTest(APITestCase):
     client = APIClient()
-    DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
-    DATE_FORMAT = '%Y-%m-%d'
 
     def setUp(self):
         self.USERS = [
@@ -43,6 +63,8 @@ class BaseViewTest(APITestCase):
                 'last_name': 'Smith',
                 'birth_date': '1978-02-12'
             },
+        ]
+        self.MODS = [
             {
                 'email': 'mod@gdziejedzonko.pl',
                 'password': 'password1234',
@@ -51,6 +73,8 @@ class BaseViewTest(APITestCase):
                 'birth_date': '1970-09-22',
                 'role': Role.MODERATOR
             },
+        ]
+        self.ADMINS = [
             {
                 'email': 'admin@gdziejedzonko.pl',
                 'password': 'password1234',
@@ -64,13 +88,32 @@ class BaseViewTest(APITestCase):
         for user in self.USERS:
             User.objects.create_user(**user)
 
-    def generate_credentials(self, email, password):
+        for mod in self.MODS:
+            User.objects.create_user(**mod)
+
+        for admin in self.ADMINS:
+            User.objects.create_user(**admin)
+
+    def generate_credentials(self, email: str, password: str):
+        """
+        Generating credentials string using token_obtain_pair endpoint.
+        :return: Credentials string in format 'Bearer <access token>'
+        :rtype: str
+        """
         data = {'email': email, 'password': password}
         response = self.client.post(
             reverse('gdzie_jedzonko:token_obtain_pair'),
             data=data
         )
         return 'Bearer ' + response.data['access']
+
+    def auth_user(self, user: dict):
+        """
+        Helper method for generating credentials
+        :param user: user_data with keys (it has to contain email and password)
+        """
+        auth_data = self.generate_credentials(user['email'], user['password'])
+        self.client.credentials(HTTP_AUTHORIZATION=auth_data)
 
 
 class GetAllUsersTest(BaseViewTest):
@@ -80,31 +123,19 @@ class GetAllUsersTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_unauthorized_user(self):
-        credentials = self.generate_credentials(
-            self.USERS[0]['email'],
-            self.USERS[0]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[0])
 
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_unauthorized_mod(self):
-        credentials = self.generate_credentials(
-            self.USERS[2]['email'],
-            self.USERS[2]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.MODS[0])
 
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authorized_admin(self):
-        credentials = self.generate_credentials(
-            self.USERS[3]['email'],
-            self.USERS[3]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.ADMINS[0])
 
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         expected = User.objects.all()
@@ -123,15 +154,9 @@ class GetDetailUserTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_success(self):
-        user_sample_data_id = 0
-        user = User.objects.get(email=self.USERS[user_sample_data_id]['email'])
+        user = User.objects.get(email=self.USERS[0]['email'])
 
-        credentials = self.generate_credentials(
-            self.USERS[user_sample_data_id]['email'],
-            self.USERS[user_sample_data_id]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
-
+        self.auth_user(self.USERS[0])
         response = self.client.get(
             reverse('gdzie_jedzonko:user-detail', args=[user.id])
         )
@@ -143,14 +168,7 @@ class GetDetailUserTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_authenticated_user_not_found(self):
-        user_sample_data_id = 0
-
-        credentials = self.generate_credentials(
-            self.USERS[user_sample_data_id]['email'],
-            self.USERS[user_sample_data_id]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
-
+        self.auth_user(self.USERS[0])
         response = self.client.get(
             reverse('gdzie_jedzonko:user-detail', args=[999])
         )
@@ -165,13 +183,7 @@ class GetAllRolesTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_success(self):
-        user_sample_data_id = 0
-
-        credentials = self.generate_credentials(
-            self.USERS[user_sample_data_id]['email'],
-            self.USERS[user_sample_data_id]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[0])
         response = self.client.get(reverse('gdzie_jedzonko:role-list'))
 
         expected = Role.items()
@@ -192,12 +204,7 @@ class DeleteUserTest(BaseViewTest):
     def test_authenticated_user_but_not_owner(self):
         user2 = User.objects.get(email=self.USERS[1]['email'])
 
-        credentials = self.generate_credentials(
-            self.USERS[0]['email'],
-            self.USERS[0]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
-
+        self.auth_user(self.USERS[0])
         response = self.client.delete(
             reverse('gdzie_jedzonko:user-detail', args=[user2.id])
         )
@@ -208,12 +215,7 @@ class DeleteUserTest(BaseViewTest):
     def test_authenticated_moderator_but_not_owner(self):
         user2 = User.objects.get(email=self.USERS[1]['email'])
 
-        credentials = self.generate_credentials(
-            self.USERS[2]['email'],
-            self.USERS[2]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
-
+        self.auth_user(self.MODS[0])
         response = self.client.delete(
             reverse('gdzie_jedzonko:user-detail', args=[user2.id])
         )
@@ -225,12 +227,7 @@ class DeleteUserTest(BaseViewTest):
 
     def test_authenticated_user_owner(self):
         user = User.objects.get(email=self.USERS[0]['email'])
-
-        credentials = self.generate_credentials(
-            self.USERS[0]['email'],
-            self.USERS[0]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[0])
 
         response = self.client.delete(
             reverse('gdzie_jedzonko:user-detail', args=[user.id])
@@ -244,12 +241,7 @@ class DeleteUserTest(BaseViewTest):
     def test_authenticated_admin(self):
         user = User.objects.get(email=self.USERS[0]['email'])
 
-        credentials = self.generate_credentials(
-            self.USERS[3]['email'],
-            self.USERS[3]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
-
+        self.auth_user(self.ADMINS[0])
         response = self.client.delete(
             reverse('gdzie_jedzonko:user-detail', args=[user.id])
         )
@@ -357,6 +349,167 @@ class CreateUserTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIsNone(User.objects.get(email=data['email']).birth_date)
+
+
+class UpdateUserTest(BaseViewTest):
+
+    def setUp(self):
+        super().setUp()
+        self.new_data = {
+                'email': 'user1new@gdziejedzonko.pl',
+                'password': 'password5432',
+                'first_name': 'James',
+                'last_name': 'Price',
+                'birth_date': '1974-03-14'
+        }
+
+    def test_unauthenticated_user(self):
+        user_id = User.objects.filter(email=self.USERS[0]['email'])[0].id
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user_id]),
+            data=self.new_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_can_change_own_data(self):
+        user_data = self.USERS[1]
+        user = User.objects.filter(email=user_data['email'])[0]
+
+        self.assertEqual(user_data['email'], user.email)
+        self.assertTrue(user.check_password(user_data['password']))
+        self.assertEqual(user_data['first_name'], user.first_name)
+        self.assertEqual(user_data['last_name'], user.last_name)
+        self.assertEqual(
+            user_data['birth_date'],
+            user.birth_date.strftime(settings.DATE_FORMAT)
+        )
+
+        self.auth_user(user_data)
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            data=self.new_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        user.refresh_from_db()
+
+        self.assertEqual(self.new_data['email'], user.email)
+        self.assertTrue(user.check_password(self.new_data['password']))
+        self.assertEqual(self.new_data['first_name'], user.first_name)
+        self.assertEqual(self.new_data['last_name'], user.last_name)
+        self.assertEqual(
+            self.new_data['birth_date'],
+            user.birth_date.strftime(settings.DATE_FORMAT)
+        )
+
+    def test_user_and_moderator_cannot_change_role(self):
+        # user
+        user_data = self.USERS[0]
+        user = User.objects.filter(email=user_data['email'])[0]
+
+        self.assertEqual(user.role, Role.USER)
+
+        self.auth_user(user_data)
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            data={'role': Role.ADMIN}
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        user.refresh_from_db()
+
+        self.assertEqual(user.role, Role.USER)
+
+        # moderator
+        mod_data = self.MODS[0]
+
+        self.auth_user(mod_data)
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            data={'role': Role.ADMIN}
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        user.refresh_from_db()
+        self.assertEqual(user.role, Role.USER)
+
+    def test_user_and_moderator_cannot_change_someone_data(self):
+        # user
+        user_data = self.USERS[0]
+        user2 = User.objects.filter(email=self.USERS[1]['email'])[0]
+
+        self.auth_user(user_data)
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user2.id]),
+            data=self.new_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # checking if first user haven't changed anything on some fields
+        user2_new = User.objects.filter(email=self.USERS[1]['email'])[0]
+        self.assertEqual(user2.email, user2_new.email)
+        self.assertEqual(user2.first_name, user2_new.first_name)
+        self.assertEqual(user2.last_name, user2_new.last_name)
+
+        # moderator
+        mod_data = self.MODS[0]
+
+        self.auth_user(mod_data)
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user2.id]),
+            data=self.new_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_admin_can_change_role(self):
+        admin_data = self.ADMINS[0]
+        admin = User.objects.filter(email=admin_data['email'])[0]
+
+        self.assertEqual(admin.role, Role.ADMIN)
+
+        self.auth_user(admin_data)
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[admin.id]),
+            data={'role': Role.USER}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        admin.refresh_from_db()
+
+        self.assertEqual(admin.role, Role.USER)
+
+    def test_admin_can_change_someone_data(self):
+        admin_data = self.ADMINS[0]
+        user = User.objects.filter(email=self.USERS[0]['email'])[0]
+
+        self.auth_user(admin_data)
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            data=self.new_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        user.refresh_from_db()
+        self.assertEqual(self.new_data['email'], user.email)
+        self.assertTrue(user.check_password(self.new_data['password']))
+        self.assertEqual(self.new_data['first_name'], user.first_name)
+        self.assertEqual(self.new_data['last_name'], user.last_name)
+        self.assertEqual(
+            self.new_data['birth_date'],
+            user.birth_date.strftime(settings.DATE_FORMAT)
+        )
+
+
+class CreateUserIncorrectDataTest(BaseViewTest):
+    def setUp(self):
+        self.test_user_data = {
+
+            'email': 'testuser@gdziejedzonko.pl',
+            'password': 'password12345',
+            'first_name': 'John',
+            'last_name': 'Smith',
+            'birth_date': '1970-09-22'
+        }
 
     def test_incorrect_email(self):
         data = self.test_user_data
