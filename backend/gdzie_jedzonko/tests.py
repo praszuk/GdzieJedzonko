@@ -22,6 +22,28 @@ class UserModelTest(TestCase):
         self.assertNotEqual(user.password, '123')
         self.assertTrue(user.check_password('123'))
 
+    def test_update_user_and_check_is_password_hashed(self):
+        old_password = 'password123'
+        user = User.objects.create_user(
+            email='test@test.com',
+            password=old_password,
+            first_name='John',
+            last_name='Smith'
+        )
+
+        new_data = {
+            'email': 'test2@gdziejedzonko.pl',
+            'password': 'Pass1234',
+            'first_name': 'William'
+        }
+
+        User.objects.update_user(user, **new_data)
+
+        self.assertTrue(user.email, new_data['email'])
+        self.assertTrue(user.first_name, new_data['first_name'])
+        self.assertNotEqual(user.password, old_password)
+        self.assertTrue(user.check_password(new_data['password']))
+
 
 class BaseViewTest(APITestCase):
     client = APIClient()
