@@ -369,7 +369,8 @@ class UpdateUserTest(BaseViewTest):
             user.birth_date.strftime(settings.DATE_FORMAT)
         )
 
-    def test_user_cannot_change_role(self):
+    def test_user_and_moderator_cannot_change_role(self):
+        # user
         user_data = self.USERS[0]
         user = User.objects.filter(email=user_data['email'])[0]
 
@@ -386,7 +387,21 @@ class UpdateUserTest(BaseViewTest):
 
         self.assertEqual(user.role, Role.USER)
 
-    def test_user_cannot_change_someone_data(self):
+        # moderator
+        mod_data = self.USERS[2]
+
+        self.auth_user(mod_data)
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            data={'role': Role.ADMIN}
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        user.refresh_from_db()
+        self.assertEqual(user.role, Role.USER)
+
+    def test_user_and_moderator_cannot_change_someone_data(self):
+        # user
         user_data = self.USERS[0]
         user2 = User.objects.filter(email=self.USERS[1]['email'])[0]
 
@@ -402,6 +417,16 @@ class UpdateUserTest(BaseViewTest):
         self.assertEqual(user2.email, user2_new.email)
         self.assertEqual(user2.first_name, user2_new.first_name)
         self.assertEqual(user2.last_name, user2_new.last_name)
+
+        # moderator
+        mod_data = self.USERS[2]
+
+        self.auth_user(mod_data)
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user2.id]),
+            data=self.new_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class CreateUserIncorrectDataTest(BaseViewTest):
