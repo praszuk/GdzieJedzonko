@@ -379,6 +379,43 @@ class UpdateUserTest(BaseViewTest):
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_user_can_change_own_data(self):
+        user_data = self.USERS[1]
+        user = User.objects.filter(email=user_data['email'])[0]
+
+        credentials = self.generate_credentials(
+            user_data['email'],
+            user_data['password']
+        )
+
+        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+
+        self.assertEqual(user_data['email'], user.email)
+        self.assertTrue(user.check_password(user_data['password']))
+        self.assertEqual(user_data['first_name'], user.first_name)
+        self.assertEqual(user_data['last_name'], user.last_name)
+        self.assertEqual(
+            user_data['birth_date'],
+            user.birth_date.strftime(settings.DATE_FORMAT)
+        )
+
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            data=self.new_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        user.refresh_from_db()
+
+        self.assertEqual(self.new_data['email'], user.email)
+        self.assertTrue(user.check_password(self.new_data['password']))
+        self.assertEqual(self.new_data['first_name'], user.first_name)
+        self.assertEqual(self.new_data['last_name'], user.last_name)
+        self.assertEqual(
+            self.new_data['birth_date'],
+            user.birth_date.strftime(settings.DATE_FORMAT)
+        )
+
 
 class UserDataTest(BaseViewTest):
     def setUp(self):
