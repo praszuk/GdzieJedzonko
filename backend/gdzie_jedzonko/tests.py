@@ -72,6 +72,14 @@ class BaseViewTest(APITestCase):
         )
         return 'Bearer ' + response.data['access']
 
+    def auth_user(self, user: dict):
+        """
+        Helper method for generating credentials
+        :param user: user_data with keys (it has to contain email and password)
+        """
+        auth_data = self.generate_credentials(user['email'], user['password'])
+        self.client.credentials(HTTP_AUTHORIZATION=auth_data)
+
 
 class GetAllUsersTest(BaseViewTest):
 
@@ -80,31 +88,19 @@ class GetAllUsersTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_unauthorized_user(self):
-        credentials = self.generate_credentials(
-            self.USERS[0]['email'],
-            self.USERS[0]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[0])
 
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_unauthorized_mod(self):
-        credentials = self.generate_credentials(
-            self.USERS[2]['email'],
-            self.USERS[2]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[2])
 
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authorized_admin(self):
-        credentials = self.generate_credentials(
-            self.USERS[3]['email'],
-            self.USERS[3]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[3])
 
         response = self.client.get(reverse('gdzie_jedzonko:user-list'))
         expected = User.objects.all()
@@ -123,14 +119,8 @@ class GetDetailUserTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_success(self):
-        user_sample_data_id = 0
-        user = User.objects.get(email=self.USERS[user_sample_data_id]['email'])
-
-        credentials = self.generate_credentials(
-            self.USERS[user_sample_data_id]['email'],
-            self.USERS[user_sample_data_id]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        user = User.objects.get(email=self.USERS[0]['email'])
+        self.auth_user(self.USERS[0])
 
         response = self.client.get(
             reverse('gdzie_jedzonko:user-detail', args=[user.id])
@@ -143,13 +133,7 @@ class GetDetailUserTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_authenticated_user_not_found(self):
-        user_sample_data_id = 0
-
-        credentials = self.generate_credentials(
-            self.USERS[user_sample_data_id]['email'],
-            self.USERS[user_sample_data_id]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[0])
 
         response = self.client.get(
             reverse('gdzie_jedzonko:user-detail', args=[999])
@@ -165,13 +149,7 @@ class GetAllRolesTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_success(self):
-        user_sample_data_id = 0
-
-        credentials = self.generate_credentials(
-            self.USERS[user_sample_data_id]['email'],
-            self.USERS[user_sample_data_id]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[0])
         response = self.client.get(reverse('gdzie_jedzonko:role-list'))
 
         expected = Role.items()
@@ -192,11 +170,7 @@ class DeleteUserTest(BaseViewTest):
     def test_authenticated_user_but_not_owner(self):
         user2 = User.objects.get(email=self.USERS[1]['email'])
 
-        credentials = self.generate_credentials(
-            self.USERS[0]['email'],
-            self.USERS[0]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[0])
 
         response = self.client.delete(
             reverse('gdzie_jedzonko:user-detail', args=[user2.id])
@@ -208,11 +182,7 @@ class DeleteUserTest(BaseViewTest):
     def test_authenticated_moderator_but_not_owner(self):
         user2 = User.objects.get(email=self.USERS[1]['email'])
 
-        credentials = self.generate_credentials(
-            self.USERS[2]['email'],
-            self.USERS[2]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[2])
 
         response = self.client.delete(
             reverse('gdzie_jedzonko:user-detail', args=[user2.id])
@@ -225,12 +195,7 @@ class DeleteUserTest(BaseViewTest):
 
     def test_authenticated_user_owner(self):
         user = User.objects.get(email=self.USERS[0]['email'])
-
-        credentials = self.generate_credentials(
-            self.USERS[0]['email'],
-            self.USERS[0]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[0])
 
         response = self.client.delete(
             reverse('gdzie_jedzonko:user-detail', args=[user.id])
@@ -244,11 +209,7 @@ class DeleteUserTest(BaseViewTest):
     def test_authenticated_admin(self):
         user = User.objects.get(email=self.USERS[0]['email'])
 
-        credentials = self.generate_credentials(
-            self.USERS[3]['email'],
-            self.USERS[3]['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
+        self.auth_user(self.USERS[3])
 
         response = self.client.delete(
             reverse('gdzie_jedzonko:user-detail', args=[user.id])
@@ -383,13 +344,6 @@ class UpdateUserTest(BaseViewTest):
         user_data = self.USERS[1]
         user = User.objects.filter(email=user_data['email'])[0]
 
-        credentials = self.generate_credentials(
-            user_data['email'],
-            user_data['password']
-        )
-
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
-
         self.assertEqual(user_data['email'], user.email)
         self.assertTrue(user.check_password(user_data['password']))
         self.assertEqual(user_data['first_name'], user.first_name)
@@ -399,6 +353,7 @@ class UpdateUserTest(BaseViewTest):
             user.birth_date.strftime(settings.DATE_FORMAT)
         )
 
+        self.auth_user(user_data)
         response = self.client.patch(
             reverse('gdzie_jedzonko:user-detail', args=[user.id]),
             data=self.new_data
@@ -422,12 +377,7 @@ class UpdateUserTest(BaseViewTest):
 
         self.assertEqual(user.role, Role.USER)
 
-        credentials = self.generate_credentials(
-            user_data['email'],
-            user_data['password']
-        )
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
-
+        self.auth_user(user_data)
         response = self.client.patch(
             reverse('gdzie_jedzonko:user-detail', args=[user.id]),
             data={'role': Role.ADMIN}
@@ -442,13 +392,7 @@ class UpdateUserTest(BaseViewTest):
         user_data = self.USERS[0]
         user2 = User.objects.filter(email=self.USERS[1]['email'])[0]
 
-        credentials = self.generate_credentials(
-            user_data['email'],
-            user_data['password']
-        )
-
-        self.client.credentials(HTTP_AUTHORIZATION=credentials)
-
+        self.auth_user(user_data)
         response = self.client.patch(
             reverse('gdzie_jedzonko:user-detail', args=[user2.id]),
             data=self.new_data
@@ -462,7 +406,7 @@ class UpdateUserTest(BaseViewTest):
         self.assertEqual(user2.last_name, user2_new.last_name)
 
 
-class UserDataTest(BaseViewTest):
+class CreateUserIncorrectDataTest(BaseViewTest):
     def setUp(self):
         self.test_user_data = {
 
