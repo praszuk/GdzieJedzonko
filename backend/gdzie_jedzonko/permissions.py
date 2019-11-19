@@ -61,4 +61,10 @@ class UserPermission(BasePermission):
             )
 
         elif view.action == 'partial_update':
-            return True
+            if 'role' in request.data:
+                return bool(IsAdminUser.has_permission(None, request, view))
+
+            return bool(
+                IsOwnerUser.has_object_permission(None, request, view, obj) or
+                IsAdminUser.has_permission(None, request, view)
+            )
