@@ -39,6 +39,9 @@ class UserSerializer(serializers.ModelSerializer):
 
         return User.objects.create_user(**validated_data)
 
+    def update(self, instance, validated_data):
+        return User.objects.update_user(instance, **validated_data)
+
     def validate_birth_date(self, birth_date):
         if birth_date > timezone.now().date():
             raise serializers.ValidationError("Cannot be greater than today")
