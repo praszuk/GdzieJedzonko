@@ -428,6 +428,23 @@ class UpdateUserTest(BaseViewTest):
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_admin_can_change_role(self):
+        admin_data = self.USERS[3]
+        admin = User.objects.filter(email=admin_data['email'])[0]
+
+        self.assertEqual(admin.role, Role.ADMIN)
+
+        self.auth_user(admin_data)
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[admin.id]),
+            data={'role': Role.USER}
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        admin.refresh_from_db()
+
+        self.assertEqual(admin.role, Role.USER)
+
 
 class CreateUserIncorrectDataTest(BaseViewTest):
     def setUp(self):
