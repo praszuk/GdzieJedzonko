@@ -445,6 +445,27 @@ class UpdateUserTest(BaseViewTest):
 
         self.assertEqual(admin.role, Role.USER)
 
+    def test_admin_can_change_someone_data(self):
+        admin_data = self.USERS[3]
+        user = User.objects.filter(email=self.USERS[0]['email'])[0]
+
+        self.auth_user(admin_data)
+        response = self.client.patch(
+            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            data=self.new_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        user.refresh_from_db()
+        self.assertEqual(self.new_data['email'], user.email)
+        self.assertTrue(user.check_password(self.new_data['password']))
+        self.assertEqual(self.new_data['first_name'], user.first_name)
+        self.assertEqual(self.new_data['last_name'], user.last_name)
+        self.assertEqual(
+            self.new_data['birth_date'],
+            user.birth_date.strftime(settings.DATE_FORMAT)
+        )
+
 
 class CreateUserIncorrectDataTest(BaseViewTest):
     def setUp(self):
