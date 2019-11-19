@@ -4,21 +4,22 @@ import {PostsSectionComponent} from './posts-section/posts-section.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {ArticleComponent} from './article/article.component';
 import {RegisterComponent} from './register/register.component';
-import {HomeComponent} from "./home/home.component";
-import {LoginComponent} from "./login/login.component";
+import {HomeComponent} from './home/home.component';
+import {LoginComponent} from './login/login.component';
+import {AdminPanelUserInfoComponent} from './admin-panel-user-info/admin-panel-user-info.component';
 
 
 
 const routes: Routes = [ {
-  path:'login',
+  path: 'login',
   component: LoginComponent,
   }, {
-  path:'register',
+  path: 'register',
   component: RegisterComponent,
   }, {
   path: '',
   component: HomeComponent,
-  children:[{
+  children: [{
     path: '',
     redirectTo: '/home',
     pathMatch: 'full'
@@ -31,6 +32,9 @@ const routes: Routes = [ {
   }, {
     path: 'register',
     component: RegisterComponent
+  }, {
+    path: 'admin',
+    component: AdminPanelUserInfoComponent
   }, {
     path: '404',
     component: PageNotFoundComponent
