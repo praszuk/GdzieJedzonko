@@ -1,7 +1,8 @@
 from django_enumfield import enum
 
-from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db import models
 
 
 class Role(enum.Enum):
@@ -70,3 +71,15 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+
+    def __str__(self):
+        date_joined = self.date_joined.strftime(settings.DATETIME_FORMAT)
+
+        return (
+            f'email: {self.email}, '
+            f'role: {self.role}, '
+            f'first_name: {self.first_name}, '
+            f'last_name: {self.last_name}, '
+            f'birth_date: {self.birth_date}, '
+            f'date_joined: {date_joined}'
+        )
