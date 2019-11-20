@@ -1,17 +1,24 @@
 <div class="container-fluid">
   <div class="row">
     <div class="offset-2 col-md-4 border">
-      <p class="firstpar">Email: {{email}}</p>
+      <p class="firstpar mt-2">Email: {{email}}</p>
       <p class="nextpar">First name: {{first_name}}</p>
       <p class="nextpar">Last name: {{last_name}}</p>
       <p class="nextpar">Birth date: {{birth_date}}</p>
       <p class="nextpar">Join date: {{join_date}}</p>
     </div>
     <div class="col-md-2 border text-center">
-      <button id="singlebutton" name="singlebutton" class="btn btn-primary center-block">Test me</button>
+      <button id="singlebutton" name="singlebutton" class="btn btn-primary center-block">Delete account</button>
     </div>
     <div class="col-md-2 border text-center">
-      DROPMENU
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle mt-5" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Rola
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" *ngFor="let role of roles">{{role}}</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>

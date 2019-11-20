@@ -15,6 +15,7 @@ export class AdminPanelUserInfoComponent implements OnInit {
   birth_date;
   // tslint:disable-next-line:variable-name
   join_date;
+  roles: string[];
 
 
 
@@ -31,6 +32,7 @@ export class AdminPanelUserInfoComponent implements OnInit {
     this.last_name = 'Pawel';
     this.birth_date = '2000-01-01';
     this.join_date = '2019-01-01';
+    this.roles = ['Moderator', 'Admin', 'User'];
   }
 
 }
