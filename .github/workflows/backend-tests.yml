@@ -1,0 +1,26 @@
+name: Backend tests
+on: [push]
+jobs:
+  tests:
+    env:
+        PROJECT_NAME: ci
+        BACKEND_CONTAINER: ci_backend_1
+        DB_CONTAINER: ci_db_1
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v1
+      - name: Add environmental variables file
+        run: echo -e 'POSTGRES_USER=${{ secrets.POSTGRES_USER }}\nPOSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}\nPOSTGRES_DB=${{ secrets.POSTGRES_DB }}\nPOSTGRES_HOST=db\nPOSTGRES_PORT=5432\nSECRET_KEY=${{ secrets.SECRET_KEY }}' > .env
+      - name: Run docker-compose up (database)
+        run: PORT=2000 docker-compose -f docker-compose-prod.yml -p $PROJECT_NAME up -d --build db
+      - name: Run docker-compose up (app)
+        run: PORT=2000 docker-compose -f docker-compose-prod.yml -p $PROJECT_NAME up -d --build backend 
+
+      - name: Run tests
+        run: docker exec -i $BACKEND_CONTAINER bash -c 'python manage.py test'
+      
+      - name: Clean
+        run: |
+            docker kill $BACKEND_CONTAINER $DB_CONTAINER
+            docker rm $BACKEND_CONTAINER $DB_CONTAINER
+
