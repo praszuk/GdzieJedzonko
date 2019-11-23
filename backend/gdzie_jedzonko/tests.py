@@ -470,7 +470,7 @@ class UpdateUserTest(BaseViewTest):
         self.auth_user(admin_data)
         response = self.client.patch(
             reverse('gdzie_jedzonko:user-detail', args=[admin.id]),
-            data={'role': Role.USER}
+            data={'role': Role.USER.value}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
