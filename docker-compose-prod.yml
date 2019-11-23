@@ -34,7 +34,7 @@ services:
     nginx:
         image: nginx:1.17.4-alpine
         ports:
-            - 80:80  # default port for all
+            - ${PORT:-80}:80  # default port for all
         volumes:
             - ./nginx/nginx-proxy-prod.conf:/etc/nginx/conf.d/default.conf:ro
             - frontend-static:/var/www/frontend/
