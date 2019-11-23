@@ -8,7 +8,6 @@ services:
             POSTGRES_USER: "${POSTGRES_USER}"
             POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
             POSTGRES_DB: "${POSTGRES_DB}"
-        command: -p ${POSTGRES_PORT}
 
     backend:
         build: ./backend/
@@ -17,8 +16,8 @@ services:
             - .env
         volumes:
             - ./backend:/backend
-        links:
-            - db
+        depends_on:
+            - "db"
         environment:
             DEV: 0
             SECRET_KEY: "${SECRET_KEY}"
