@@ -1,0 +1,11 @@
+name: Frontend build
+on: [push]
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v1
+      - name: Add environmental variables file
+        run: echo -e 'POSTGRES_USER=${{ secrets.POSTGRES_USER }}\nPOSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}\nPOSTGRES_DB=${{ secrets.POSTGRES_DB }}\nPOSTGRES_HOST=db\nPOSTGRES_PORT=5468\nSECRET_KEY=${{ secrets.SECRET_KEY }}' > .env
+      - name: Run docker-compose up
+        run: PORT=2000 docker-compose -f docker-compose-prod.yml -p ci up -d --build frontend
