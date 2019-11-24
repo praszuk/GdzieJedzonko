@@ -25,7 +25,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if 'DEV' in os.environ and os.environ['DEV'] == '1' else False
 
-ALLOWED_HOSTS = ['0.0.0.0']
+ALLOWED_HOSTS = os.environ.get('BACKEND_ALLOWED_HOST', '0.0.0.0').split(',')
 
 
 # Application definition
