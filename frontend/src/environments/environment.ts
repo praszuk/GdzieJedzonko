@@ -3,7 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  apiUrl: 'http://0.0.0.0:8000',
+  loginUrl: '/api/sessions/token/',
+  refreshUrl: '/api/sessions/refresh/',
+  registerUrl: '/api/users/'
 };
 
 /*
