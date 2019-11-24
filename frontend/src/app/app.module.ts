@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +16,7 @@ import { CommentComponent } from './comment/comment.component';
 import { HomeComponent } from './home/home.component';
 import {AuthModule} from "./auth/auth.module";
 import {UserProfileComponent} from "./user-profile/user-profile.component";
+import {AdminPanelUserInfoComponent} from "./admin-panel-user-info/admin-panel-user-info.component";
 
 
 @NgModule({
@@ -29,12 +31,15 @@ import {UserProfileComponent} from "./user-profile/user-profile.component";
     CommentSectionComponent,
     CommentComponent,
     HomeComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    AdminPanelUserInfoComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
     AuthModule
   ],
   providers: [],
