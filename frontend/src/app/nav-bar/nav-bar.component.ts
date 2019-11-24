@@ -47,7 +47,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.userSubscription.unsubscribe();
   }
 
-  private logout() {
+  logout() {
     this.authService.logout();
     this.loggedIn = false;
     this.router.navigate(['/home']);
