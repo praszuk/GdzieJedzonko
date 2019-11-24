@@ -1,0 +1,21 @@
+<div class="offset-3 col-6 border rounded">
+  <div class="col-12">
+    <div class="row">
+      <p class="font-weight-bold offset-4 text-center">Imie i nazwisko: </p> <span class="ml-2"> {{user.firstName}} {{user.lastName}} </span>
+    </div>
+  </div>
+  <div class="row offset-2">
+    <div class="col-6">
+      <span class="font-weight-bold ">Data urodzenia:</span> <span> {{user.birthDate}}</span>
+    </div>
+    <div class="col-6">
+      <span class="font-weight-bold"> Data dołączenia:</span><span>{{user.joinDate}}</span>
+    </div>
+  </div>
+</div>
+<div class="offset-2 col-8 mt-4">
+  <h2 class="text-center"> Recencje użytkownika: </h2>
+</div>
+  <app-posts-section class="mt-2"></app-posts-section>
+
+
