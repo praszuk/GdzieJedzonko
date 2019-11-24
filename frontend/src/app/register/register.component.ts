@@ -15,9 +15,9 @@ export class RegisterComponent implements OnInit, OnDestroy{
   profileForm: FormGroup;
   isIdenticalPassword: boolean;
   subsription: Subscription;
-  private isError: boolean;
-  private submitted = false;
-  private countdown: number = 5;
+  isError: boolean;
+  submitted = false;
+  countdown: number = 5;
 
   constructor(private registerForm: FormBuilder, private authService: AuthService, private router: Router){}
 
