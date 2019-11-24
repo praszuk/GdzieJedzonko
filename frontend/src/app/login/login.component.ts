@@ -10,7 +10,7 @@ import {AuthService} from "../auth/services/auth-service";
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  private isError: boolean;
+  isError: boolean;
   constructor(private loginFormBuilder: FormBuilder,
               private authService: AuthService,
               private router: Router) {}
