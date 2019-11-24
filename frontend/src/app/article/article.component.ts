@@ -12,19 +12,19 @@ export class ArticleComponent implements OnInit {
   text: string;
   creationDate;
   tags: string [];
-  subsription: any;
+  subscription: any;
   constructor(private Activatedroute: ActivatedRoute) { }
 
   ngOnInit() {
     this.testValues();
-    this.subsription = this.Activatedroute.paramMap.subscribe( params => {
+    this.subscription = this.Activatedroute.paramMap.subscribe(params => {
       this.id = params.get('id');
       }
     );
   }
 
   ngOnDestroy() {
-    this.subsription.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   testValues() {

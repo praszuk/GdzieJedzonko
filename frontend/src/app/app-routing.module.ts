@@ -7,6 +7,7 @@ import {RegisterComponent} from './register/register.component';
 import {HomeComponent} from "./home/home.component";
 import {LoginComponent} from "./login/login.component";
 import {AuthGuard} from "./auth/guards/AuthGuard";
+import {UserProfileComponent} from "./user-profile/user-profile.component";
 
 
 
@@ -31,6 +32,9 @@ const routes: Routes = [ {
   }, {
     path: 'article/:id',
     component: ArticleComponent
+  },  {
+    path: 'userprofile/:id',
+    component: UserProfileComponent
   }, {
     path: '404',
     component: PageNotFoundComponent
@@ -42,7 +46,7 @@ const routes: Routes = [ {
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes,{scrollPositionRestoration: 'enabled'})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
