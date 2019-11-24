@@ -3,7 +3,7 @@ import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {User} from "../../user";
 import {Tokens} from "../tokens.model";
 import {BehaviorSubject, Observable, of, throwError} from "rxjs";
-import {config} from "../../config"
+import {environment} from "src/environments/environment";
 import {catchError, mapTo, switchMap, tap} from "rxjs/operators";
 import {Router} from "@angular/router";
 
@@ -22,11 +22,11 @@ export class AuthService {
   }
 
   register(user) {
-    return this.http.post<User>(`${config.apiUrl}${config.registerUrl}`, user);
+    return this.http.post<User>(`${environment.apiUrl}${environment.registerUrl}`, user);
   }
 
   login(credentials: {email: string, password: string}): Observable<boolean> {
-    return this.http.post<Tokens>(`${config.apiUrl}${config.loginUrl}`, credentials)
+    return this.http.post<Tokens>(`${environment.apiUrl}${environment.loginUrl}`, credentials)
       .pipe(
         tap((tokens: Tokens) => this.storeTokens(tokens)),
         switchMap((tokens: Tokens) => this.getUserById(this.getUserIdFromTokens(tokens.access))
@@ -54,7 +54,7 @@ export class AuthService {
   }
 
   refreshTokens() {
-    return this.http.post<any>(`${config.apiUrl}${config.refreshUrl}`, {
+    return this.http.post<any>(`${environment.apiUrl}${environment.refreshUrl}`, {
       'refresh': this.getRefreshTokens()})
       .pipe(
         tap((tokens: Tokens) => {
@@ -77,11 +77,11 @@ export class AuthService {
   }
 
   getCurrentUserById(): Observable<User>{
-    return this.http.get<User>(`${config.apiUrl}/api/users/${this.getUserIdFromTokens(this.getAccessToken())}/`);
+    return this.http.get<User>(`${environment.apiUrl}/api/users/${this.getUserIdFromTokens(this.getAccessToken())}/`);
   }
 
   getUserById(id: number): Observable<User>{
-    return this.http.get<User>(`${config.apiUrl}/api/users/${id}/`);
+    return this.http.get<User>(`${environment.apiUrl}/api/users/${id}/`);
   }
 
   getUserIdFromTokens(token: string): number{

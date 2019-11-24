@@ -2,7 +2,7 @@ import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest}
 import {BehaviorSubject, Observable, throwError} from "rxjs";
 import {AuthService} from "./services/auth-service";
 import {switchMap, take, catchError, filter, tap} from "rxjs/operators";
-import {config} from "../config";
+import {environment} from "src/environments/environment";
 
 export class TokenInterceptor implements HttpInterceptor{
 
@@ -13,8 +13,8 @@ export class TokenInterceptor implements HttpInterceptor{
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    let skipUrls = [config.loginUrl,config.refreshUrl];
-    let requestUrl = request.url.replace(config.apiUrl,"");
+    let skipUrls = [environment.loginUrl,environment.refreshUrl];
+    let requestUrl = request.url.replace(environment.apiUrl,"");
 
 
     if (this.authService.getTokens()) {
