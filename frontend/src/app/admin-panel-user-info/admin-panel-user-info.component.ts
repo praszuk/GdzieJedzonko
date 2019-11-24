@@ -7,16 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdminPanelUserInfoComponent implements OnInit {
   email: string;
-  // tslint:disable-next-line:variable-name
   first_name: string;
-  // tslint:disable-next-line:variable-name
   last_name: string;
-  // tslint:disable-next-line:variable-name
   birth_date;
-  // tslint:disable-next-line:variable-name
   join_date;
   roles: string[];
-
+  selectedRole = 'Rola';
 
 
   constructor() { }
@@ -27,12 +23,15 @@ export class AdminPanelUserInfoComponent implements OnInit {
 
   testValues() {
     this.email = 'testowymail@wp.pl';
-    // tslint:disable-next-line:max-line-length
     this.first_name = 'Pan';
     this.last_name = 'Pawel';
     this.birth_date = '2000-01-01';
     this.join_date = '2019-01-01';
     this.roles = ['Moderator', 'Admin', 'User'];
+  }
+
+  selected(role: string){
+    this.selectedRole = role;
   }
 
 }
