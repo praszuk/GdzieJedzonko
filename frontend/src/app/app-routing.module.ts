@@ -8,7 +8,7 @@ import {HomeComponent} from "./home/home.component";
 import {LoginComponent} from "./login/login.component";
 import {AuthGuard} from "./auth/guards/AuthGuard";
 import {UserProfileComponent} from "./user-profile/user-profile.component";
-
+import {AdminPanelUserSelectionComponent} from "./admin-panel-user-selection/admin-panel-user-selection.component";
 
 
 const routes: Routes = [ {
@@ -35,6 +35,9 @@ const routes: Routes = [ {
   },  {
     path: 'userprofile/:id',
     component: UserProfileComponent
+  }, {
+    path: 'admin',
+    component: AdminPanelUserSelectionComponent
   }, {
     path: '404',
     component: PageNotFoundComponent
