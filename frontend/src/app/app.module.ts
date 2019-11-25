@@ -17,6 +17,7 @@ import { HomeComponent } from './home/home.component';
 import {AuthModule} from "./auth/auth.module";
 import {UserProfileComponent} from "./user-profile/user-profile.component";
 import {AdminPanelUserInfoComponent} from "./admin-panel-user-info/admin-panel-user-info.component";
+import { AdminPanelUserSelectionComponent } from './admin-panel-user-selection/admin-panel-user-selection.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import {AdminPanelUserInfoComponent} from "./admin-panel-user-info/admin-panel-u
     CommentComponent,
     HomeComponent,
     UserProfileComponent,
-    AdminPanelUserInfoComponent
+    AdminPanelUserInfoComponent,
+    AdminPanelUserSelectionComponent
   ],
   imports: [
     BrowserModule,
