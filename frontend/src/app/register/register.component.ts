@@ -14,7 +14,7 @@ import {take} from "rxjs/operators";
 export class RegisterComponent implements OnInit, OnDestroy{
   profileForm: FormGroup;
   isIdenticalPassword: boolean;
-  subsription: Subscription;
+  subscription: Subscription;
   isError: boolean;
   submitted = false;
   countdown: number = 5;
@@ -32,12 +32,13 @@ export class RegisterComponent implements OnInit, OnDestroy{
   }
 
   ngOnDestroy(): void {
-    this.subsription.unsubscribe();
+    if(this.subscription != undefined)
+      this.subscription.unsubscribe();
   }
 
   onSubmit(formValues){
     formValues.birth_date = undefined;
-    this.subsription = this.authService.register(formValues).subscribe({
+    this.subscription = this.authService.register(formValues).subscribe({
       next: user => {
         this.submitted = true;
         this.isError = false;
