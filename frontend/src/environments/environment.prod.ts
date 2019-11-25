@@ -1,3 +1,7 @@
 export const environment = {
-  production: true
+  production: true,
+  apiUrl: '',
+  loginUrl: '/api/sessions/token/',
+  refreshUrl: '/api/sessions/refresh/',
+  registerUrl: '/api/users/'
 };

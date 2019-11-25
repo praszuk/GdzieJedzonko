@@ -6,18 +6,17 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" routerLink="/home">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-link" routerLink="/home">Strona głowna <span class="sr-only">(current)</span></a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/someotherpage" tabindex="-1" aria-disabled="true">Some other option</a>
+      <li class="nav-item" *ngIf="loggedIn">
+        <a class="nav-link" routerLink="/newreview" tabindex="-1" aria-disabled="true">Nowa recenzja</a>
       </li>
     </ul>
-    <form class="form-inline my-2 my-lg-0" *ngIf="!loggedIn">
-      <input class="form-control mr-sm-2" type="text" placeholder="Login" aria-label="Login">
-      <input class="form-control mr-sm-2" type="password" placeholder="Password" aria-label="Password">
-      <button class="btn btn-secondary my-2 my-sm-0" type="submit">Login</button>
-    </form>
-    <div  class="d-inline-flex" *ngIf="loggedIn">
+    <div class="form-inline my-2 my-lg-0" *ngIf="!loggedIn">
+      <button class="btn btn-secondary my-2 my-sm-0" routerLink="/login">Login</button>
+      <button class="btn btn-secondary ml-2 my-2 my-sm-0" routerLink="/register">Sign up</button>
+    </div>
+    <div  class="d-inline-flex mr-4" *ngIf="loggedIn">
       <p class="d-inline mr-4 my-2 text-light ">{{username}}</p>
       <ul class="navbar-nav mr-auto d-inline">
         <li class="nav-item dropdown">
@@ -28,7 +27,7 @@
             <a class="dropdown-item" routerLink="/myprofile">Profile</a>
             <a class="dropdown-item" routerLink="/editprofile">Edit profile</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" routerLink="/logout">Logout</a>
+            <a class="dropdown-item" (click)="logout()">Logout</a>
           </div>
         </li>
       </ul>

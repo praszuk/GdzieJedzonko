@@ -1,0 +1,14 @@
+.no-outline:focus {
+  outline: 0;
+}
+
+.text-h1 {
+  color: #fcc007;
+  opacity: 1;
+  text-shadow: 3px 3px #b2b2b2;
+}
+
+.register-container {
+  position: fixed;
+  top: 15%;
+}

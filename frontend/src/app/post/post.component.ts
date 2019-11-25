@@ -9,6 +9,7 @@ import {Post} from '../post';
 export class PostComponent implements OnInit {
 
   @Input() post: Post;
+  articleId = 1;
 
   constructor() { }
 

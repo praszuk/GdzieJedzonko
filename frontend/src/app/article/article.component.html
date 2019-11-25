@@ -1,0 +1,12 @@
+<article class="offset-3 col-6 border border-light my-2 rounded mb-1 bg-light">
+  <h1 class="card-title">{{title}}</h1>
+  <div class="row ml-1">
+    <p>{{creationDate}}</p> <h6 class="ml-2" *ngFor="let tag of tags"><a routerLink="404">#{{tag}}</a></h6>
+  </div>
+  <div id="article-map" class="align-content-center">
+    <p> MAP GOES HERE</p>
+  </div>
+    <p>{{text}}</p>
+</article>
+<app-comment-section></app-comment-section>
+
