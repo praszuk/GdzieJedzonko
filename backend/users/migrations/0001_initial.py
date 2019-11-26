@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django_enumfield.db.fields
-import gdzie_jedzonko.models
+import users.models
 
 
 class Migration(migrations.Migration):
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('password', models.CharField(max_length=128, verbose_name='password')),
                 ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
                 ('email', models.EmailField(max_length=254, unique=True)),
-                ('role', django_enumfield.db.fields.EnumField(default=1, enum=gdzie_jedzonko.models.Role)),
+                ('role', django_enumfield.db.fields.EnumField(default=1, enum=users.models.Role)),
                 ('first_name', models.CharField(max_length=50)),
                 ('last_name', models.CharField(max_length=50)),
                 ('birth_date', models.DateField(blank=True, null=True)),
