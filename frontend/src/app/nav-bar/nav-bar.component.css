@@ -1,1 +1,25 @@
+.navbar-custom{
+  background: black;
+  opacity: 0.8;
+}
+
+.navbar-custom a{
+  color: white;
+}
+
+.navbar-custom a:hover{
+  color: white;
+}
+
+.navbar-custom a:active{
+  color: white;
+}
+
+.navbar-custom a:focus{
+  color: white;
+}
+
+.navbar-custom .color-custom a {
+  color: black;
+}
 
