@@ -14,10 +14,12 @@ import { ArticleComponent } from './article/article.component';
 import { CommentSectionComponent } from './comment-section/comment-section.component';
 import { CommentComponent } from './comment/comment.component';
 import { HomeComponent } from './home/home.component';
-import {AuthModule} from "./auth/auth.module";
-import {UserProfileComponent} from "./user-profile/user-profile.component";
-import {AdminPanelUserInfoComponent} from "./admin-panel-user-info/admin-panel-user-info.component";
+import {AuthModule} from './auth/auth.module';
+import {UserProfileComponent} from './user-profile/user-profile.component';
+import {AdminPanelUserInfoComponent} from './admin-panel-user-info/admin-panel-user-info.component';
 import { AdminPanelUserSelectionComponent } from './admin-panel-user-selection/admin-panel-user-selection.component';
+import { NewReviewComponent } from './new-review/new-review.component';
+import {QuillModule} from 'ngx-quill';
 
 
 @NgModule({
@@ -34,7 +36,8 @@ import { AdminPanelUserSelectionComponent } from './admin-panel-user-selection/a
     HomeComponent,
     UserProfileComponent,
     AdminPanelUserInfoComponent,
-    AdminPanelUserSelectionComponent
+    AdminPanelUserSelectionComponent,
+    NewReviewComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +45,8 @@ import { AdminPanelUserSelectionComponent } from './admin-panel-user-selection/a
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    AuthModule
+    AuthModule,
+    QuillModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
