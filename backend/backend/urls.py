@@ -10,4 +10,7 @@ urlpatterns = [
     # Users
     path('api/users/', include('users.urls')),
     path('api/roles/', role_list, name='role-list'),
+
+    # Articles
+    path('api/articles/', include('articles.urls')),
 ]
