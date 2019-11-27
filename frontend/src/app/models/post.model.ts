@@ -1,7 +1,8 @@
+import {SimpleUser} from './simple-user';
+
 export class Post {
   id: number;
   title: string;
-  description: string;
-  content: string;
   creationDate: string;
+  user: SimpleUser;
 }
