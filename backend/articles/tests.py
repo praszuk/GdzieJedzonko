@@ -179,11 +179,22 @@ class GetAllArticlesFilteredByUserTest(BaseViewTest):
             user=self.user2
         )
 
-    def test_get_articles_with_user_filter(self):
+    def test_get_articles_user_exists(self):
         expected = Article.objects.filter(user_id=self.user1.id)
         response = self.client.get(
             reverse('articles:article-list'),
             {'user': self.user1.id}
+        )
+        serialized = ArticleListSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_articles_user_not_exists(self):
+        expected = Article.objects.all()
+        response = self.client.get(
+            reverse('articles:article-list'),
+            {'user': 999999}
         )
         serialized = ArticleListSerializer(expected, many=True)
 
