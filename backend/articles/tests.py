@@ -11,6 +11,52 @@ from users.models import User, Role
 class BaseViewTest(APITestCase):
     client = APIClient()
 
+    def setUp(self):
+        self.USERS = [
+            {
+                'email': 'articleuser1@gdziejedzonko.pl',
+                'password': 'password1234',
+                'first_name': 'David',
+                'last_name': 'Davis'
+            },
+            {
+                'email': 'articleuser2@gdziejedzonko.pl',
+                'password': 'password1234',
+                'first_name': 'John',
+                'last_name': 'Smith',
+                'birth_date': '1978-02-12'
+            },
+        ]
+        self.MODS = [
+            {
+                'email': 'articlemod@gdziejedzonko.pl',
+                'password': 'password1234',
+                'first_name': 'Micheal',
+                'last_name': 'Johnson',
+                'birth_date': '1970-09-22',
+                'role': Role.MODERATOR
+            },
+        ]
+        self.ADMINS = [
+            {
+                'email': 'articleadmin@gdziejedzonko.pl',
+                'password': 'password1234',
+                'first_name': 'Adam',
+                'last_name': 'Williams',
+                'birth_date': '1970-09-22',
+                'role': Role.ADMIN
+            }
+        ]
+
+        for user in self.USERS:
+            User.objects.create_user(**user)
+
+        for mod in self.MODS:
+            User.objects.create_user(**mod)
+
+        for admin in self.ADMINS:
+            User.objects.create_user(**admin)
+
     def generate_credentials(self, email: str, password: str):
         """
         Generating credentials string using token_obtain_pair endpoint.
@@ -100,16 +146,6 @@ class GetAllArticlesTest(BaseViewTest):
 
 class CreateArticleTest(BaseViewTest):
 
-    @classmethod
-    def setUpTestData(cls):
-        User.objects.create_user(
-            email='test@gdziejedzonko.pl',
-            password='password1234',
-            first_name='John',
-            last_name='Smith',
-            role=Role.USER
-        )
-
     def test_unauthenticated_user_cannot_create(self):
         article_data = {
             'title': 'Title',
@@ -121,3 +157,24 @@ class CreateArticleTest(BaseViewTest):
         )
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_user_can_create(self):
+        article_data = {
+            'title': 'Title',
+            'content': 'Content of the article',
+        }
+
+        self.auth_user(self.USERS[0])
+
+        response = self.client.post(
+            reverse('articles:article-list'),
+            data=article_data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        article = Article.objects.get(pk=response.data['id'])
+        user = User.objects.filter(email=self.USERS[0]['email'])[0]
+
+        self.assertEqual(article_data['title'], article.title)
+        self.assertEqual(article.user, user)
