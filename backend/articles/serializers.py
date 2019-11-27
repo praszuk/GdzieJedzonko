@@ -19,3 +19,13 @@ class ArticleSerializer(serializers.ModelSerializer):
         depth = 1
         fields = '__all__'
         read_only_fields = ('id', 'creation_date')
+
+
+class ArticleListSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = Article
+        depth = 1
+        exclude = ('content', )
+        read_only_fields = ('id', 'creation_date')

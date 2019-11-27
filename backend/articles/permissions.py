@@ -7,7 +7,7 @@ class ArticlePermission(BasePermission):
     """
 
     def has_permission(self, request, view):
-        if view.action == 'retrieve':
+        if view.action in ('list', 'retrieve'):
             return True
 
     def has_object_permission(self, request, view, obj):
