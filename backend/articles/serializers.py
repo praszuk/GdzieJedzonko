@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework.fields import CurrentUserDefault
 
 from .models import Article
 from users.models import User
@@ -28,14 +27,14 @@ class ArticleSerializer(serializers.ModelSerializer):
             )
         return title
 
-    def save(self):
+    def create(self, validated_data):
         # if self.context['request'].user.is_authenticated:
         #     user = self.context['request'].user
         # else:
         #     user = None
         user = self.context['request'].user
-        title = self.validated_data['title']
-        content = self.validated_data['content']
+        title = validated_data['title']
+        content = validated_data['content']
 
         return Article.objects.create(title=title, content=content, user=user)
 
