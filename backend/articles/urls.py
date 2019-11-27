@@ -12,6 +12,7 @@ article_detail = ArticleViewSet.as_view({
 
 article_list = ArticleViewSet.as_view({
     'get': 'list',
+    'post': 'create',
 })
 
 urlpatterns = [
