@@ -11,6 +11,28 @@ from users.models import User, Role
 class BaseViewTest(APITestCase):
     client = APIClient()
 
+    def generate_credentials(self, email: str, password: str):
+        """
+        Generating credentials string using token_obtain_pair endpoint.
+        :return: Credentials string in format 'Bearer <access token>'
+        :rtype: str
+        """
+        data = {'email': email, 'password': password}
+        response = self.client.post(
+            reverse('authentication:token_obtain_pair'),
+            data=data
+        )
+
+        return 'Bearer ' + response.data['access']
+
+    def auth_user(self, user: dict):
+        """
+        Helper method for generating credentials
+        :param user: user_data with keys (it has to contain email and password)
+        """
+        auth_data = self.generate_credentials(user['email'], user['password'])
+        self.client.credentials(HTTP_AUTHORIZATION=auth_data)
+
 
 class GetDetailArticleTest(BaseViewTest):
 
@@ -74,3 +96,28 @@ class GetAllArticlesTest(BaseViewTest):
 
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class CreateArticleTest(BaseViewTest):
+
+    @classmethod
+    def setUpTestData(cls):
+        User.objects.create_user(
+            email='test@gdziejedzonko.pl',
+            password='password1234',
+            first_name='John',
+            last_name='Smith',
+            role=Role.USER
+        )
+
+    def test_unauthenticated_user_cannot_create(self):
+        article_data = {
+            'title': 'Title',
+            'content': 'Content of the article',
+        }
+        response = self.client.post(
+            reverse('articles:article-list'),
+            data=article_data
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
