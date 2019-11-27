@@ -4,25 +4,26 @@ import {PostsSectionComponent} from './posts-section/posts-section.component';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {ArticleComponent} from './article/article.component';
 import {RegisterComponent} from './register/register.component';
-import {HomeComponent} from "./home/home.component";
-import {LoginComponent} from "./login/login.component";
-import {AuthGuard} from "./auth/guards/AuthGuard";
-import {UserProfileComponent} from "./user-profile/user-profile.component";
-import {AdminPanelUserSelectionComponent} from "./admin-panel-user-selection/admin-panel-user-selection.component";
+import {HomeComponent} from './home/home.component';
+import {LoginComponent} from './login/login.component';
+import {AuthGuard} from './auth/guards/AuthGuard';
+import {UserProfileComponent} from './user-profile/user-profile.component';
+import {AdminPanelUserSelectionComponent} from './admin-panel-user-selection/admin-panel-user-selection.component';
+import {NewReviewComponent} from "./new-review/new-review.component";
 
 
 const routes: Routes = [ {
-  path:'login',
+  path: 'login',
   component: LoginComponent,
   canActivate: [AuthGuard]
   }, {
-  path:'register',
+  path: 'register',
   component: RegisterComponent,
   canActivate: [AuthGuard]
   }, {
   path: '',
   component: HomeComponent,
-  children:[{
+  children: [{
     path: '',
     redirectTo: '/home',
     pathMatch: 'full'
@@ -32,6 +33,9 @@ const routes: Routes = [ {
   }, {
     path: 'article/:id',
     component: ArticleComponent
+  }, {
+    path: 'newreview',
+    component: NewReviewComponent
   },  {
     path: 'userprofile/:id',
     component: UserProfileComponent
