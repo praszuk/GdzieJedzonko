@@ -21,4 +21,6 @@ export class ArticleService {
         })
       );
   }
+
+  getAllArticles(): Observable<>
 }

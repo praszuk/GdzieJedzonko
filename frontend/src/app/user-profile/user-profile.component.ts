@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {User} from '../user';
+import {User} from '../models/user.model';
 
 @Component({
   selector: 'app-user-profile',

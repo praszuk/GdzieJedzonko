@@ -1,5 +1,5 @@
-import {User} from '../user';
-import {Comment} from '../comment';
+import {User} from './user.model';
+import {Comment} from './comment.model';
 
 export class Article {
   id: number;
