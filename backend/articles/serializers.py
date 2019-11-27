@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 
 from .models import Article
 from users.models import User
@@ -19,6 +20,17 @@ class ArticleSerializer(serializers.ModelSerializer):
         depth = 1
         fields = '__all__'
         read_only_fields = ('id', 'creation_date')
+
+    def save(self):
+        # if self.context['request'].user.is_authenticated:
+        #     user = self.context['request'].user
+        # else:
+        #     user = None
+        user = self.context['request'].user
+        title = self.validated_data['title']
+        content = self.validated_data['content']
+
+        return Article.objects.create(title=title, content=content, user=user)
 
 
 class ArticleListSerializer(serializers.ModelSerializer):
