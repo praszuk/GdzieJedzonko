@@ -1,30 +1,51 @@
-import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ArticleService} from '../services/article/article.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-new-review',
   templateUrl: './new-review.component.html',
   styleUrls: ['./new-review.component.css']
 })
-export class NewReviewComponent implements OnInit {
+export class NewReviewComponent implements OnInit, OnDestroy {
   editorForm: FormGroup;
+  titleExists = false;
+  subscription: Subscription = null;
+
   editorStyle = {
     height: '35vh'
   };
 
-  config = {
+  modules = {
   };
 
-  constructor(private formBuilder: FormBuilder) { }
+
+  constructor(private formBuilder: FormBuilder, private articleService: ArticleService) { }
 
   ngOnInit() {
     this.editorForm = this.formBuilder.group({
-      title: [''],
-      content: ['']
+      title: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$'), Validators.maxLength(100)]],
+      content: ['', Validators.required]
     });
   }
 
-  onSubmit() {
+  ngOnDestroy(): void {
+    if (this.subscription != null) {
+      this.subscription.unsubscribe();
+    }
+  }
 
+  onSubmit() {
+    const article = this.editorForm.value;
+    this.subscription = this.articleService.newReview(article).subscribe(
+      (next) => {
+          this.titleExists = false;
+        },
+      error => {
+        if (error !== undefined) {
+          this.titleExists = true;
+        }
+      });
   }
 }
