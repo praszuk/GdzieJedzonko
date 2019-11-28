@@ -201,6 +201,17 @@ class GetAllArticlesFilteredByUserTest(BaseViewTest):
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_get_articles_user_incorrect_value(self):
+        expected = Article.objects.all()
+        response = self.client.get(
+            reverse('articles:article-list'),
+            {'user': 'incorrect_value'}
+        )
+        serialized = ArticleListSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class CreateArticleTest(BaseViewTest):
 
