@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ArticleService} from '../services/article/article.service';
 import {Subscription} from 'rxjs';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-new-review',
@@ -21,12 +22,12 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   };
 
 
-  constructor(private formBuilder: FormBuilder, private articleService: ArticleService) { }
+  constructor(private formBuilder: FormBuilder, private articleService: ArticleService, private router: Router) { }
 
   ngOnInit() {
     this.editorForm = this.formBuilder.group({
       title: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$'), Validators.maxLength(100)]],
-      content: ['', Validators.required]
+      content: ['', [Validators.required, Validators.maxLength(3000)]]
     });
   }
 
@@ -39,11 +40,12 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   onSubmit() {
     const article = this.editorForm.value;
     this.subscription = this.articleService.newReview(article).subscribe(
-      (next) => {
+      (id) => {
           this.titleExists = false;
+          this.router.navigate([`article/${id.id}`]);
         },
       error => {
-        if (error !== undefined) {
+        if (error.error.title !== undefined) {
           this.titleExists = true;
         }
       });

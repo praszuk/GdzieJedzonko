@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {User} from "../../user";
+import {User} from "../../models/user.model";
 import {Tokens} from "../tokens.model";
 import {BehaviorSubject, Observable, of, throwError} from "rxjs";
 import {environment} from "src/environments/environment";

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {User} from '../user';
+import {User} from '../models/user.model';
 
 @Component({
   selector: 'app-user-profile',
@@ -9,13 +9,13 @@ import {User} from '../user';
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
  subscription;
- userId: string;
+ userId: number;
  user: User;
   constructor(private Activatedroute: ActivatedRoute) {  }
 
   ngOnInit() {
     this.subscription = this.Activatedroute.paramMap.subscribe(params => {
-        this.userId = params.get('id');
+        this.userId = +params.get('id');
       }
     );
 
