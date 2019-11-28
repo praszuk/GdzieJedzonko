@@ -17,9 +17,10 @@ import { HomeComponent } from './home/home.component';
 import {AuthModule} from './auth/auth.module';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {AdminPanelUserInfoComponent} from './admin-panel-user-info/admin-panel-user-info.component';
-import { AdminPanelUserSelectionComponent } from './admin-panel-user-selection/admin-panel-user-selection.component';
+import { AdminPanelUserSectionComponent } from './admin-panel-user-section/admin-panel-user-section.component';
 import { NewReviewComponent } from './new-review/new-review.component';
 import {QuillModule} from 'ngx-quill';
+import {NgxSpinnerModule} from 'ngx-spinner';
 
 
 @NgModule({
@@ -36,7 +37,7 @@ import {QuillModule} from 'ngx-quill';
     HomeComponent,
     UserProfileComponent,
     AdminPanelUserInfoComponent,
-    AdminPanelUserSelectionComponent,
+    AdminPanelUserSectionComponent,
     NewReviewComponent
   ],
   imports: [
@@ -46,7 +47,8 @@ import {QuillModule} from 'ngx-quill';
     FormsModule,
     ReactiveFormsModule,
     AuthModule,
-    QuillModule.forRoot()
+    QuillModule.forRoot(),
+    NgxSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,17 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import {User} from '../models/user.model';
+import {NgxSpinnerService} from 'ngx-spinner';
 
 @Component({
   selector: 'app-admin-panel-user-selection',
-  templateUrl: './admin-panel-user-selection.component.html',
-  styleUrls: ['./admin-panel-user-selection.component.css']
+  templateUrl: './admin-panel-user-section.component.html',
+  styleUrls: ['./admin-panel-user-section.component.css']
 })
-export class AdminPanelUserSelectionComponent implements OnInit {
+export class AdminPanelUserSectionComponent implements OnInit {
   users: User[];
-
-  constructor() { }
+  isLoading = false;
+  constructor(private loadingService: NgxSpinnerService) { }
 
   ngOnInit() {
+    this.loadingService.show('admin-panel-user-section');
+    this.loadingService.hide('admin-panel-user-section');
+
     this.users = [{
       id: 1,
       email: 'testowymail@wp.pl',

@@ -2,6 +2,7 @@ import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ArticleService} from '../services/article/article.service';
 import {Article} from '../models/article.model';
+import {NgxSpinnerService} from 'ngx-spinner';
 
 @Component({
   selector: 'app-article',
@@ -12,10 +13,15 @@ export class ArticleComponent implements OnInit, OnDestroy {
   articleId: number;
   article: Article;
   subscription: any;
-  constructor(private Activatedroute: ActivatedRoute, private articleService: ArticleService) { }
+  isLoading = true;
+  constructor(private activatedroute: ActivatedRoute,
+              private articleService: ArticleService,
+              private loadingService: NgxSpinnerService
+  ) { }
 
   ngOnInit() {
-    this.subscription = this.Activatedroute.paramMap.subscribe(params => {
+    this.loadingService.show('articleLoading');
+    this.subscription = this.activatedroute.paramMap.subscribe(params => {
       this.articleId = +params.get('id');
       }
     );
@@ -31,6 +37,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.articleService.getArticle(articleId).subscribe(
       (article) => {
         this.article = article;
+        this.isLoading = false;
+        this.loadingService.hide('articleLoading');
       },
       (error) => {
       }

@@ -1,9 +1,9 @@
-<div class="offset-3 col-6 border rounded">
-  <div class="col-12">
-    <div class="row">
+<div class="offset-3 col-6 border rounded min-height-10">
+  <ngx-spinner  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
+  <div *ngIf="!isLoading">
+  <div class="row">
       <p class="font-weight-bold offset-4 text-center">Imie i nazwisko: </p> <span class="ml-2"> {{user.first_name}} {{user.last_name}} </span>
     </div>
-  </div>
   <div class="row offset-2">
     <div class="col-6">
       <span class="font-weight-bold ">Data urodzenia:</span> <span> {{user.birth_date}}</span>
@@ -13,9 +13,15 @@
     </div>
   </div>
 </div>
+</div>
 <div class="offset-2 col-8 mt-4">
   <h2 class="text-center"> Recencje użytkownika: </h2>
 </div>
-  <app-posts-section class="mt-2" [userId]="userId"></app-posts-section>
+  <div *ngIf="isLoading" class="container">
+    <div class="offset-2 col-8 border rounded min-height-40">
+      <ngx-spinner  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
+    </div>
+  </div>
+  <app-posts-section *ngIf="!isLoading" class="mt-2" [userId]="userId"></app-posts-section>
 
 
