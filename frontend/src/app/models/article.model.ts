@@ -9,4 +9,5 @@ export class Article {
   restaurant?: object;
   user?: User;
   comments?: Comment[];
+  tags?: string[];
 }

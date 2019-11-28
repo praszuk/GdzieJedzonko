@@ -9,13 +9,13 @@ import {User} from '../models/user.model';
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
  subscription;
- userId: string;
+ userId: number;
  user: User;
   constructor(private Activatedroute: ActivatedRoute) {  }
 
   ngOnInit() {
     this.subscription = this.Activatedroute.paramMap.subscribe(params => {
-        this.userId = params.get('id');
+        this.userId = +params.get('id');
       }
     );
 
