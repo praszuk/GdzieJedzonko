@@ -3,6 +3,6 @@ export const environment = {
   apiUrl: '',
   loginUrl: '/api/sessions/token/',
   refreshUrl: '/api/sessions/refresh/',
-  registerUrl: '/api/users/',
+  userUrl: '/api/users/',
   articlesUrl: '/api/articles/'
 };
