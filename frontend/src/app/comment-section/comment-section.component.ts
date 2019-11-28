@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Comment} from '../models/comment.model';
-import {User} from '../models/user.model';
+import { NgxSpinnerService} from 'ngx-spinner';
 
 @Component({
   selector: 'app-comment-section',
@@ -9,9 +9,11 @@ import {User} from '../models/user.model';
 })
 export class CommentSectionComponent implements OnInit {
   comments: Comment [];
-  constructor() { }
+  isLoading = true;
+  constructor(private loadingService: NgxSpinnerService) { }
 
   ngOnInit() {
+    this.loadingService.show('comments-section-loading');
     this.dummyData();
   }
 

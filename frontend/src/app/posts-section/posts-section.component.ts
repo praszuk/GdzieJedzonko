@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Post} from '../models/post.model';
 import {ArticleService} from '../services/article/article.service';
+import {NgxSpinnerService} from 'ngx-spinner';
 
 @Component({
   selector: 'app-posts-section',
@@ -11,9 +12,11 @@ export class PostsSectionComponent implements OnInit {
   @Input() userId?: number;
   posts: Post[];
   isError = false;
-  constructor(private articleService: ArticleService) {  }
+  isLoading = true;
+  constructor(private articleService: ArticleService, private loadingService: NgxSpinnerService) {  }
 
   ngOnInit() {
+    this.loadingService.show('posts-section-loading');
     if (this.userId) {
       this.getUserArticles(this.userId);
     } else {
@@ -26,6 +29,8 @@ export class PostsSectionComponent implements OnInit {
       (posts) => {
         this.isError = false;
         this.posts = posts;
+        this.isLoading = false;
+        this.loadingService.hide('posts-section-loading');
       },
       (error) => {
         this.isError = true;
@@ -35,9 +40,11 @@ export class PostsSectionComponent implements OnInit {
 
   getAllArticles() {
     this.articleService.getAllArticles().subscribe(
-      (next) => {
+      (posts) => {
         this.isError = false;
-        this.posts = next;
+        this.posts = posts;
+        this.isLoading = false;
+        this.loadingService.hide('posts-section-loading');
       },
       (error) => {
         this.isError = true;

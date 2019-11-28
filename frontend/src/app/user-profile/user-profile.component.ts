@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {User} from '../models/user.model';
+import {NgxSpinnerService} from 'ngx-spinner';
 
 @Component({
   selector: 'app-user-profile',
@@ -11,19 +12,22 @@ export class UserProfileComponent implements OnInit, OnDestroy {
  subscription;
  userId: number;
  user: User;
-  constructor(private Activatedroute: ActivatedRoute) {  }
+ isLoading = true;
+  constructor(private Activatedroute: ActivatedRoute, private loadingService: NgxSpinnerService) {  }
 
   ngOnInit() {
+    this.loadingService.show();
     this.subscription = this.Activatedroute.paramMap.subscribe(params => {
         this.userId = +params.get('id');
       }
     );
-
     this.getUserById(this.userId);
   }
 
-  getUserById(userId){
-    this.user = {id:1,first_name:"first",email:"a@w.pl",last_name:"last",birth_date:"2000-11-11",join_date:"2019-11-11",role: 1};
+  getUserById(userId) {
+
+    this.user = {id: 1, last_name: 'asdf', first_name: 'df', role: 1, email: '123', birth_date: '34343', join_date: '232'};
+
   }
 
   ngOnDestroy() {
