@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
+from users.models import User
 
 from .models import Article
 from .permissions import ArticlePermission
@@ -8,7 +9,6 @@ from .serializers import ArticleSerializer, ArticleListSerializer
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
-    queryset = Article.objects.all()
     permission_classes = [ArticlePermission]
 
     def get_serializer_class(self):
@@ -28,3 +28,17 @@ class ArticleViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED,
             headers=headers,
         )
+
+    def get_queryset(self):
+        user_id = self.request.query_params.get('user', None)
+
+        if user_id:
+            try:
+                user_id = int(user_id)
+                if User.objects.filter(id=user_id).exists():
+                    return Article.objects.filter(user__id=user_id)
+
+            except ValueError:
+                pass
+
+        return Article.objects.all()

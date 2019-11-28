@@ -144,6 +144,75 @@ class GetAllArticlesTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+class GetAllArticlesFilteredByUserTest(BaseViewTest):
+
+    def setUp(self):
+        self.user1 = User.objects.create_user(
+            email='filteruser@gdziejedzonko.pl',
+            password='password1234',
+            first_name='John',
+            last_name='Smith',
+            role=Role.USER
+        )
+
+        self.user2 = User.objects.create_user(
+            email='filteruser2@gdziejedzonko.pl',
+            password='password1234',
+            first_name='John',
+            last_name='Smith',
+            role=Role.USER
+        )
+
+        Article.objects.create(
+            title='Title1',
+            content='Content of the article',
+            user=self.user1
+        )
+        Article.objects.create(
+            title='Test title2',
+            content='No content',
+            user=self.user1
+        )
+        Article.objects.create(
+            title='Test title title3',
+            content='Test content',
+            user=self.user2
+        )
+
+    def test_get_articles_user_exists(self):
+        expected = Article.objects.filter(user_id=self.user1.id)
+        response = self.client.get(
+            reverse('articles:article-list'),
+            {'user': self.user1.id}
+        )
+        serialized = ArticleListSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_articles_user_not_exists(self):
+        expected = Article.objects.all()
+        response = self.client.get(
+            reverse('articles:article-list'),
+            {'user': 999999}
+        )
+        serialized = ArticleListSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_articles_user_incorrect_value(self):
+        expected = Article.objects.all()
+        response = self.client.get(
+            reverse('articles:article-list'),
+            {'user': 'incorrect_value'}
+        )
+        serialized = ArticleListSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
 class CreateArticleTest(BaseViewTest):
 
     def test_unauthenticated_user_cannot_create(self):
