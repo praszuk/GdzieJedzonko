@@ -23,7 +23,7 @@ export class ArticleService {
   }
 
   getAllArticles(): Observable<Post[]> {
-    return this.http.get(`${environment.apiUrl}${environment.articlesUrl}`)
+    return this.http.get<Post[]>(`${environment.apiUrl}${environment.articlesUrl}`)
       .pipe(
         catchError(
           err => throwError(err)
@@ -34,7 +34,7 @@ export class ArticleService {
   getUserArticles(userId: number): Observable<Post[]> {
     const params = new HttpParams()
       .set('user', String(userId));
-    return this.http.get(`${environment.apiUrl}${environment.articlesUrl}`, {params})
+    return this.http.get<Post[]>(`${environment.apiUrl}${environment.articlesUrl}`, {params})
       .pipe(
         catchError(
           err => throwError(err)
@@ -43,7 +43,7 @@ export class ArticleService {
   }
 
   getArticle(articleId: number): Observable<Article> {
-    return this.http.get(`${environment.apiUrl}${environment.articlesUrl}${articleId}`)
+    return this.http.get<Article>(`${environment.apiUrl}${environment.articlesUrl}${articleId}`)
       .pipe(
         catchError(
           err => throwError(err)
