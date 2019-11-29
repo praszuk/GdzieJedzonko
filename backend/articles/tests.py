@@ -289,3 +289,11 @@ class DeleteArticleTest(BaseViewTest):
             reverse('articles:article-detail', args=[self.article1.id])
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_mod_not_owner_can(self):
+        self.auth_user(self.MODS[0])
+
+        response = self.client.delete(
+            reverse('articles:article-detail', args=[self.article1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
