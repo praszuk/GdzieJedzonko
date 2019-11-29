@@ -247,3 +247,53 @@ class CreateArticleTest(BaseViewTest):
 
         self.assertEqual(article_data['title'], article.title)
         self.assertEqual(article.user, user)
+
+
+class DeleteArticleTest(BaseViewTest):
+
+    def setUp(self):
+        super().setUp()
+
+        self.article1 = Article.objects.create(
+            title='Title1',
+            content='Content of the article',
+            user=User.objects.filter(email=self.USERS[0]['email'])[0]
+        )
+
+    def test_unauthenticated_user(self):
+        response = self.client.delete(
+            reverse('articles:article-detail', args=[self.article1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_not_owner_cannot(self):
+        self.auth_user(self.USERS[1])
+
+        response = self.client.delete(
+            reverse('articles:article-detail', args=[self.article1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_owner_can(self):
+        self.auth_user(self.USERS[0])
+
+        response = self.client.delete(
+            reverse('articles:article-detail', args=[self.article1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_mod_not_owner_can(self):
+        self.auth_user(self.MODS[0])
+
+        response = self.client.delete(
+            reverse('articles:article-detail', args=[self.article1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_admin_not_owner_can(self):
+        self.auth_user(self.ADMINS[0])
+
+        response = self.client.delete(
+            reverse('articles:article-detail', args=[self.article1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
