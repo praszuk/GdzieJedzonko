@@ -1,6 +1,19 @@
 from rest_framework.permissions import BasePermission
 
-from users.permissions import IsAuthenticated
+from users.permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+    IsModeratorUser,
+    IsOwnerUser,
+)
+
+
+class IsOwnerArticle(BasePermission):
+    """
+        Allows access to the article object only for the owner of the article.
+    """
+    def has_object_permission(self, request, view, obj):
+        return request.user == obj.user
 
 
 class ArticlePermission(BasePermission):
