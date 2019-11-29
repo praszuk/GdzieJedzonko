@@ -247,3 +247,29 @@ class CreateArticleTest(BaseViewTest):
 
         self.assertEqual(article_data['title'], article.title)
         self.assertEqual(article.user, user)
+
+
+class DeleteArticleTest(BaseViewTest):
+
+    def setUp(self):
+        super().setUp()
+
+        self.user1 = User.objects.filter(email=self.USERS[0]['email'])[0]
+        self.user2 = User.objects.filter(email=self.USERS[1]['email'])[0]
+
+        self.article1 = Article.objects.create(
+            title='Title1',
+            content='Content of the article',
+            user=self.user1
+        )
+        self.article2 = Article.objects.create(
+            title='Test title title3',
+            content='Test content',
+            user=self.user2
+        )
+
+    def test_unauthenticated_user(self):
+        response = self.client.delete(
+            reverse('articles:article-detail', args=[self.article1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
