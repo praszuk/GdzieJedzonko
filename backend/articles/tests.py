@@ -273,3 +273,11 @@ class DeleteArticleTest(BaseViewTest):
             reverse('articles:article-detail', args=[self.article1.id])
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_user_not_owner(self):
+        self.auth_user(self.USERS[1])
+
+        response = self.client.delete(
+            reverse('articles:article-detail', args=[self.article1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
