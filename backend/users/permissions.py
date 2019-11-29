@@ -12,6 +12,15 @@ class IsAdminUser(BasePermission):
         return bool(request.user and request.user.role == Role.ADMIN)
 
 
+class IsModeratorUser(BasePermission):
+    """
+    Allows access only to users with MODERATOR role.
+    """
+
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.role == Role.MODERATOR)
+
+
 class IsOwnerUser(BasePermission):
     """
     Allows access to the user object only for the owner of the object.
