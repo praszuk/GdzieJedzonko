@@ -254,18 +254,10 @@ class DeleteArticleTest(BaseViewTest):
     def setUp(self):
         super().setUp()
 
-        self.user1 = User.objects.filter(email=self.USERS[0]['email'])[0]
-        self.user2 = User.objects.filter(email=self.USERS[1]['email'])[0]
-
         self.article1 = Article.objects.create(
             title='Title1',
             content='Content of the article',
-            user=self.user1
-        )
-        self.article2 = Article.objects.create(
-            title='Test title title3',
-            content='Test content',
-            user=self.user2
+            user=User.objects.filter(email=self.USERS[0]['email'])[0]
         )
 
     def test_unauthenticated_user(self):
@@ -292,6 +284,14 @@ class DeleteArticleTest(BaseViewTest):
 
     def test_mod_not_owner_can(self):
         self.auth_user(self.MODS[0])
+
+        response = self.client.delete(
+            reverse('articles:article-detail', args=[self.article1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_admin_not_owner_can(self):
+        self.auth_user(self.ADMINS[0])
 
         response = self.client.delete(
             reverse('articles:article-detail', args=[self.article1.id])
