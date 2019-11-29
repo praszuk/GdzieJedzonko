@@ -30,9 +30,17 @@ class ArticlePermission(BasePermission):
         if view.action in ('list', 'retrieve'):
             return True
 
-        if view.action == 'create':
+        elif view.action in ('create', 'destroy'):
             return IsAuthenticated.has_permission(None, request, view)
 
     def has_object_permission(self, request, view, obj):
         if view.action == 'retrieve':
             return True
+
+        elif view.action == 'destroy':
+
+            return bool(
+                IsAdminUser.has_permission(None, request, view) or
+                IsModeratorUser.has_permission(None, request, view) or
+                IsOwnerArticle.has_object_permission(None, request, view, obj)
+            )
