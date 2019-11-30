@@ -7,12 +7,12 @@ import {FormBuilder, FormGroup} from '@angular/forms';
   styleUrls: ['./basic-information.component.css']
 })
 export class BasicInformationComponent implements OnInit {
-  editProfileForm: FormGroup;
+  editBasicInformationForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-    this.editProfileForm = this.formBuilder.group({
+    this.editBasicInformationForm = this.formBuilder.group({
       email: [''],
       first_name: [''],
       last_name: [''],

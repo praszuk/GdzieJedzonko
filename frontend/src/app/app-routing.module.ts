@@ -44,6 +44,10 @@ const routes: Routes = [ {
     path: 'editprofile',
     component: EditProfileComponent,
     children: [{
+      path: '',
+      redirectTo: 'basic-information',
+      pathMatch: 'full'
+    }, {
       path: 'basic-information',
       component: BasicInformationComponent
       }, {
