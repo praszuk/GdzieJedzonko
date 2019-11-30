@@ -10,6 +10,10 @@ import {AuthGuard} from './auth/guards/AuthGuard';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {AdminPanelUserSectionComponent} from './admin-panel-user-section/admin-panel-user-section.component';
 import {NewReviewComponent} from "./new-review/new-review.component";
+import {EditProfileComponent} from "./edit-profile/edit-profile.component";
+import {BasicInformationComponent} from "./edit-profile/basic-information/basic-information.component";
+import {ChangePasswordComponent} from "./edit-profile/change-password/change-password.component";
+import {DeleteAccountComponent} from "./edit-profile/delete-account/delete-account.component";
 
 
 const routes: Routes = [ {
@@ -36,7 +40,20 @@ const routes: Routes = [ {
   }, {
     path: 'newreview',
     component: NewReviewComponent
-  },  {
+  }, {
+    path: 'editprofile',
+    component: EditProfileComponent,
+    children: [{
+      path: 'basic-information',
+      component: BasicInformationComponent
+      }, {
+      path: 'password',
+      component: ChangePasswordComponent
+    }, {
+      path: 'delete',
+      component: DeleteAccountComponent
+    }]
+  }, {
     path: 'userprofile/:id',
     component: UserProfileComponent
   }, {

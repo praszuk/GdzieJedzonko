@@ -1,0 +1,45 @@
+<div class="border rounded shadow min-height-60">
+  <form [formGroup]="editProfileForm" (ngSubmit)="onSubmit()" class="offset-1 col-10">
+
+    <div class="form-group">
+      <label class="mt-5" for="email">
+        <h6>
+          Email
+        </h6>
+      </label>
+      <input class="form-control" name="email" id="email" formControlName="email">
+    </div>
+
+    <div class="form-group">
+      <label for="first_name">
+        <h6>
+          Imie
+        </h6>
+      </label>
+      <input class="form-control" type="password" name="first_name" id="first_name" formControlName="first_name">
+    </div>
+
+    <div class="form-group">
+      <label for="last_name">
+        <h6>
+          Nazwisko
+        </h6>
+      </label>
+      <input class="form-control" type="text" name="last_name" id="last_name" formControlName="last_name">
+    </div>
+
+    <div class="form-group">
+      <label for="birth_date">
+        <h6>
+          Data urodzenia
+        </h6>
+      </label>
+      <input class="form-control" type="date" placeholder="YYYY-MM-DD" name="birth_date" id="birth_date" formControlName="birth_date">
+    </div>
+
+    <div class="form-group text-center">
+      <button class="btn btn-primary" [disabled]="editProfileForm.dirty">Submit</button>
+    </div>
+
+  </form>
+</div>
