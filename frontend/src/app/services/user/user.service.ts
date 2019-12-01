@@ -10,7 +10,9 @@ import {catchError} from 'rxjs/operators';
 })
 export class UserService {
   user: User;
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+  }
+
 
   getUserById(id: number): Observable<User> {
     return this.http.get<User>(`${environment.apiUrl}/api/users/${id}/`);
@@ -57,12 +59,24 @@ export class UserService {
   }
 
   deleteUser(id: number) {
-    return this.http.delete(`${environment.apiUrl}${environment.userUrl}${id}`)
+    return this.http.delete(`${environment.apiUrl}${environment.userUrl}${id}/`)
       .pipe(
         catchError(
           err => throwError(err)
         )
       );
+  }
+
+  getCurrentUserById(): Observable<User> {
+    return this.getUserById(this.getUserIdFromTokens(this.getAccessToken()));
+  }
+
+  getUserIdFromTokens(token: string): number {
+    return JSON.parse(atob(token.split('.')[1])).user_id;
+  }
+
+  getAccessToken() {
+    return localStorage.getItem('access');
   }
 
   getUser() {

@@ -47,6 +47,8 @@ export class AuthService {
   logout() {
     this.setUser(null);
     this.removeTokens();
+    this.userSubject.next(null);
+    this.router.navigate(['home']);
   }
 
   isLoggedIn(): boolean {
