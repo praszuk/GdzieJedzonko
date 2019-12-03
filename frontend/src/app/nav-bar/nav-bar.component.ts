@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AuthService} from '../auth/services/auth-service';
-import { Subscription} from 'rxjs';
+import {Subscription} from 'rxjs';
 import {Router} from '@angular/router';
-
+import {Role} from '../models/role.enum';
 
 
 @Component({
@@ -12,6 +12,8 @@ import {Router} from '@angular/router';
 })
 export class NavBarComponent implements OnInit, OnDestroy {
   loggedIn: boolean;
+  isModerator: boolean;
+  isAdmin: boolean;
   username: string;
   userSubscription: Subscription;
   constructor(private authService: AuthService, private router: Router) { }
@@ -25,6 +27,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
                                           this.username = `${user.first_name} ${user.last_name}`;
                                           this.loggedIn = true;
+                                          this.isAdmin = user.role === Role.ADMIN;
                                         } else {
                                           if (this.authService.isLoggedIn()) {
                                             this.authService.getCurrentUserById()
@@ -32,11 +35,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
                                                 user => {
                                                   this.username = `${user.first_name} ${user.last_name}`;
                                                   this.loggedIn = true;
+                                                  this.isAdmin = user.role === Role.ADMIN;
                                                 }
                                               );
                                           } else {
                                             this.username = '';
                                             this.loggedIn = false;
+                                            this.isAdmin = false;
                                           }
                                         }
                                       }

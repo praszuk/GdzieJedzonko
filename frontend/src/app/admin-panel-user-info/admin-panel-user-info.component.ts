@@ -8,18 +8,10 @@ import {User} from '../models/user.model';
 })
 export class AdminPanelUserInfoComponent implements OnInit {
   @Input() user: User;
-  roles: string[];
-  selectedRole = 'Rola';
-
 
   constructor() { }
 
   ngOnInit() {
-    this.roles = ['1', '2', '3'];
-  }
-
-  selected(role: string) {
-    this.selectedRole = role;
   }
 
 }

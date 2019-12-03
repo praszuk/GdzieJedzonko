@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../services/user/user.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-edit-basic-information',
@@ -11,9 +12,12 @@ export class BasicInformationComponent implements OnInit {
   editBasicInformationForm: FormGroup;
   submitSuccess: boolean;
   submitError: boolean;
-  constructor(private formBuilder: FormBuilder, private userService: UserService) { }
+  private isAdmin: boolean;
+  constructor(private formBuilder: FormBuilder, private userService: UserService, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
+    this.isAdmin = this.activatedRoute.parent.snapshot.params.id !== undefined;
+
     this.editBasicInformationForm = this.formBuilder.group({
       email: ['', Validators.email],
       first_name: [''],
@@ -25,18 +29,12 @@ export class BasicInformationComponent implements OnInit {
 
   onSubmit() {
     const dirtyValues = this.getDirtyValues(this.editBasicInformationForm);
-    this.userService.editProfile(dirtyValues).subscribe(
-      (next) => {
-        this.editBasicInformationForm.reset();
-        this.submitError = false;
-        this.submitSuccess = true;
-      },
-      (error) => {
-        this.editBasicInformationForm.reset();
-        this.submitSuccess = false;
-        this.submitError = true;
-      }
-    );
+    if (this.isAdmin) {
+     const userId = this.activatedRoute.parent.snapshot.params.id;
+     this.editUser(userId, dirtyValues);
+   } else {
+      this.editMyProfile(dirtyValues);
+    }
 
   }
 
@@ -57,5 +55,35 @@ export class BasicInformationComponent implements OnInit {
       });
 
     return dirtyValues;
+  }
+
+  editUser(userId: number, dirtyValues) {
+    this.userService.editUser(userId, dirtyValues).subscribe(
+      (next) => {
+        this.editBasicInformationForm.reset();
+        this.submitError = false;
+        this.submitSuccess = true;
+      },
+      (error) => {
+        this.editBasicInformationForm.reset();
+        this.submitSuccess = false;
+        this.submitError = true;
+      }
+    );
+  }
+
+  editMyProfile(dirtyValues) {
+    this.userService.editProfile(dirtyValues).subscribe(
+      (next) => {
+        this.editBasicInformationForm.reset();
+        this.submitError = false;
+        this.submitSuccess = true;
+      },
+      (error) => {
+        this.editBasicInformationForm.reset();
+        this.submitSuccess = false;
+        this.submitError = true;
+      }
+    );
   }
 }
