@@ -35,7 +35,7 @@ export class UserService {
                         last_name?: string;
                         birth_date?: string; }): Observable<any> {
 
-    return this.http.patch<any>(`${environment.apiUrl}${environment.userUrl}${id}`, user)
+    return this.http.patch<any>(`${environment.apiUrl}${environment.userUrl}${id}/`, user)
       .pipe(
         catchError(
           err => throwError(err)
@@ -43,14 +43,15 @@ export class UserService {
       );
   }
 
-  editProfile(id: number, user: {
+  editProfile(user: {
                             email?: string;
                             password?: string;
                             first_name?: string;
                             last_name?: string;
                             birth_date?: string; }): Observable<any> {
 
-    return this.http.patch<any>(`${environment.apiUrl}${environment.userUrl}${id}`, user)
+    const id = this.getCurrentUserId();
+    return this.http.patch<any>(`${environment.apiUrl}${environment.userUrl}${id}/`, user)
       .pipe(
         catchError(
           err => throwError(err)
@@ -69,6 +70,10 @@ export class UserService {
 
   getCurrentUserById(): Observable<User> {
     return this.getUserById(this.getUserIdFromTokens(this.getAccessToken()));
+  }
+
+  getCurrentUserId() {
+    return this.getUserIdFromTokens(this.getAccessToken());
   }
 
   getUserIdFromTokens(token: string): number {
