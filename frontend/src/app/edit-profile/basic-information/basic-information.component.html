@@ -8,6 +8,10 @@
         </h6>
       </label>
       <input class="form-control" name="email" id="email" formControlName="email">
+      <div class="alert alert-danger" *ngIf="editBasicInformationForm.get('email').hasError('email') &&
+        editBasicInformationForm.get('email').touched">
+        Składnia emaila jest niepoprawna. Przykład: Kowalski@op.pl
+      </div>
     </div>
 
     <div class="form-group">
@@ -38,7 +42,14 @@
     </div>
 
     <div class="form-group text-center">
-      <button class="btn btn-primary" [disabled]="editBasicInformationForm.dirty"> Wyślij </button>
+      <button class="btn btn-primary" [disabled]="editBasicInformationForm.pristine || editBasicInformationForm.invalid"> Wyślij </button>
+
+      <div class="alert alert-success text-center mt-3" *ngIf="submitSuccess">
+        Zmieniono dane
+      </div>
+      <div class="alert alert-danger text-center mt-3" *ngIf="submitError">
+        Błąd, dane nie zostały zmienione, spróbuj za chwile
+      </div>
     </div>
 
   </form>
