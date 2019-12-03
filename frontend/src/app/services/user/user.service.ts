@@ -40,7 +40,7 @@ export class UserService {
 
     return this.http.patch<User>(`${environment.apiUrl}${environment.userUrl}${id}/`, user)
       .pipe(
-        tap(() => this.setUserSubjectValue(user)),
+        tap((response) => this.setUserSubjectValue(response)),
         catchError(
           err => throwError(err)
         )
@@ -57,7 +57,7 @@ export class UserService {
     const id = this.getCurrentUserId();
     return this.http.patch<User>(`${environment.apiUrl}${environment.userUrl}${id}/`, user)
       .pipe(
-        tap(() => this.setUserSubjectValue(user)),
+        tap((response) => this.setUserSubjectValue(response)),
         catchError(
           err => throwError(err)
         )
