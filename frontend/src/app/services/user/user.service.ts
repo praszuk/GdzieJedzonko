@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, throwError} from 'rxjs';
+import {BehaviorSubject, Observable, throwError} from 'rxjs';
 import {User} from '../../models/user.model';
 import {environment} from '../../../environments/environment';
-import {catchError} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   user: User;
+  private userSubject: BehaviorSubject<User>;
+
   constructor(private http: HttpClient) {
+    this.userSubject = new BehaviorSubject<User>(null);
   }
 
 
@@ -33,10 +36,11 @@ export class UserService {
                         role?: number;
                         first_name?: string;
                         last_name?: string;
-                        birth_date?: string; }): Observable<any> {
+                        birth_date?: string; }): Observable<User> {
 
-    return this.http.patch<any>(`${environment.apiUrl}${environment.userUrl}${id}/`, user)
+    return this.http.patch<User>(`${environment.apiUrl}${environment.userUrl}${id}/`, user)
       .pipe(
+        tap(() => this.setUserSubjectValue(user)),
         catchError(
           err => throwError(err)
         )
@@ -48,11 +52,12 @@ export class UserService {
                             password?: string;
                             first_name?: string;
                             last_name?: string;
-                            birth_date?: string; }): Observable<any> {
+                            birth_date?: string; }): Observable<User> {
 
     const id = this.getCurrentUserId();
-    return this.http.patch<any>(`${environment.apiUrl}${environment.userUrl}${id}/`, user)
+    return this.http.patch<User>(`${environment.apiUrl}${environment.userUrl}${id}/`, user)
       .pipe(
+        tap(() => this.setUserSubjectValue(user)),
         catchError(
           err => throwError(err)
         )
@@ -100,6 +105,12 @@ export class UserService {
     this.user = user;
   }
 
+  getUserSubject(): Observable<User> {
+    return this.userSubject.asObservable();
+  }
 
+  setUserSubjectValue(value: any) {
+    this.userSubject.next(value);
+}
 
 }
