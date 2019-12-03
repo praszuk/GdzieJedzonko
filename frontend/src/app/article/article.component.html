@@ -2,7 +2,8 @@
   <ngx-spinner name="articleLoading"  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
   <div *ngIf="!isLoading">
     <div class="row mx-2 mt-2">
-     <a class="text-decoration-none text-dark" [routerLink]="['/userprofile', article.user.id]"> <p>{{article.user.first_name}} {{article.user.last_name}}</p> </a>
+     <a *ngIf="article.user" class="text-decoration-none text-dark" [routerLink]="['/userprofile', article.user.id]"> <p>{{article.user.first_name}} {{article.user.last_name}}</p> </a>
+      <p *ngIf="!article.user">[deleted]</p>
       <small class="ml-3 mt-1">{{article.creation_date}}</small><!--   <h6 class="ml-2" *ngFor="let tag of article.tags"><a routerLink="404">#{{tag}}</a></h6>-->
     </div>
     <h2>{{article.title}}</h2>

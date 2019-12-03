@@ -1,0 +1,56 @@
+<div class="border rounded shadow min-height-60">
+  <form [formGroup]="editBasicInformationForm" (ngSubmit)="onSubmit()" class="offset-1 col-10">
+
+    <div class="form-group">
+      <label class="mt-5" for="email">
+        <h6>
+          Email
+        </h6>
+      </label>
+      <input class="form-control" name="email" id="email" formControlName="email">
+      <div class="alert alert-danger" *ngIf="editBasicInformationForm.get('email').hasError('email') &&
+        editBasicInformationForm.get('email').touched">
+        Składnia emaila jest niepoprawna. Przykład: Kowalski@op.pl
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="first_name">
+        <h6>
+          Imie
+        </h6>
+      </label>
+      <input class="form-control" type="text" name="first_name" id="first_name" formControlName="first_name">
+    </div>
+
+    <div class="form-group">
+      <label for="last_name">
+        <h6>
+          Nazwisko
+        </h6>
+      </label>
+      <input class="form-control" type="text" name="last_name" id="last_name" formControlName="last_name">
+    </div>
+
+    <div class="form-group">
+      <label for="birth_date">
+        <h6>
+          Data urodzenia
+        </h6>
+      </label>
+      <input class="form-control" type="date" placeholder="YYYY-MM-DD" name="birth_date" id="birth_date" formControlName="birth_date">
+    </div>
+
+    <div class="form-group text-center">
+      <button class="btn btn-primary" [disabled]="editBasicInformationForm.pristine || editBasicInformationForm.invalid"> Wyślij </button>
+
+      <div class="alert alert-success text-center mt-3" *ngIf="submitSuccess">
+        Zmieniono dane
+      </div>
+      <div class="alert alert-danger text-center mt-3" *ngIf="submitError">
+        Błąd, dane nie zostały zmienione, spróbuj za chwile
+      </div>
+    </div>
+
+  </form>
+</div>

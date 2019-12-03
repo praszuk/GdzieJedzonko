@@ -1,0 +1,10 @@
+<div class="sidebar">
+  <div class="rounded-top rounded-bottom shadow-sm">
+    <div *ngFor="let option of options" class="border-bottom text-center" [ngClass]="{ 'active-container': activeTab === option.name}">
+     <a [routerLink]="[option.url]" class="text-decoration-none"
+        [ngClass]="{ 'active-text': activeTab === option.name}" (click)="setActiveTab(option.name)">
+       <p> {{option.name}} </p>
+     </a>
+    </div>
+  </div>
+</div>

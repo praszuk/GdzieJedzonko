@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, throwError} from 'rxjs';
+import {BehaviorSubject, Observable, throwError} from 'rxjs';
 import {User} from '../../models/user.model';
 import {environment} from '../../../environments/environment';
-import {catchError} from 'rxjs/operators';
+import {catchError, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   user: User;
-  constructor(private http: HttpClient) { }
+  private userSubject: BehaviorSubject<User>;
+
+  constructor(private http: HttpClient) {
+    this.userSubject = new BehaviorSubject<User>(null);
+  }
+
 
   getUserById(id: number): Observable<User> {
     return this.http.get<User>(`${environment.apiUrl}/api/users/${id}/`);
@@ -31,25 +36,28 @@ export class UserService {
                         role?: number;
                         first_name?: string;
                         last_name?: string;
-                        birth_date?: string; }): Observable<any> {
+                        birth_date?: string; }): Observable<User> {
 
-    return this.http.patch<any>(`${environment.apiUrl}${environment.userUrl}${id}`, user)
+    return this.http.patch<User>(`${environment.apiUrl}${environment.userUrl}${id}/`, user)
       .pipe(
+        tap((response) => this.setUserSubjectValue(response)),
         catchError(
           err => throwError(err)
         )
       );
   }
 
-  editProfile(id: number, user: {
+  editProfile(user: {
                             email?: string;
                             password?: string;
                             first_name?: string;
                             last_name?: string;
-                            birth_date?: string; }): Observable<any> {
+                            birth_date?: string; }): Observable<User> {
 
-    return this.http.patch<any>(`${environment.apiUrl}${environment.userUrl}${id}`, user)
+    const id = this.getCurrentUserId();
+    return this.http.patch<User>(`${environment.apiUrl}${environment.userUrl}${id}/`, user)
       .pipe(
+        tap((response) => this.setUserSubjectValue(response)),
         catchError(
           err => throwError(err)
         )
@@ -57,12 +65,28 @@ export class UserService {
   }
 
   deleteUser(id: number) {
-    return this.http.delete(`${environment.apiUrl}${environment.userUrl}${id}`)
+    return this.http.delete(`${environment.apiUrl}${environment.userUrl}${id}/`)
       .pipe(
         catchError(
           err => throwError(err)
         )
       );
+  }
+
+  getCurrentUserById(): Observable<User> {
+    return this.getUserById(this.getUserIdFromTokens(this.getAccessToken()));
+  }
+
+  getCurrentUserId() {
+    return this.getUserIdFromTokens(this.getAccessToken());
+  }
+
+  getUserIdFromTokens(token: string): number {
+    return JSON.parse(atob(token.split('.')[1])).user_id;
+  }
+
+  getAccessToken() {
+    return localStorage.getItem('access');
   }
 
   getUser() {
@@ -81,6 +105,12 @@ export class UserService {
     this.user = user;
   }
 
+  getUserSubject(): Observable<User> {
+    return this.userSubject.asObservable();
+  }
 
+  setUserSubjectValue(value: any) {
+    this.userSubject.next(value);
+}
 
 }

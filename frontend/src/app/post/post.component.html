@@ -2,7 +2,8 @@
   <div class="mx-1">
     <h2> <a [routerLink]="['/article', post.id]"> {{post.title}} </a> </h2>
     <small>{{post.creation_date}}</small>
-    <p> <a [routerLink]="['/userprofile', post.user.id]"> {{post.user.first_name}} {{post.user.last_name}} </a> </p>
+    <p *ngIf="post.user"> <a [routerLink]="['/userprofile', post.user.id]"> {{post.user.first_name}} {{post.user.last_name}} </a> </p>
+    <p *ngIf="!post.user">[deleted]</p>
   </div>
 </div>
 

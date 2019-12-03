@@ -21,6 +21,11 @@ import { AdminPanelUserSectionComponent } from './admin-panel-user-section/admin
 import { NewReviewComponent } from './new-review/new-review.component';
 import {QuillModule} from 'ngx-quill';
 import {NgxSpinnerModule} from 'ngx-spinner';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import { BasicInformationComponent } from './edit-profile/basic-information/basic-information.component';
+import { ChangePasswordComponent } from './edit-profile/change-password/change-password.component';
+import { DeleteAccountComponent } from './edit-profile/delete-account/delete-account.component';
+import { StickySidebarComponent } from './sticky-sidebar/sticky-sidebar.component';
 
 
 @NgModule({
@@ -38,7 +43,12 @@ import {NgxSpinnerModule} from 'ngx-spinner';
     UserProfileComponent,
     AdminPanelUserInfoComponent,
     AdminPanelUserSectionComponent,
-    NewReviewComponent
+    NewReviewComponent,
+    EditProfileComponent,
+    BasicInformationComponent,
+    ChangePasswordComponent,
+    DeleteAccountComponent,
+    StickySidebarComponent
   ],
   imports: [
     BrowserModule,

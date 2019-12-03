@@ -15,10 +15,8 @@ export class AuthService {
 
   private readonly ACCESS_TOKEN = 'access';
   private readonly REFRESH_TOKEN = 'refresh';
-  private userSubject: BehaviorSubject<User>;
 
   constructor(private http: HttpClient, private router: Router, private userService: UserService) {
-    this.userSubject = new BehaviorSubject<User>(null);
   }
 
   register(user) {
@@ -34,7 +32,7 @@ export class AuthService {
             tap(user => {
               this.register({});
               this.setUser(user);
-              this.userSubject.next(user);
+              this.setUserSubjectValue(user);
             })
           )),
         mapTo(true),
@@ -47,6 +45,8 @@ export class AuthService {
   logout() {
     this.setUser(null);
     this.removeTokens();
+    this.setUserSubjectValue(null);
+    this.router.navigate(['home']);
   }
 
   isLoggedIn(): boolean {
@@ -69,7 +69,7 @@ export class AuthService {
   }
 
   getUserSubject(): Observable<User> {
-    return this.userSubject.asObservable();
+    return this.userService.getUserSubject();
   }
 
   getTokens() {
@@ -116,4 +116,7 @@ export class AuthService {
     this.userService.setUser(user);
   }
 
+  private setUserSubjectValue(value) {
+    this.userService.setUserSubjectValue(value);
+  }
 }
