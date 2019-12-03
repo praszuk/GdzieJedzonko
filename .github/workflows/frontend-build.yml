@@ -2,10 +2,20 @@ name: Frontend build
 on: [push]
 jobs:
   build:
+    env:
+        PROJECT_NAME: ci
+        FRONTEND_IMAGE: ci_frontend
+        FRONTEND_CONTAINER: ci_frontend_1
+        FRONTEND_STATIC: ci_frontend-static
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v1
       - name: Add environmental variables file
         run: echo -e 'POSTGRES_USER=${{ secrets.POSTGRES_USER }}\nPOSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}\nPOSTGRES_DB=${{ secrets.POSTGRES_DB }}\nPOSTGRES_HOST=db\nPOSTGRES_PORT=5468\nSECRET_KEY=${{ secrets.SECRET_KEY }}' > .env
       - name: Run docker-compose up
-        run: PORT=2000 docker-compose -f docker-compose-prod.yml -p ci up -d --build frontend
+        run: PORT=2000 docker-compose -f docker-compose-prod.yml -p $PROJECT_NAME up -d --build frontend
+      - name: Clean
+        run: |
+            docker rm $FRONTEND_CONTAINER
+            docker rmi $FRONTEND_IMAGE
+            docker volume rm $FRONTEND_STATIC
