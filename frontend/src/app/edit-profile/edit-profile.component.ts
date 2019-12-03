@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-edit-profile',
@@ -7,15 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EditProfileComponent implements OnInit {
   options: any;
+  isAdmin: boolean;
 
 
-  constructor() { }
+  constructor(private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
-   this.options = this.setOptions();
+    this.isAdmin = this.activatedRoute.snapshot.params.id !== undefined;
+    if (this.isAdmin) {
+        this.options = this.setAdminOptions();
+      } else {
+        this.options = this.setUserOptions();
+      }
   }
 
-  private setOptions() {
+  private setUserOptions() {
     return [{
         name: 'Podstawowe informacje',
         url: 'basic-information'
@@ -26,5 +33,21 @@ export class EditProfileComponent implements OnInit {
         name: 'Usuń konto',
         url: 'delete'
       }];
+  }
+
+  private setAdminOptions() {
+    return [{
+      name: 'Podstawowe informacje',
+      url: 'basic-information'
+    }, {
+      name: 'Zmień hasło',
+      url: 'password'
+    }, {
+      name: 'Zmień role',
+      url: 'role'
+    }, {
+      name: 'Usuń konto',
+      url: 'delete'
+    }];
   }
 }
