@@ -8,17 +8,14 @@
       <p>Data dołączenia: {{user.join_date}}</p>
     </div>
     <div class="col-2 border text-center">
-      <button id="singlebutton" name="singlebutton" class="btn btn-primary mt-5">Usuń konto</button>
+      <button name="editButton" class="btn btn-outline-dark mt-5" [routerLink]="['/editprofile',user.id]">
+        Edytuj konto
+      </button>
     </div>
     <div class="col-2 border rounded-right text-center">
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle mt-5 w-75" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-         {{selectedRole}}
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <a class="dropdown-item" (click)="selected(role)" *ngFor="let role of roles">{{role}}</a>
-        </div>
-      </div>
+      <button name="deleteButton" class="btn btn-outline-danger mt-5" [routerLink]="['/editprofile',user.id,'delete']">
+        Usuń konto
+      </button>
     </div>
   </div>
 </div>
