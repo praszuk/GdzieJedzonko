@@ -9,11 +9,12 @@ import {LoginComponent} from './login/login.component';
 import {AuthGuard} from './auth/guards/AuthGuard';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {AdminPanelUserSectionComponent} from './admin-panel-user-section/admin-panel-user-section.component';
-import {NewReviewComponent} from "./new-review/new-review.component";
-import {EditProfileComponent} from "./edit-profile/edit-profile.component";
-import {BasicInformationComponent} from "./edit-profile/basic-information/basic-information.component";
-import {ChangePasswordComponent} from "./edit-profile/change-password/change-password.component";
-import {DeleteAccountComponent} from "./edit-profile/delete-account/delete-account.component";
+import {NewReviewComponent} from './new-review/new-review.component';
+import {EditProfileComponent} from './edit-profile/edit-profile.component';
+import {BasicInformationComponent} from './edit-profile/basic-information/basic-information.component';
+import {ChangePasswordComponent} from './edit-profile/change-password/change-password.component';
+import {DeleteAccountComponent} from './edit-profile/delete-account/delete-account.component';
+import {ChangeRoleComponent} from './edit-profile/change-role/change-role.component';
 
 
 const routes: Routes = [ {
@@ -50,9 +51,29 @@ const routes: Routes = [ {
     }, {
       path: 'basic-information',
       component: BasicInformationComponent
+    }, {
+      path: 'password',
+      component: ChangePasswordComponent
+    }, {
+      path: 'delete',
+      component: DeleteAccountComponent
+    }]
+  }, {
+    path: 'editprofile/:id',
+    component: EditProfileComponent,
+    children: [{
+      path: '',
+      redirectTo: 'basic-information',
+      pathMatch: 'full'
+    }, {
+      path: 'basic-information',
+      component: BasicInformationComponent
       }, {
       path: 'password',
       component: ChangePasswordComponent
+    }, {
+      path: 'role',
+      component: ChangeRoleComponent
     }, {
       path: 'delete',
       component: DeleteAccountComponent
@@ -74,7 +95,7 @@ const routes: Routes = [ {
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes,{scrollPositionRestoration: 'enabled'})],
+  imports: [RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
