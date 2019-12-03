@@ -16,6 +16,6 @@ jobs:
         run: PORT=2000 docker-compose -f docker-compose-prod.yml -p $PROJECT_NAME up -d --build frontend
       - name: Clean
         run: |
-            docker rm $FRONTEND_CONTAINER
+            docker rm -f $FRONTEND_CONTAINER
             docker rmi $FRONTEND_IMAGE
             docker volume rm $FRONTEND_STATIC
