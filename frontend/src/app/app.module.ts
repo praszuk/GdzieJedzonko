@@ -27,6 +27,7 @@ import { ChangePasswordComponent } from './edit-profile/change-password/change-p
 import { DeleteAccountComponent } from './edit-profile/delete-account/delete-account.component';
 import { StickySidebarComponent } from './sticky-sidebar/sticky-sidebar.component';
 import { ChangeRoleComponent } from './edit-profile/change-role/change-role.component';
+import { ImageUploadComponent } from './image-upload/image-upload.component';
 
 
 @NgModule({
@@ -50,7 +51,8 @@ import { ChangeRoleComponent } from './edit-profile/change-role/change-role.comp
     ChangePasswordComponent,
     DeleteAccountComponent,
     StickySidebarComponent,
-    ChangeRoleComponent
+    ChangeRoleComponent,
+    ImageUploadComponent,
   ],
   imports: [
     BrowserModule,
