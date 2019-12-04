@@ -2,5 +2,6 @@ django>=2.2
 djangorestframework>=3.10.3
 djangorestframework-simplejwt>=4.3.0
 django-enumfield>=1.5
+pillow>=6.2.1
 psycopg2>=2.8.2
 gunicorn>=19.9.0
