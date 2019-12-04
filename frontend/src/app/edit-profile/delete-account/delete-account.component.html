@@ -1,0 +1,18 @@
+<div class="border rounded shadow min-height-30 text-center">
+  <div *ngIf="!confirmation; else deleteConfirmation">
+    <h4 class="mt-3"> Usuniecie konta jest nieodwracalne!</h4>
+    <h6> Twoje recenzje pozostaną na stronie, lecz ich autor będzie wyświetlany jako [deleted] </h6>
+    <div class="container min-height-20 text-center">
+      <button class="btn btn-danger mt-4 shadow-sm" (click)="showConfirmation()"> Usuń konto </button>
+    </div>
+  </div>
+
+  <ng-template #deleteConfirmation>
+    <h4 class="mt-3"> Czy jesteś pewny? </h4>
+    <h6> Twoja decyzja jest nieodwracalna </h6>
+    <div class="container min-height-20 text-center">
+      <button class="btn btn-danger mt-4 shadow-sm" (click)="deleteAccount()"> Usuń konto </button>
+      <button class="btn btn-light border mt-4 ml-5 shadow-sm" (click)="showConfirmation()"> Cofnij </button>
+    </div>
+  </ng-template>
+</div>

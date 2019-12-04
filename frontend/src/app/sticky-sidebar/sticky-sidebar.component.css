@@ -1,0 +1,18 @@
+.sidebar {
+  position: -webkit-sticky!important;
+  position: sticky!important;
+  top: 50px;
+}
+
+.active-container {
+  font-weight: normal;
+  font-size: large;
+  padding-top: 6px;
+  border-left: 3px solid #fcc007;
+}
+
+.active-text {
+  color:black;
+}
+
+

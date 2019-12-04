@@ -1,41 +1,48 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
+import {ArticleService} from '../services/article/article.service';
+import {Article} from '../models/article.model';
+import {NgxSpinnerService} from 'ngx-spinner';
 
 @Component({
   selector: 'app-article',
   templateUrl: './article.component.html',
   styleUrls: ['./article.component.css']
 })
-export class ArticleComponent implements OnInit {
-  id: string;
-  title: string;
-  text: string;
-  creationDate;
-  tags: string [];
+export class ArticleComponent implements OnInit, OnDestroy {
+  articleId: number;
+  article: Article;
   subscription: any;
-  constructor(private Activatedroute: ActivatedRoute) { }
+  isLoading = true;
+  constructor(private activatedroute: ActivatedRoute,
+              private articleService: ArticleService,
+              private loadingService: NgxSpinnerService
+  ) { }
 
   ngOnInit() {
-    this.testValues();
-    this.subscription = this.Activatedroute.paramMap.subscribe(params => {
-      this.id = params.get('id');
+    this.loadingService.show('articleLoading');
+    this.subscription = this.activatedroute.paramMap.subscribe(params => {
+      this.articleId = +params.get('id');
       }
     );
+
+    this.getArticle(this.articleId);
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
-  testValues() {
-    this.title = 'Test title';
-    // tslint:disable-next-line:max-line-length
-    this.text = ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec aliquet vel ligula vitae bibendum. Nam eu magna tincidunt, congue elit a, rhoncus est. Suspendisse ac libero odio. Quisque odio tortor, volutpat vitae justo vulputate, volutpat suscipit ex. Sed ac aliquet mi, ac porta erat. Aliquam condimentum nulla sit amet erat tempor, at consectetur est gravida. Nullam at lacus elit. Maecenas lacinia risus eros, nec consectetur dui varius nec. In sit amet molestie eros, at ornare purus. Cras non libero eros. Aenean tempus porttitor mauris, ut cursus augue congue vel. Vivamus viverra efficitur ante, nec dapibus nisi condimentum nec. Aliquam eget finibus massa, ut ullamcorper odio. Cras eget ex et urna semper maximus blandit sit amet nunc. Praesent sit amet euismod metus.\n' +
-      '\n' +
-      // tslint:disable-next-line:max-line-length
-      'Suspendisse orci leo, laoreet nec ornare vitae, volutpat sit amet erat. Aenean ac magna laoreet, pellentesque diam eget, interdum mi. Cras sed eleifend neque. Nam sit amet eros sit amet lacus semper malesuada. Vestibulum a ante non lorem maximus rhoncus non ut risus. Etiam pellentesque neque non est dictum, non facilisis dui vestibulum. Praesent lobortis, urna vitae condimentum egestas, ipsum lacus viverra turpis, commodo cursus turpis sem non tellus. Duis placerat leo et diam sollicitudin malesuada. Suspendisse tempus accumsan aliquam. Maecenas nunc nisi, malesuada vel lorem nec, accumsan varius felis. Nam iaculis eros vitae imperdiet volutpat. Suspendisse orci sem, aliquet sit amet congue nec, euismod id nulla. Vestibulum scelerisque quam ultricies ligula mattis, vitae posuere mauris gravida. Aenean gravida facilisis arcu, ut venenatis lacus luctus nec. Sed vel euismod dui. Etiam turpis magna, volutpat vitae mollis et, rutrum non ';
-    this.creationDate = '2019-10-25';
-    this.tags = ['one', 'two', 'three'];
+  getArticle(articleId: number) {
+    this.articleService.getArticle(articleId).subscribe(
+      (article) => {
+        this.article = article;
+        this.isLoading = false;
+        this.loadingService.hide('articleLoading');
+      },
+      (error) => {
+      }
+    );
   }
 
 }

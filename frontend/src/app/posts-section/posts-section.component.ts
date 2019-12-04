@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import {Post} from '../post';
+import {Component, Input, OnInit} from '@angular/core';
+import {Post} from '../models/post.model';
+import {ArticleService} from '../services/article/article.service';
+import {NgxSpinnerService} from 'ngx-spinner';
 
 @Component({
   selector: 'app-posts-section',
@@ -7,61 +9,47 @@ import {Post} from '../post';
   styleUrls: ['./posts-section.component.css']
 })
 export class PostsSectionComponent implements OnInit {
-  posts: Post [];
-
-  constructor() {  }
+  @Input() userId?: number;
+  posts: Post[];
+  isError = false;
+  isLoading = true;
+  constructor(private articleService: ArticleService, private loadingService: NgxSpinnerService) {  }
 
   ngOnInit() {
-    this.posts = [{
-      id: 1,
-      title: 'Test title',
-      description: 'Test description',
-      content: 'Test content',
-      creationDate: '2019-10-15',
-  }, {
-      id: 2,
-      title: 'Test title 2',
-      description: 'Test description 2',
-      content: 'Test content 2',
-      creationDate: '2019-10-15',
-    },{
-      id: 1,
-      title: 'Test title',
-      description: 'Test description',
-      content: 'Test content',
-      creationDate: '2019-10-15',
-    }, {
-      id: 2,
-      title: 'Test title 2',
-      description: 'Test description 2',
-      content: 'Test content 2',
-      creationDate: '2019-10-15',
-    },{
-      id: 1,
-      title: 'Test title',
-      description: 'Test description',
-      content: 'Test content',
-      creationDate: '2019-10-15',
-    }, {
-      id: 2,
-      title: 'Test title 2',
-      description: 'Test description 2',
-      content: 'Test content 2',
-      creationDate: '2019-10-15',
-    },{
-      id: 1,
-      title: 'Test title',
-      description: 'Test description',
-      content: 'Test content',
-      creationDate: '2019-10-15',
-    }, {
-      id: 2,
-      title: 'Test title 2',
-      description: 'Test description 2',
-      content: 'Test content 2',
-      creationDate: '2019-10-15',
-    }];
+    this.loadingService.show('posts-section-loading');
+    if (this.userId) {
+      this.getUserArticles(this.userId);
+    } else {
+      this.getAllArticles();
+    }
   }
 
+  getUserArticles(userId: number) {
+    this.articleService.getUserArticles(userId).subscribe(
+      (posts) => {
+        this.isError = false;
+        this.posts = posts;
+        this.isLoading = false;
+        this.loadingService.hide('posts-section-loading');
+      },
+      (error) => {
+        this.isError = true;
+      }
+    );
+  }
+
+  getAllArticles() {
+    this.articleService.getAllArticles().subscribe(
+      (posts) => {
+        this.isError = false;
+        this.posts = posts;
+        this.isLoading = false;
+        this.loadingService.hide('posts-section-loading');
+      },
+      (error) => {
+        this.isError = true;
+      }
+    );
+  }
 
 }

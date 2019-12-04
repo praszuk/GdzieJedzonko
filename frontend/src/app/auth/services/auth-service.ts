@@ -1,28 +1,27 @@
-import {Injectable} from "@angular/core";
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {User} from "../../user";
-import {Tokens} from "../tokens.model";
-import {BehaviorSubject, Observable, of, throwError} from "rxjs";
-import {environment} from "src/environments/environment";
-import {catchError, mapTo, switchMap, tap} from "rxjs/operators";
-import {Router} from "@angular/router";
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {User} from '../../models/user.model';
+import {Tokens} from '../tokens.model';
+import {Observable, of} from 'rxjs';
+import {environment} from 'src/environments/environment';
+import {catchError, mapTo, switchMap, tap} from 'rxjs/operators';
+import {Router} from '@angular/router';
+import {UserService} from '../../services/user/user.service';
+import {Role} from '../../models/role.enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private readonly ACCESS_TOKEN = "access";
-  private readonly REFRESH_TOKEN = "refresh";
-  private userSubject: BehaviorSubject<User>;
-  user: User;
+  private readonly ACCESS_TOKEN = 'access';
+  private readonly REFRESH_TOKEN = 'refresh';
 
-  constructor(private http: HttpClient, private router: Router) {
-    this.userSubject = new BehaviorSubject<User>(null);
+  constructor(private http: HttpClient, private router: Router, private userService: UserService) {
   }
 
   register(user) {
-    return this.http.post<User>(`${environment.apiUrl}${environment.registerUrl}`, user);
+    return this.http.post<User>(`${environment.apiUrl}${environment.userUrl}`, user);
   }
 
   login(credentials: {email: string, password: string}): Observable<boolean> {
@@ -34,7 +33,7 @@ export class AuthService {
             tap(user => {
               this.register({});
               this.setUser(user);
-              this.userSubject.next(user);
+              this.setUserSubjectValue(user);
             })
           )),
         mapTo(true),
@@ -47,6 +46,8 @@ export class AuthService {
   logout() {
     this.setUser(null);
     this.removeTokens();
+    this.setUserSubjectValue(null);
+    this.router.navigate(['home']);
   }
 
   isLoggedIn(): boolean {
@@ -55,37 +56,46 @@ export class AuthService {
 
   refreshTokens() {
     return this.http.post<any>(`${environment.apiUrl}${environment.refreshUrl}`, {
-      'refresh': this.getRefreshTokens()})
+      refresh: this.getRefreshTokens()})
       .pipe(
         tap((tokens: Tokens) => {
         this.storeAccessTokens(tokens.access);
-    }),catchError((err) => {
-      if(err.status == 401) {
+    }), catchError((err) => {
+      if (err.status === 401) {
         this.logout();
         this.router.navigate(['/login']);
-        return of('401 error')
+        return of('401 error');
       }
       }));
   }
 
-  getUserSubject(): Observable<User>{
-    return this.userSubject.asObservable();
+  getUserSubject(): Observable<User> {
+    return this.userService.getUserSubject();
   }
 
   getTokens() {
     return localStorage.getItem(this.ACCESS_TOKEN);
   }
 
-  getCurrentUserById(): Observable<User>{
-    return this.http.get<User>(`${environment.apiUrl}/api/users/${this.getUserIdFromTokens(this.getAccessToken())}/`);
+  getCurrentUserById(): Observable<User> {
+    return this.getUserById(this.getUserIdFromTokens(this.getAccessToken()));
   }
 
-  getUserById(id: number): Observable<User>{
-    return this.http.get<User>(`${environment.apiUrl}/api/users/${id}/`);
+  getUserById(id: number): Observable<User> {
+    return this.userService.getUserById(id);
   }
 
-  getUserIdFromTokens(token: string): number{
-    return JSON.parse(atob(token.split('.')[1])).user_id
+  getUserIdFromTokens(token: string): number {
+    return JSON.parse(atob(token.split('.')[1])).user_id;
+  }
+
+  getRoleFromTokens(): number {
+    if (this.isLoggedIn()) {
+      const token = this.getAccessToken();
+      return JSON.parse(atob(token.split('.')[1])).role;
+    } else {
+      return Role.GUEST;
+    }
   }
 
 
@@ -112,20 +122,11 @@ export class AuthService {
     localStorage.removeItem(this.REFRESH_TOKEN);
   }
 
-  getUser() {
-    return this.user;
-  }
-
-  getUserFullName(){
-    return `${this.user.first_name} ${this.user.last_name}`;
-  }
-
-  getUserRole(){
-    return this.user.role;
-  }
-
   setUser(user: User) {
-    this.user = user;
+    this.userService.setUser(user);
   }
 
+  private setUserSubjectValue(value) {
+    this.userService.setUserSubjectValue(value);
+  }
 }

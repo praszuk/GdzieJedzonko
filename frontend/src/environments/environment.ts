@@ -7,7 +7,8 @@ export const environment = {
   apiUrl: 'http://0.0.0.0:8000',
   loginUrl: '/api/sessions/token/',
   refreshUrl: '/api/sessions/refresh/',
-  registerUrl: '/api/users/'
+  userUrl: '/api/users/',
+  articlesUrl: '/api/articles/'
 };
 
 /*
