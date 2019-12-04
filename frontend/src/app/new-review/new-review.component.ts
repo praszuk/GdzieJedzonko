@@ -1,8 +1,9 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ArticleService} from '../services/article/article.service';
 import {Subscription} from 'rxjs';
 import {Router} from '@angular/router';
+import {ImageUploadComponent} from '../image-upload/image-upload.component';
 
 @Component({
   selector: 'app-new-review',
@@ -10,6 +11,7 @@ import {Router} from '@angular/router';
   styleUrls: ['./new-review.component.css']
 })
 export class NewReviewComponent implements OnInit, OnDestroy {
+  @ViewChild(ImageUploadComponent, {static: false}) imageUpload: ImageUploadComponent;
   editorForm: FormGroup;
   titleExists = false;
   subscription: Subscription = null;
@@ -37,11 +39,14 @@ export class NewReviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSubmit() {
+   onSubmit() {
     const article = this.editorForm.value;
     this.subscription = this.articleService.newReview(article).subscribe(
-      (id) => {
+      async (id) => {
           this.titleExists = false;
+          console.log(id);
+          await this.imageUpload.uploadImages(id.id);
+          console.log("after await");
           this.router.navigate([`article/${id.id}`]);
         },
       error => {
