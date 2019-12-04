@@ -15,7 +15,7 @@ export class ImageService {
     console.log('inside imageservice');
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post(`${environment.apiUrl}/${articleId}${environment.imagesUrl}`, formData)
+    return this.http.post(`${environment.apiUrl}${environment.articlesUrl}${articleId}${environment.imagesUrl}`, formData)
       .pipe(
         catchError(
           (err) => throwError(err)
