@@ -44,9 +44,9 @@ export class NewReviewComponent implements OnInit, OnDestroy {
     this.subscription = this.articleService.newReview(article).subscribe(
       async (id) => {
           this.titleExists = false;
-          console.log(id);
-          await this.imageUpload.uploadImages(id.id);
-          console.log("after await");
+          // todo
+          // await this.imageUpload.uploadImages(id.id);
+          // console.log("after await");
           this.router.navigate([`article/${id.id}`]);
         },
       error => {
