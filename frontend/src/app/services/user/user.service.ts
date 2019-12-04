@@ -40,7 +40,6 @@ export class UserService {
 
     return this.http.patch<User>(`${environment.apiUrl}${environment.userUrl}${id}/`, user)
       .pipe(
-        tap((response) => this.setUserSubjectValue(response)),
         catchError(
           err => throwError(err)
         )
