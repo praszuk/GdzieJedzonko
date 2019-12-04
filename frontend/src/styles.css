@@ -1,0 +1,29 @@
+/* You can add global styles to this file, and also import other style files */
+
+.min-height-10 {
+  min-height: 10vh;
+}
+
+.min-height-20 {
+  min-height: 20vh;
+}
+
+.min-height-30 {
+  min-height: 30vh;
+}
+
+.min-height-40 {
+  min-height: 40vh;
+}
+
+.min-height-50 {
+  min-height: 50vh;
+}
+
+.min-height-60 {
+  min-height: 60vh;
+}
+
+.min-height-80 {
+  min-height: 80vh;
+}

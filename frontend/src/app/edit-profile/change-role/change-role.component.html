@@ -1,0 +1,26 @@
+<div class="border rounded shadow min-height-30">
+  <form (ngSubmit)="onSubmit()" class="offset-1 col-10">
+    <div class="form-group mt-3 text-center">
+      <label class="form-check-label">
+        <h4> Wybierz role </h4>
+      </label>
+      <div class="dropdown">
+        <button class="btn btn-light dropdown-toggle mt-3 col-3" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{selectedRole}}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item text-center" (click)="select(role)" *ngFor="let role of roles">{{role}}</a>
+        </div>
+      </div>
+
+      <button class="btn btn-primary my-5"> Zmień </button>
+      <div class="alert alert-success text-center mt-3" *ngIf="submitSuccess">
+        Rola została zmieniona
+      </div>
+      <div class="alert alert-danger text-center mt-3" *ngIf="submitError">
+        Błąd, rola nie została zmieniona, spróbuj za chwile
+      </div>
+    </div>
+  </form>
+
+</div>

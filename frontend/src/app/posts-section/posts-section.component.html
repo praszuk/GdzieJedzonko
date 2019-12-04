@@ -1,0 +1,9 @@
+<div>
+  <div class="offset-3 col-6 border border-light rounded mb-1 min-height-80">
+    <ngx-spinner name="posts-section-loading"  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
+    <div *ngIf="!isLoading">
+      <app-post *ngFor="let post of posts" [post]="post"></app-post>
+    </div>
+  </div>
+</div>
+

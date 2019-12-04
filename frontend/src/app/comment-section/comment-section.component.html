@@ -1,0 +1,7 @@
+<h2 class="offset-3 font-weight-light mt-4">Komentarze</h2>
+<div class="offset-3 col-6 mt-2 mb-5 border rounded border-light min-height-20">
+  <ngx-spinner name="comments-section-loading" bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
+  <div *ngIf="!isLoading">
+    <app-comment *ngFor="let comment of comments" [comment]="comment"></app-comment>
+  </div>
+</div>

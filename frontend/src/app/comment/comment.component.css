@@ -1,0 +1,18 @@
+.bg-creamy {
+  background-color: #fdfbfb;
+}
+
+a {
+  color: #0039ff;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #007eff;
+}
+
+a:visited {
+  color: #233343;
+}
+
+
