@@ -63,7 +63,8 @@ const routes: Routes = [ {
     }]
   }, {
     path: 'userprofile/:id',
-    component: UserProfileComponent
+    component: UserProfileComponent,
+    canActivate: [UserGuard]
   }, {
     path: 'admin',
     component: AdminPanelUserSectionComponent,
@@ -100,7 +101,7 @@ const routes: Routes = [ {
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled', enableTracing:true})],
+  imports: [RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
