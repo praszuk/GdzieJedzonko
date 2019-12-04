@@ -5,4 +5,5 @@ export class Post {
   title: string;
   creation_date: string;
   user: SimpleUser;
+  thumbnail?: string;
 }
