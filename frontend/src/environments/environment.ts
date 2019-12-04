@@ -8,7 +8,8 @@ export const environment = {
   loginUrl: '/api/sessions/token/',
   refreshUrl: '/api/sessions/refresh/',
   userUrl: '/api/users/',
-  articlesUrl: '/api/articles/'
+  articlesUrl: '/api/articles/',
+  imagesUrl: '/images/'
 };
 
 /*
