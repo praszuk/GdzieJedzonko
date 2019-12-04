@@ -3,6 +3,7 @@ import {AuthService} from '../auth/services/auth-service';
 import {Subscription} from 'rxjs';
 import {Router} from '@angular/router';
 import {Role} from '../models/role.enum';
+import {User} from '../models/user.model';
 
 
 @Component({
@@ -14,7 +15,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   loggedIn: boolean;
   isModerator: boolean;
   isAdmin: boolean;
-  username: string;
+  user: User;
   userSubscription: Subscription;
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -25,7 +26,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
                                       user => {
                                         if (user != null) {
 
-                                          this.username = `${user.first_name} ${user.last_name}`;
+                                          this.user = user;
                                           this.loggedIn = true;
                                           this.isAdmin = user.role === Role.ADMIN;
                                         } else {
@@ -33,13 +34,13 @@ export class NavBarComponent implements OnInit, OnDestroy {
                                             this.authService.getCurrentUserById()
                                               .subscribe(
                                                 user => {
-                                                  this.username = `${user.first_name} ${user.last_name}`;
+                                                  this.user = user;
                                                   this.loggedIn = true;
                                                   this.isAdmin = user.role === Role.ADMIN;
                                                 }
                                               );
                                           } else {
-                                            this.username = '';
+                                            this.user = null;
                                             this.loggedIn = false;
                                             this.isAdmin = false;
                                           }

@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {User} from '../models/user.model';
 import {NgxSpinnerService} from 'ngx-spinner';
+import {UserService} from '../services/user/user.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-user-profile',
@@ -9,14 +11,14 @@ import {NgxSpinnerService} from 'ngx-spinner';
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent implements OnInit, OnDestroy {
- subscription;
+ subscription: Subscription;
  userId: number;
  user: User;
  isLoading = true;
-  constructor(private Activatedroute: ActivatedRoute, private loadingService: NgxSpinnerService) {  }
+  constructor(private Activatedroute: ActivatedRoute, private loadingService: NgxSpinnerService, private userService: UserService) {  }
 
   ngOnInit() {
-    this.loadingService.show();
+    this.loadingService.show('userProfileLoading');
     this.subscription = this.Activatedroute.paramMap.subscribe(params => {
         this.userId = +params.get('id');
       }
@@ -24,9 +26,18 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.getUserById(this.userId);
   }
 
-  getUserById(userId) {
-
-    this.user = {id: 1, last_name: 'asdf', first_name: 'df', role: 1, email: '123', birth_date: '34343', join_date: '232'};
+  getUserById(userId: number) {
+    this.userService.getUserById(userId).subscribe(
+      (user) => {
+        this.user = user;
+        this.loadingService.hide('userProfileLoading');
+        this.isLoading = false;
+      },
+      (error) => {
+        this.loadingService.show('userProfileLoading');
+        this.isLoading = true;
+      }
+    )
 
   }
 

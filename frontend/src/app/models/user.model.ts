@@ -6,6 +6,6 @@ export class User {
   first_name: string;
   last_name: string;
   birth_date: string;
-  join_date: string;
+  date_joined: string;
   role: Role;
 }
