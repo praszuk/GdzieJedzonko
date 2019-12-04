@@ -26,7 +26,7 @@ export class CommentSectionComponent implements OnInit {
           first_name: 'testName1',
           last_name: 'testSurName1',
           birth_date: 'testdate1',
-          join_date: 'testJoindate1',
+          date_joined: 'testJoindate1',
           role: 1
         },
         comment: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin eget neque nibh. Integer a sapien id' +
@@ -40,7 +40,7 @@ export class CommentSectionComponent implements OnInit {
           first_name: 'testName2',
           last_name: 'testSurName2',
           birth_date: 'testdate2',
-          join_date: 'testJoindate2',
+          date_joined: 'testJoindate2',
           role: 1
         },
         comment: 'Test comment 2',
