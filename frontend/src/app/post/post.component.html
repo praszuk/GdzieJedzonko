@@ -1,9 +1,19 @@
-<div class="border border-dark my-2 rounded mb-1">
-  <div class="mx-1">
-    <h2> <a [routerLink]="['/article', post.id]"> {{post.title}} </a> </h2>
-    <small>{{post.creation_date}}</small>
-    <p *ngIf="post.user"> <a [routerLink]="['/userprofile', post.user.id]"> {{post.user.first_name}} {{post.user.last_name}} </a> </p>
-    <p *ngIf="!post.user">[deleted]</p>
+<div [@slideIn]="postState" class="container-fluid ">
+  <div class="my-4 mx-2 border border-light rounded-bottom rounded-top text-dark">
+    <img class="border pointer" [routerLink]="['/article', post.id]" [src]="thumbnail" width="100%" [height]="200"/>
+    <div class="gradient">
+      <div class="container-fluid text-center pt-1 pb-1">
+          <h6 class="pointer" [routerLink]="['/article', post.id]"> {{post.title}} </h6>
+      </div>
+      <div class="container-fluid">
+        <div class="row rounded-bottom">
+          <div class="mr-auto ml-1">
+            <p *ngIf="post.user" class="pointer" [routerLink]="['/userprofile', post.user.id]"> {{post.user.first_name}} {{post.user.last_name}} </p>
+            <p *ngIf="!post.user">[deleted]</p>
+          </div>
+          <small class="ml-auto mr-1 mt-1">{{post.creation_date}}</small>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
