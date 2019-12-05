@@ -1,9 +1,14 @@
-<div>
-  <div class="offset-3 col-6 border border-light rounded mb-1 min-height-80">
+<div class="min-height-30 offset-3 col-6 border border-light text-center">
+  <div class="min-height-10"></div>
+  <h2>MAPA</h2>
+</div>
+<div class="min-height-5"></div>
+<div class="min-height-80">
     <ngx-spinner name="posts-section-loading"  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
     <div *ngIf="!isLoading">
-      <app-post *ngFor="let post of posts" [post]="post"></app-post>
+      <div class="row">
+        <app-post class="col-3" *ngFor="let post of posts" [post]="post"></app-post>
+      </div>
     </div>
   </div>
-</div>
 

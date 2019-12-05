@@ -10,4 +10,6 @@ export class Article {
   user?: User;
   comments?: Comment[];
   tags?: string[];
+  thumbnail?: string;
+  images?: string[];
 }

@@ -1,11 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
+.min-height-5 {
+  min-height: 5vh;
+}
 
 .min-height-10 {
   min-height: 10vh;
 }
 
+.min-height-15 {
+  min-height: 15vh;
+}
+
 .min-height-20 {
   min-height: 20vh;
+}
+
+.min-height-25 {
+  min-height: 25vh;
 }
 
 .min-height-30 {
@@ -26,4 +37,8 @@
 
 .min-height-80 {
   min-height: 80vh;
+}
+
+.pointer {
+  cursor: pointer;
 }
