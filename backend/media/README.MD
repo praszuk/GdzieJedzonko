@@ -1,0 +1,1 @@
+Required dir for images.
