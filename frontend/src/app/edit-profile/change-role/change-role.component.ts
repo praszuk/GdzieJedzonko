@@ -22,7 +22,7 @@ export class ChangeRoleComponent implements OnInit {
   }
 
   onSubmit() {
-    const role = this.roles.indexOf(this.selectedRole);
+    const role = this.roles.indexOf(this.selectedRole) + 1;
 
     this.userService.editUser(this.userId, {role}).subscribe(
       (next) => {
