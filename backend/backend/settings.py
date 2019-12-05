@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'django_cleanup.apps.CleanupConfig',
 
     'articles.apps.ArticlesConfig',
     'authentication.apps.AuthenticationConfig',
