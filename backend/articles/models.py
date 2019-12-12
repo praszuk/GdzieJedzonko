@@ -10,14 +10,14 @@ class Article(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
 
-class Image(models.Model):
+class BaseImage(models.Model):
     image = models.ImageField()
 
     class Meta:
         abstract = True
 
 
-class Thumbnail(Image):
+class Thumbnail(BaseImage):
     """
     Main photo for article. It will be used as thumbnail with articles list.
     """
@@ -28,9 +28,9 @@ class Thumbnail(Image):
     )
 
 
-class Photo(Image):
+class Image(BaseImage):
     """
-    Additional photos to article (max 10).
+    Additional images to article (max 9).
     """
     article = models.ForeignKey(
         Article,
