@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from users.models import User
@@ -28,6 +29,11 @@ class Thumbnail(BaseImage):
     )
 
 
+def image_number_limit(article):
+    if article.images.count() == 9:
+        raise ValidationError('The article cannot contain more than 9 images.')
+
+
 class Image(BaseImage):
     """
     Additional images to article (max 9).
@@ -35,5 +41,6 @@ class Image(BaseImage):
     article = models.ForeignKey(
         Article,
         on_delete=models.CASCADE,
-        related_name='images'
+        related_name='images',
+        validators=(image_number_limit, )
     )
