@@ -11,10 +11,10 @@ export class ImageService {
 
   constructor(private http: HttpClient) { }
 
-  uploadImage(articleId: number, file: File) {
+  uploadImage(articleId: number, image: File) {
     console.log('inside imageservice');
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('image', image);
     return this.http.post(`${environment.apiUrl}${environment.articlesUrl}${articleId}${environment.imagesUrl}`, formData)
       .pipe(
         catchError(
