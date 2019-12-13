@@ -11,8 +11,17 @@ class Article(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
 
+def image_size_limit(image):
+    limit_mb = 10
+
+    if image.size > limit_mb * 1024 ** 2:
+        raise ValidationError(
+            f'Image file size cannot be greater than {limit_mb} MB.'
+        )
+
+
 class BaseImage(models.Model):
-    image = models.ImageField()
+    image = models.ImageField(validators=(image_size_limit, ))
 
     class Meta:
         abstract = True
