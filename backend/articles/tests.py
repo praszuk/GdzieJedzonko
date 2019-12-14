@@ -312,7 +312,7 @@ class DeleteArticleTest(BaseViewTest):
 
 
 @override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)
-class CreateImageForArticle(BaseViewTest):
+class CreateImageForArticleTest(BaseViewTest):
     def setUp(self):
         super().setUp()
 
@@ -395,3 +395,29 @@ class CreateImageForArticle(BaseViewTest):
     def test_mod_and_admin_not_owners_can_create_image_for_article(self):
         self.create(self.MODS[0], self.article1)
         self.create(self.ADMINS[0], self.article1)
+
+
+class ImageValidatorsTest(CreateImageForArticleTest):
+    def test_image_number_limit_validator(self):
+        image_limit = 9
+        article = self.article1
+        user = self.USERS[0]
+
+        for _ in range(image_limit):
+            self.create(user, article)
+
+        self.assertEqual(len(article.images.all()), image_limit)
+
+        # Try to create over limit
+        self.auth_user(user)
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': article.id}
+            ),
+            {'image': self.create_test_image_file()},
+            format='multipart'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(len(article.images.all()), image_limit)
