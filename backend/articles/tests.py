@@ -1,10 +1,5 @@
 from PIL import Image as PILImage
 
-import shutil
-import tempfile
-
-from io import BytesIO
-
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
@@ -12,6 +7,12 @@ from django.core.files.base import File
 from django.urls import reverse
 from django.test import override_settings
 
+import shutil
+import tempfile
+
+from io import BytesIO
+
+from .constants import MAX_IMAGES_PER_ARTICLE, ALLOWED_IMAGE_EXTENSION
 from .models import Article, Image
 from .serializers import ArticleSerializer, ArticleListSerializer
 from users.models import User, Role
@@ -408,7 +409,7 @@ class CreateImageForArticleTest(BaseViewTest):
 
 class ImageValidatorsTest(CreateImageForArticleTest):
     def test_image_number_limit_validator(self):
-        image_limit = 9
+        image_limit = MAX_IMAGES_PER_ARTICLE
         article = self.article1
         user = self.USERS[0]
 
@@ -434,6 +435,9 @@ class ImageValidatorsTest(CreateImageForArticleTest):
     def test_image_allowed_extension_validator(self):
         user = self.USERS[0]
         article = self.article1
+
+        # Checking for safety.
+        self.assertTupleEqual(('png', 'jpg'), ALLOWED_IMAGE_EXTENSION)
 
         # Allowed only these formats
         png = self.create_test_image_file(name='test.png', ext='png')
