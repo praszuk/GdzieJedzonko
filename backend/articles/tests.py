@@ -332,7 +332,7 @@ class CreateImageForArticle(BaseViewTest):
         shutil.rmtree(TMP_MEDIA_ROOT, ignore_errors=True)
         super().tearDownClass()
 
-    def create_test_image(
+    def create_test_image_file(
             self,
             name='test.png',
             ext='png',
@@ -346,33 +346,38 @@ class CreateImageForArticle(BaseViewTest):
 
         return File(file_obj, name=name)
 
+    def create(self, user: dict, article: Article):
+        self.auth_user(user)
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': article.id}
+            ),
+            {'image': self.create_test_image_file()},
+            format='multipart'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(Image.objects.filter(
+            pk=response.data['id'],
+            article__id=article.id
+        ).exists())
+
     def test_unauthorized_cannot_create_image_for_article(self):
         response = self.client.post(
             reverse(
                 'articles:images-list',
                 kwargs={'article_id': self.article1.id}
             ),
-            {'image': self.create_test_image()},
+            {'image': self.create_test_image_file()},
             format='multipart'
         )
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_owner_can_create_image_for_article(self):
-        self.auth_user(self.USERS[0])
-
-        response = self.client.post(
-            reverse(
-                'articles:images-list',
-                kwargs={'article_id': self.article1.id}
-            ),
-            {'image': self.create_test_image()},
-            format='multipart'
-        )
-        image_obj = Image.objects.get(pk=response.data['id'])
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(image_obj.article.id, self.article1.id)
+        self.create(self.USERS[0], self.article1)
 
     def test_user_not_owner_cannot_create_image_for_article(self):
         self.auth_user(self.USERS[1])
@@ -382,33 +387,11 @@ class CreateImageForArticle(BaseViewTest):
                 'articles:images-list',
                 kwargs={'article_id': self.article1.id}
             ),
-            {'image': self.create_test_image()},
+            {'image': self.create_test_image_file()},
             format='multipart'
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_mod_and_admin_not_owners_can_create_image_for_article(self):
-        self.auth_user(self.MODS[0])
-
-        response = self.client.post(
-            reverse(
-                'articles:images-list',
-                kwargs={'article_id': self.article1.id}
-            ),
-            {'image': self.create_test_image()},
-            format='multipart'
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        self.auth_user(self.ADMINS[0])
-
-        response = self.client.post(
-            reverse(
-                'articles:images-list',
-                kwargs={'article_id': self.article1.id}
-            ),
-            {'image': self.create_test_image()},
-            format='multipart'
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.create(self.MODS[0], self.article1)
+        self.create(self.ADMINS[0], self.article1)
