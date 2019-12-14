@@ -1,6 +1,10 @@
+from io import BytesIO
+from PIL import Image
+
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
+from django.core.files.base import File
 from django.urls import reverse
 
 from .models import Article
@@ -297,3 +301,46 @@ class DeleteArticleTest(BaseViewTest):
             reverse('articles:article-detail', args=[self.article1.id])
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class CreateImageForArticle(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+
+        self.article1 = Article.objects.create(
+            title='Title1',
+            content='Content of the article',
+            user=User.objects.filter(email=self.USERS[0]['email'])[0]
+        )
+        self.article2 = Article.objects.create(
+            title='Title2',
+            content='Content of the article',
+            user=User.objects.filter(email=self.USERS[1]['email'])[0]
+        )
+        self.image = CreateImageForArticle.create_test_image()
+
+    @staticmethod
+    def create_test_image(
+            name='test.png',
+            ext='png',
+            size=(50, 50),
+            color=(256, 0, 0)
+    ):
+        file_obj = BytesIO()
+        image = Image.new("RGBA", size=size, color=color)
+        image.save(file_obj, ext)
+        file_obj.seek(0)
+
+        return File(file_obj, name=name)
+
+    def test_unauthorized_cannot_create_image_for_article(self):
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': self.article1.id}
+            ),
+            {'image': self.image},
+            format='multipart'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
