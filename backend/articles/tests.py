@@ -1,15 +1,23 @@
-from io import BytesIO
 from PIL import Image as PILImage
+
+import shutil
+import tempfile
+
+from io import BytesIO
 
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
 from django.core.files.base import File
 from django.urls import reverse
+from django.test import override_settings
 
 from .models import Article, Image
 from .serializers import ArticleSerializer, ArticleListSerializer
 from users.models import User, Role
+
+
+TMP_MEDIA_ROOT = tempfile.mkdtemp()
 
 
 class BaseViewTest(APITestCase):
@@ -303,6 +311,7 @@ class DeleteArticleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
+@override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)
 class CreateImageForArticle(BaseViewTest):
     def setUp(self):
         super().setUp()
@@ -317,10 +326,14 @@ class CreateImageForArticle(BaseViewTest):
             content='Content of the article',
             user=User.objects.filter(email=self.USERS[1]['email'])[0]
         )
-        self.image = CreateImageForArticle.create_test_image()
 
-    @staticmethod
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def create_test_image(
+            self,
             name='test.png',
             ext='png',
             size=(50, 50),
@@ -339,7 +352,7 @@ class CreateImageForArticle(BaseViewTest):
                 'articles:images-list',
                 kwargs={'article_id': self.article1.id}
             ),
-            {'image': self.image},
+            {'image': self.create_test_image()},
             format='multipart'
         )
 
@@ -353,7 +366,7 @@ class CreateImageForArticle(BaseViewTest):
                 'articles:images-list',
                 kwargs={'article_id': self.article1.id}
             ),
-            {'image': self.image},
+            {'image': self.create_test_image()},
             format='multipart'
         )
         image_obj = Image.objects.get(pk=response.data['id'])
@@ -369,7 +382,33 @@ class CreateImageForArticle(BaseViewTest):
                 'articles:images-list',
                 kwargs={'article_id': self.article1.id}
             ),
-            {'image': self.image},
+            {'image': self.create_test_image()},
             format='multipart'
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_mod_and_admin_not_owners_can_create_image_for_article(self):
+        self.auth_user(self.MODS[0])
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': self.article1.id}
+            ),
+            {'image': self.create_test_image()},
+            format='multipart'
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        self.auth_user(self.ADMINS[0])
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': self.article1.id}
+            ),
+            {'image': self.create_test_image()},
+            format='multipart'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
