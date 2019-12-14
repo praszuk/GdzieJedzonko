@@ -360,3 +360,16 @@ class CreateImageForArticle(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(image_obj.article.id, self.article1.id)
+
+    def test_user_not_owner_cannot_create_image_for_article(self):
+        self.auth_user(self.USERS[1])
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': self.article1.id}
+            ),
+            {'image': self.image},
+            format='multipart'
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
