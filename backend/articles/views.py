@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from users.models import User
 
 from .models import Article, Image
-from .permissions import ArticlePermission
+from .permissions import ArticlePermission, ImageArticlePermission
 from .serializers import (
     ArticleSerializer,
     ArticleListSerializer,
@@ -66,5 +66,5 @@ class ImageViewSet(viewsets.ModelViewSet):
 
         return Response(
             data={'id': serializer.data['id']},
-            status=status.HTTP_200_OK
+            status=status.HTTP_201_CREATED
         )
