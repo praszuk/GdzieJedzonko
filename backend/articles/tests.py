@@ -1,5 +1,5 @@
 from io import BytesIO
-from PIL import Image
+from PIL import Image as PILImage
 
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
@@ -7,7 +7,7 @@ from rest_framework.test import APIClient, APITestCase
 from django.core.files.base import File
 from django.urls import reverse
 
-from .models import Article
+from .models import Article, Image
 from .serializers import ArticleSerializer, ArticleListSerializer
 from users.models import User, Role
 
@@ -327,7 +327,7 @@ class CreateImageForArticle(BaseViewTest):
             color=(256, 0, 0)
     ):
         file_obj = BytesIO()
-        image = Image.new("RGBA", size=size, color=color)
+        image = PILImage.new("RGBA", size=size, color=color)
         image.save(file_obj, ext)
         file_obj.seek(0)
 
@@ -344,3 +344,19 @@ class CreateImageForArticle(BaseViewTest):
         )
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_owner_can_create_image_for_article(self):
+        self.auth_user(self.USERS[0])
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': self.article1.id}
+            ),
+            {'image': self.image},
+            format='multipart'
+        )
+        image_obj = Image.objects.get(pk=response.data['id'])
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(image_obj.article.id, self.article1.id)
