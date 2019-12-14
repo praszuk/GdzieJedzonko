@@ -28,7 +28,7 @@ class ImageSerializer(BaseImageSerializer):
 
 class ArticleSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)
-    images = ImageSerializer(many=True)
+    images = ImageSerializer(many=True, required=False)
 
     class Meta:
         model = Article
