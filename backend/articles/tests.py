@@ -340,13 +340,22 @@ class CreateImageForArticleTest(BaseViewTest):
             color=(256, 0, 0)
     ):
         file_obj = BytesIO()
-        image = PILImage.new("RGBA", size=size, color=color)
+
+        if ext == 'jpg':
+            ext = 'JPEG'
+            image = PILImage.new('RGB', size=size, color=color)
+        else:
+            image = PILImage.new('RGBA', size=size, color=color)
+
         image.save(file_obj, ext)
         file_obj.seek(0)
 
         return File(file_obj, name=name)
 
-    def create(self, user: dict, article: Article):
+    def create(self, user: dict, article: Article, image: PILImage = None):
+        if not image:
+            image = self.create_test_image_file()
+
         self.auth_user(user)
 
         response = self.client.post(
@@ -354,7 +363,7 @@ class CreateImageForArticleTest(BaseViewTest):
                 'articles:images-list',
                 kwargs={'article_id': article.id}
             ),
-            {'image': self.create_test_image_file()},
+            {'image': image},
             format='multipart'
         )
 
@@ -421,3 +430,28 @@ class ImageValidatorsTest(CreateImageForArticleTest):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(len(article.images.all()), image_limit)
+
+    def test_image_allowed_extension_validator(self):
+        user = self.USERS[0]
+        article = self.article1
+
+        # Allowed only these formats
+        png = self.create_test_image_file(name='test.png', ext='png')
+        jpg = self.create_test_image_file(name='test.jpg', ext='jpg')
+
+        self.create(user, article, png)
+        self.create(user, article, jpg)
+
+        # Disallowed gif (as example) and others
+        gif = self.create_test_image_file(name='test.gif', ext='gif')
+        self.auth_user(user)
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': article.id}
+            ),
+            {'image': gif},
+            format='multipart'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
