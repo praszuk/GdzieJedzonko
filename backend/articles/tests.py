@@ -1,11 +1,24 @@
+from PIL import Image as PILImage
+
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
+from django.core.files.base import File
 from django.urls import reverse
+from django.test import override_settings
 
-from .models import Article
+import shutil
+import tempfile
+
+from io import BytesIO
+
+from .constants import MAX_IMAGES_PER_ARTICLE, ALLOWED_IMAGE_EXTENSION
+from .models import Article, Image
 from .serializers import ArticleSerializer, ArticleListSerializer
 from users.models import User, Role
+
+
+TMP_MEDIA_ROOT = tempfile.mkdtemp()
 
 
 class BaseViewTest(APITestCase):
@@ -297,3 +310,152 @@ class DeleteArticleTest(BaseViewTest):
             reverse('articles:article-detail', args=[self.article1.id])
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+@override_settings(MEDIA_ROOT=TMP_MEDIA_ROOT)
+class CreateImageForArticleTest(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+
+        self.article1 = Article.objects.create(
+            title='Title1',
+            content='Content of the article',
+            user=User.objects.filter(email=self.USERS[0]['email'])[0]
+        )
+        self.article2 = Article.objects.create(
+            title='Title2',
+            content='Content of the article',
+            user=User.objects.filter(email=self.USERS[1]['email'])[0]
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
+    def create_test_image_file(
+            self,
+            name='test.png',
+            ext='png',
+            size=(50, 50),
+            color=(256, 0, 0)
+    ):
+        file_obj = BytesIO()
+
+        if ext == 'jpg':
+            ext = 'JPEG'
+            image = PILImage.new('RGB', size=size, color=color)
+        else:
+            image = PILImage.new('RGBA', size=size, color=color)
+
+        image.save(file_obj, ext)
+        file_obj.seek(0)
+
+        return File(file_obj, name=name)
+
+    def create(self, user: dict, article: Article, image: PILImage = None):
+        if not image:
+            image = self.create_test_image_file()
+
+        self.auth_user(user)
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': article.id}
+            ),
+            {'image': image},
+            format='multipart'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(Image.objects.filter(
+            pk=response.data['id'],
+            article__id=article.id
+        ).exists())
+
+    def test_unauthorized_cannot_create_image_for_article(self):
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': self.article1.id}
+            ),
+            {'image': self.create_test_image_file()},
+            format='multipart'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_owner_can_create_image_for_article(self):
+        self.create(self.USERS[0], self.article1)
+
+    def test_user_not_owner_cannot_create_image_for_article(self):
+        self.auth_user(self.USERS[1])
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': self.article1.id}
+            ),
+            {'image': self.create_test_image_file()},
+            format='multipart'
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_mod_and_admin_not_owners_can_create_image_for_article(self):
+        self.create(self.MODS[0], self.article1)
+        self.create(self.ADMINS[0], self.article1)
+
+
+class ImageValidatorsTest(CreateImageForArticleTest):
+    def test_image_number_limit_validator(self):
+        image_limit = MAX_IMAGES_PER_ARTICLE
+        article = self.article1
+        user = self.USERS[0]
+
+        for _ in range(image_limit):
+            self.create(user, article)
+
+        self.assertEqual(len(article.images.all()), image_limit)
+
+        # Try to create over limit
+        self.auth_user(user)
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': article.id}
+            ),
+            {'image': self.create_test_image_file()},
+            format='multipart'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(len(article.images.all()), image_limit)
+
+    def test_image_allowed_extension_validator(self):
+        user = self.USERS[0]
+        article = self.article1
+
+        # Checking for safety.
+        self.assertTupleEqual(('png', 'jpg'), ALLOWED_IMAGE_EXTENSION)
+
+        # Allowed only these formats
+        png = self.create_test_image_file(name='test.png', ext='png')
+        jpg = self.create_test_image_file(name='test.jpg', ext='jpg')
+
+        self.create(user, article, png)
+        self.create(user, article, jpg)
+
+        # Disallowed gif (as example) and others
+        gif = self.create_test_image_file(name='test.gif', ext='gif')
+        self.auth_user(user)
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': article.id}
+            ),
+            {'image': gif},
+            format='multipart'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
