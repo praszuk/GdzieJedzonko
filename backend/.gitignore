@@ -93,3 +93,6 @@ db.sqlite3
 .idea/
 .env
 
+# Django MEDIA_URL
+media/
+!media/README.MD
