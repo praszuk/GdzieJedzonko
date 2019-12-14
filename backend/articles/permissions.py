@@ -6,6 +6,7 @@ from users.permissions import (
     IsModeratorUser,
     IsOwnerUser,
 )
+from .models import Article
 
 
 class IsOwnerArticle(BasePermission):
@@ -44,3 +45,35 @@ class ArticlePermission(BasePermission):
                 IsModeratorUser.has_permission(None, request, view) or
                 IsOwnerArticle.has_object_permission(None, request, view, obj)
             )
+
+
+class ImageArticlePermission(BasePermission):
+    """
+        All permissions for Images/Thumbnails in articles.
+    """
+
+    # noinspection PyTypeChecker
+    def has_permission(self, request, view):
+        # DRF hasn't option for getting foreign key object for creation
+        # So object_id need to be get from request param and get object by id
+        article_id = request.resolver_match.kwargs.get('article_id')
+        article = Article.objects.get(pk=article_id)
+
+        if view.action in ('create', ):
+            if IsAuthenticated.has_permission(None, request, view):
+                # Next hacky solution changing view.action to use
+                # existing permissions instead of creating almost the same
+                # TODO change to "update" when article-update will be done
+                view.action = 'destroy'
+
+                return ArticlePermission.has_object_permission(
+                    None,
+                    request,
+                    view,
+                    article
+                )
+            return False
+
+    def has_object_permission(self, request, view, obj):
+        if view.action == 'create':
+            return True

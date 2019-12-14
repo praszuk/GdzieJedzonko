@@ -52,6 +52,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
+    permission_classes = [ImageArticlePermission]
 
     def create(self, request, *args, **kwargs):
         article = get_object_or_404(Article, pk=self.kwargs.get('article_id'))
