@@ -17,6 +17,7 @@ import {DeleteAccountComponent} from './edit-profile/delete-account/delete-accou
 import {ChangeRoleComponent} from './edit-profile/change-role/change-role.component';
 import {UserGuard} from "./auth/guards/user.guard";
 import {AdminGuard} from "./auth/guards/admin.guard";
+import {AdminPanelUsersComponent} from "./admin-panel-users/admin-panel-users.component";
 
 
 const routes: Routes = [ {
@@ -66,6 +67,10 @@ const routes: Routes = [ {
     component: UserProfileComponent,
     canActivate: [UserGuard]
   }, {
+    path: 'newadmin',
+    component: AdminPanelUsersComponent
+  }, {
+
     path: 'admin',
     component: AdminPanelUserSectionComponent,
     canActivate: [AdminGuard]
