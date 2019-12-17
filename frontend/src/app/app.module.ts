@@ -28,6 +28,7 @@ import { DeleteAccountComponent } from './edit-profile/delete-account/delete-acc
 import { StickySidebarComponent } from './sticky-sidebar/sticky-sidebar.component';
 import { ChangeRoleComponent } from './edit-profile/change-role/change-role.component';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
+import { AdminPanelUsersComponent } from './admin-panel-users/admin-panel-users.component';
 
 
 @NgModule({
@@ -53,6 +54,7 @@ import { ImageUploadComponent } from './image-upload/image-upload.component';
     StickySidebarComponent,
     ChangeRoleComponent,
     ImageUploadComponent,
+    AdminPanelUsersComponent,
   ],
   imports: [
     BrowserModule,
