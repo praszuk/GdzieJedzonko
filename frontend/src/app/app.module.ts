@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatTableModule, MatToolbarModule, MatSidenavModule, MatIconModule, MatListModule, MatSortModule, MatPaginatorModule} from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -29,6 +30,9 @@ import { StickySidebarComponent } from './sticky-sidebar/sticky-sidebar.componen
 import { ChangeRoleComponent } from './edit-profile/change-role/change-role.component';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
 import { AdminPanelUsersComponent } from './admin-panel-users/admin-panel-users.component';
+import {MatButtonModule} from "@angular/material/button";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
 
 
 @NgModule({
@@ -64,7 +68,17 @@ import { AdminPanelUsersComponent } from './admin-panel-users/admin-panel-users.
     ReactiveFormsModule,
     AuthModule,
     QuillModule.forRoot(),
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    MatTableModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatListModule,
+    MatButtonModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
