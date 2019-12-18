@@ -67,12 +67,8 @@ const routes: Routes = [ {
     component: UserProfileComponent,
     canActivate: [UserGuard]
   }, {
-    path: 'newadmin',
-    component: AdminPanelUsersComponent
-  }, {
-
     path: 'admin',
-    component: AdminPanelUserSectionComponent,
+    component: AdminPanelUsersComponent,
     canActivate: [AdminGuard]
   }, {
     path: 'editprofile/:id',
