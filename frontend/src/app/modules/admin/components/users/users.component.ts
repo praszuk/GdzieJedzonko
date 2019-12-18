@@ -10,10 +10,10 @@ import {MatRipple} from '@angular/material/core';
 
 @Component({
   selector: 'app-admin-panel-users',
-  templateUrl: './admin-panel-users.component.html',
-  styleUrls: ['./admin-panel-users.component.css']
+  templateUrl: './users.component.html',
+  styleUrls: ['./users.component.css']
 })
-export class AdminPanelUsersComponent implements OnInit, OnDestroy {
+export class UsersComponent implements OnInit, OnDestroy {
   userDataSource: MatTableDataSource<User>;
   subscription: Subscription;
 
