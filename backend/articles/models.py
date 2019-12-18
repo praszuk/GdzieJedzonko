@@ -44,9 +44,6 @@ class BaseImage(models.Model):
         validate_image_file_extension
     ))
 
-    class Meta:
-        abstract = True
-
 
 class Thumbnail(BaseImage):
     """
@@ -59,13 +56,13 @@ class Thumbnail(BaseImage):
     )
 
 
-class Image(BaseImage):
+class Photo(BaseImage):
     """
     Additional images to article (max 9).
     """
     article = models.ForeignKey(
         Article,
         on_delete=models.CASCADE,
-        related_name='images',
+        related_name='photos',
         validators=(validate_image_number_limit,)
     )
