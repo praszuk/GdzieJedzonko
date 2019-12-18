@@ -10,7 +10,8 @@ from .permissions import ArticlePermission, ImageArticlePermission
 from .serializers import (
     ArticleSerializer,
     ArticleListSerializer,
-    PhotoSerializer
+    PhotoSerializer,
+    ThumbnailSerializer
 )
 
 
@@ -57,11 +58,33 @@ class ImageViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         article = get_object_or_404(Article, pk=self.kwargs.get('article_id'))
 
-        data = {
-            'image': request.data.get('photo'),
-            'article': article.id
-        }
-        serializer = PhotoSerializer(data=data)
+        if 'photo' in request.data:
+            data = {
+                'image': request.data.get('photo'),
+                'article': article.id
+            }
+            serializer = PhotoSerializer(data=data)
+
+        elif 'thumbnail' in request.data:
+            data = {
+                'image': request.data.get('thumbnail'),
+                'article': article.id
+            }
+
+            # Default action for post thumbnail is replacing by removing old
+            if article.thumbnail:
+                article.thumbnail.delete()
+
+            serializer = ThumbnailSerializer(data=data)
+
+        else:
+            return Response(
+                data={
+                    'Not found image/thumbnail param in multipart/form-data'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
