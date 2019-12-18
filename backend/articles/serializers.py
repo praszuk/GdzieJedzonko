@@ -26,15 +26,23 @@ class PhotoSerializer(BaseImageSerializer):
         extra_kwargs = {'article': {'write_only': True}}
 
 
+class ThumbnailSerializer(BaseImageSerializer):
+    class Meta:
+        model = Thumbnail
+        fields = ('id', 'image', 'article')
+        extra_kwargs = {'article': {'write_only': True}}
+
+
 class ArticleSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)
     photos = PhotoSerializer(many=True, required=False)
+    thumbnail = ThumbnailSerializer(many=False, required=False)
 
     class Meta:
         model = Article
         depth = 1
         fields = '__all__'
-        read_only_fields = ('id', 'creation_date', 'photos')
+        read_only_fields = ('id', 'creation_date', 'photos', 'thumbnail')
 
     def validate_title(self, title):
         if not all(c.isalnum() or c.isspace() for c in title):
@@ -57,9 +65,10 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 class ArticleListSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)
+    thumbnail = ThumbnailSerializer(many=False, required=False)
 
     class Meta:
         model = Article
         depth = 1
         exclude = ('content', )
-        read_only_fields = ('id', 'creation_date')
+        read_only_fields = ('id', 'creation_date', 'thumbnail')
