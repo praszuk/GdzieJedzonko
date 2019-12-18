@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from users.models import User
 
-from .models import Article, Photo
+from .models import Article, Photo, Thumbnail
 from .permissions import ArticlePermission, ImageArticlePermission
 from .serializers import (
     ArticleSerializer,
@@ -56,7 +56,16 @@ class ImageViewSet(viewsets.ModelViewSet):
     permission_classes = [ImageArticlePermission]
 
     def create(self, request, *args, **kwargs):
-        article = get_object_or_404(Article, pk=self.kwargs.get('article_id'))
+        try:
+            article = get_object_or_404(
+                Article,
+                pk=self.kwargs.get('article_id')
+            )
+        except Article.DoesNotExist:
+            raise Response(
+                data={'detail': 'Not found.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         if 'photo' in request.data:
             data = {
@@ -72,7 +81,7 @@ class ImageViewSet(viewsets.ModelViewSet):
             }
 
             # Default action for post thumbnail is replacing by removing old
-            if article.thumbnail:
+            if Thumbnail.objects.filter(article=article).exists():
                 article.thumbnail.delete()
 
             serializer = ThumbnailSerializer(data=data)
