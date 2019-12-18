@@ -21,12 +21,6 @@ import {UserProfileComponent} from './components/user-profile/user-profile.compo
 import { NewReviewComponent } from './components/new-review/new-review.component';
 import {QuillModule} from 'ngx-quill';
 import {NgxSpinnerModule} from 'ngx-spinner';
-import { EditProfileComponent } from './edit-profile/edit-profile.component';
-import { BasicInformationComponent } from './edit-profile/basic-information/basic-information.component';
-import { ChangePasswordComponent } from './edit-profile/change-password/change-password.component';
-import { DeleteAccountComponent } from './edit-profile/delete-account/delete-account.component';
-import { StickySidebarComponent } from './sticky-sidebar/sticky-sidebar.component';
-import { ChangeRoleComponent } from './edit-profile/change-role/change-role.component';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
@@ -48,12 +42,6 @@ import {AdminModule} from './modules/admin/admin.module';
     HomeComponent,
     UserProfileComponent,
     NewReviewComponent,
-    EditProfileComponent,
-    BasicInformationComponent,
-    ChangePasswordComponent,
-    DeleteAccountComponent,
-    StickySidebarComponent,
-    ChangeRoleComponent,
     ImageUploadComponent,
   ],
   imports: [
