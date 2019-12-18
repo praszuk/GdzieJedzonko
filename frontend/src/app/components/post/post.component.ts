@@ -33,7 +33,7 @@ export class PostComponent implements OnInit {
     }, 100);
 
     if (this.post.thumbnail) {
-      this.thumbnail = this.post.thumbnail;
+      this.thumbnail = this.post.thumbnail.image;
     } else {
       this.thumbnail = 'assets/images/no-image.svg';
     }
