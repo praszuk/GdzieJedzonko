@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Article, BaseImage, Image
+from .models import Article, BaseImage, Photo, Thumbnail
 from users.models import User
 
 
@@ -19,22 +19,22 @@ class BaseImageSerializer(serializers.ModelSerializer):
         abstract = True
 
 
-class ImageSerializer(BaseImageSerializer):
+class PhotoSerializer(BaseImageSerializer):
     class Meta:
-        model = Image
+        model = Photo
         fields = ('id', 'image', 'article')
         extra_kwargs = {'article': {'write_only': True}}
 
 
 class ArticleSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)
-    images = ImageSerializer(many=True, required=False)
+    photos = PhotoSerializer(many=True, required=False)
 
     class Meta:
         model = Article
         depth = 1
         fields = '__all__'
-        read_only_fields = ('id', 'creation_date', 'images')
+        read_only_fields = ('id', 'creation_date', 'photos')
 
     def validate_title(self, title):
         if not all(c.isalnum() or c.isspace() for c in title):

@@ -16,7 +16,7 @@ def validate_image_size_limit(image):
 
 
 def validate_image_number_limit(article):
-    if article.images.count() == MAX_IMAGES_PER_ARTICLE:
+    if article.photos.count() == MAX_IMAGES_PER_ARTICLE:
         raise ValidationError('The article cannot contain more than 9 images.')
 
 

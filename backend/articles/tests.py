@@ -13,7 +13,7 @@ import tempfile
 from io import BytesIO
 
 from .constants import MAX_IMAGES_PER_ARTICLE, ALLOWED_IMAGE_EXTENSION
-from .models import Article, Image
+from .models import Article, Photo
 from .serializers import ArticleSerializer, ArticleListSerializer
 from users.models import User, Role
 
@@ -364,12 +364,12 @@ class CreateImageForArticleTest(BaseViewTest):
                 'articles:images-list',
                 kwargs={'article_id': article.id}
             ),
-            {'image': image},
+            {'photo': image},
             format='multipart'
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(Image.objects.filter(
+        self.assertTrue(Photo.objects.filter(
             pk=response.data['id'],
             article__id=article.id
         ).exists())
@@ -380,7 +380,7 @@ class CreateImageForArticleTest(BaseViewTest):
                 'articles:images-list',
                 kwargs={'article_id': self.article1.id}
             ),
-            {'image': self.create_test_image_file()},
+            {'photo': self.create_test_image_file()},
             format='multipart'
         )
 
@@ -397,7 +397,7 @@ class CreateImageForArticleTest(BaseViewTest):
                 'articles:images-list',
                 kwargs={'article_id': self.article1.id}
             ),
-            {'image': self.create_test_image_file()},
+            {'photo': self.create_test_image_file()},
             format='multipart'
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -416,7 +416,7 @@ class ImageValidatorsTest(CreateImageForArticleTest):
         for _ in range(image_limit):
             self.create(user, article)
 
-        self.assertEqual(len(article.images.all()), image_limit)
+        self.assertEqual(len(article.photos.all()), image_limit)
 
         # Try to create over limit
         self.auth_user(user)
@@ -426,11 +426,11 @@ class ImageValidatorsTest(CreateImageForArticleTest):
                 'articles:images-list',
                 kwargs={'article_id': article.id}
             ),
-            {'image': self.create_test_image_file()},
+            {'photo': self.create_test_image_file()},
             format='multipart'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(len(article.images.all()), image_limit)
+        self.assertEqual(len(article.photos.all()), image_limit)
 
     def test_image_allowed_extension_validator(self):
         user = self.USERS[0]
@@ -455,7 +455,7 @@ class ImageValidatorsTest(CreateImageForArticleTest):
                 'articles:images-list',
                 kwargs={'article_id': article.id}
             ),
-            {'image': gif},
+            {'photo': gif},
             format='multipart'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

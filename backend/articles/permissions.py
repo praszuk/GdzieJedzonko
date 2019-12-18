@@ -49,7 +49,7 @@ class ArticlePermission(BasePermission):
 
 class ImageArticlePermission(BasePermission):
     """
-        All permissions for Images/Thumbnails in articles.
+        All permissions for Photos/Thumbnail in articles.
     """
 
     # noinspection PyTypeChecker

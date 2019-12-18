@@ -5,12 +5,12 @@ from django.shortcuts import get_object_or_404
 
 from users.models import User
 
-from .models import Article, Image
+from .models import Article, Photo
 from .permissions import ArticlePermission, ImageArticlePermission
 from .serializers import (
     ArticleSerializer,
     ArticleListSerializer,
-    ImageSerializer
+    PhotoSerializer
 )
 
 
@@ -51,17 +51,17 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
 
 class ImageViewSet(viewsets.ModelViewSet):
-    queryset = Image.objects.all()
+    queryset = Photo.objects.all()
     permission_classes = [ImageArticlePermission]
 
     def create(self, request, *args, **kwargs):
         article = get_object_or_404(Article, pk=self.kwargs.get('article_id'))
 
         data = {
-            'image': request.data.get('image'),
+            'image': request.data.get('photo'),
             'article': article.id
         }
-        serializer = ImageSerializer(data=data)
+        serializer = PhotoSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
