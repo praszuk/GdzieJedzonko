@@ -406,6 +406,19 @@ class CreateImageForArticleTest(BaseViewTest):
         self.create(self.MODS[0], self.article1)
         self.create(self.ADMINS[0], self.article1)
 
+    def test_article_not_exists(self):
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': 99999}
+            ),
+            {'photo': self.create_test_image_file()},
+            format='multipart'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
 
 class ImageValidatorsTest(CreateImageForArticleTest):
     def test_image_number_limit_validator(self):
