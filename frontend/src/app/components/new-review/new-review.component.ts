@@ -42,11 +42,12 @@ export class NewReviewComponent implements OnInit, OnDestroy {
    onSubmit() {
     const article = this.editorForm.value;
     this.subscription = this.articleService.newReview(article).subscribe(
-      async (id) => {
+      (id) => {
           this.titleExists = false;
           // todo
-          // await this.imageUpload.uploadImages(id.id);
-          // console.log("after await");
+          this.imageUpload.uploadImages(id.id);
+          console.log("after sending");
+          console.log("redirecting to article with id = " + id.id );
           this.router.navigate([`article/${id.id}`]);
         },
       error => {

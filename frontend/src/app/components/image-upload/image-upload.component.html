@@ -25,7 +25,7 @@
     <div id="allImages" class="mt-4 ml-4 mb-5 min-height-20" >
       <h5> Pozostałe zdjęcia </h5>
     <div class="mt-3 ml-2">
-      <input type="file" accept="image/*" multiple="true" (change)="addImages($event)">
+      <input [disabled]="!selectedMainImageFile" type="file" accept="image/*" multiple="true" (change)="addImages($event)">
     </div>
     <div class="container-fluid mt-2">
       <div *ngIf="previewUrlArray" class="row mx-2 my-2">
