@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <table mat-table matSort [dataSource]="userDataSource" class="ml-2">
+  <table mat-table matSort matSortActive="id" matSortDirection="asc" [dataSource]="userDataSource" class="ml-2">
 
     <ng-container matColumnDef="id">
       <mat-header-cell *matHeaderCellDef mat-sort-header> No </mat-header-cell>
