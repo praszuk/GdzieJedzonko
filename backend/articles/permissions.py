@@ -1,10 +1,11 @@
 from rest_framework.permissions import BasePermission
 
+from django.shortcuts import get_object_or_404
+
 from users.permissions import (
     IsAuthenticated,
     IsAdminUser,
     IsModeratorUser,
-    IsOwnerUser,
 )
 from .models import Article
 
@@ -57,7 +58,7 @@ class ImageArticlePermission(BasePermission):
         # DRF hasn't option for getting foreign key object for creation
         # So object_id need to be get from request param and get object by id
         article_id = request.resolver_match.kwargs.get('article_id')
-        article = Article.objects.get(pk=article_id)
+        article = get_object_or_404(Article, pk=article_id)
 
         if view.action in ('create', ):
             if IsAuthenticated.has_permission(None, request, view):
