@@ -444,6 +444,19 @@ class CreateImageForArticleTest(BaseViewTest):
         self.assertNotEqual(response1.data['id'], response2.data['id'])
         self.assertEqual(self.article1.thumbnail.id, response2.data['id'])
 
+    def test_incorrect_form_data_parameter(self):
+        self.auth_user(self.USERS[0])
+
+        response = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': self.article1.id}
+            ),
+            {'incorrect': self.create_test_image_file()},
+            format='multipart'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class ImageValidatorsTest(CreateImageForArticleTest):
     def test_image_number_limit_validator(self):
