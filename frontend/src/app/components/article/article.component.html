@@ -1,4 +1,4 @@
-<article class="offset-3 col-6 border border-light my-2 rounded bg-light min-height-40">
+<article class="offset-2 col-9  my-2 rounded gradient min-height-40">
   <ngx-spinner name="articleLoading"  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
   <div *ngIf="!isLoading">
     <div class="row mx-2 mt-2">
@@ -10,7 +10,11 @@
     <div id="article-map" class="align-content-center">
       <p class="text-center"> MAP GOES HERE</p>
     </div>
-      <p [innerHTML]="article.content"></p>
+    <quill-view [content]="article.content" format="html" theme="snow"></quill-view>
+  </div>
+
+  <div id="images">
+
   </div>
 </article>
 <app-comment-section></app-comment-section>
