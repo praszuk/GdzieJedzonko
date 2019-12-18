@@ -30,9 +30,9 @@ import { StickySidebarComponent } from './sticky-sidebar/sticky-sidebar.componen
 import { ChangeRoleComponent } from './edit-profile/change-role/change-role.component';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
 import { AdminPanelUsersComponent } from './admin-panel-users/admin-panel-users.component';
-import {MatButtonModule} from "@angular/material/button";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatRippleModule} from '@angular/material/core';
 
 
 @NgModule({
@@ -74,11 +74,11 @@ import {MatInputModule} from "@angular/material/input";
     MatSidenavModule,
     MatIconModule,
     MatListModule,
-    MatButtonModule,
     MatSortModule,
     MatPaginatorModule,
     MatFormFieldModule,
     MatInputModule,
+    MatRippleModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

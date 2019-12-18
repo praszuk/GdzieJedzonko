@@ -1,43 +1,60 @@
-<mat-table [dataSource]="dataSource" matSort class="table table-dark offset-1 col-10">
-  <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Id</mat-header-cell>
-    <mat-cell *matCellDef="let user">{{user.id}}</mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="email">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Email</mat-header-cell>
-    <mat-cell *matCellDef="let user">{{user.email}}</mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="first_name">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>First name </mat-header-cell>
-    <mat-cell *matCellDef="let user">{{user.first_name}}</mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="last_name">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Last name </mat-header-cell>
-    <mat-cell *matCellDef="let user">{{user.last_name}}</mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="birth_date">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Birth date </mat-header-cell>
-    <mat-cell *matCellDef="let user">{{user.birth_date}}</mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="date_joined">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Date joined </mat-header-cell>
-    <mat-cell *matCellDef="let user">{{user.date_joined}}</mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="role">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>Role </mat-header-cell>
-    <mat-cell *matCellDef="let user">{{user.role}}</mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="actions">
-    <mat-header-cell *matHeaderCellDef></mat-header-cell>
-    <mat-cell *matCellDef="let row">
-      <button class="mr-3">Edit</button>
-      <button>Delete</button>
-    </mat-cell>
-  </ng-container>
-  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-</mat-table>
-<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="5" showFirstLastButtons></mat-paginator>
+<div class="border rounded shadow min-height-50 mb-5" >
 
+  <div class="row">
+    <mat-form-field class="ml-3 col-4 mt-2">
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtruj">
+    </mat-form-field>
+    <div class="offset-4 col-4 color-black">
+      <button [disabled]="!selectedRowIndex" class="btn btn-light mt-2" [routerLink]="['/admin/editprofile', selectedRowIndex]"> Edytuj </button>
+    </div>
+  </div>
 
+  <table mat-table matSort [dataSource]="userDataSource" class="ml-2">
+
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> No </mat-header-cell>
+      <mat-cell *matCellDef="let user">{{user.id}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Email </mat-header-cell>
+      <mat-cell *matCellDef="let user">{{user.email}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="first_name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Imie </mat-header-cell>
+      <mat-cell *matCellDef="let user">{{user.first_name}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="last_name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Nazwisko </mat-header-cell>
+      <mat-cell *matCellDef="let user">{{user.last_name}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="birth_date">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Data urodzenia </mat-header-cell>
+      <mat-cell *matCellDef="let user">{{user.birth_date}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="date_joined">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Data dołączenia </mat-header-cell>
+      <mat-cell *matCellDef="let user">{{user.date_joined}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="role">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Uprawnienia </mat-header-cell>
+      <mat-cell *matCellDef="let user">{{roles[user.role]}}</mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row  matRipple
+              *matRowDef="let row; columns: displayedColumns"
+              (mousedown)="selectRow(row)"
+              [ngClass]="{'highlight': selectedRowIndex == row.id}">
+
+    </mat-row>
+  </table>
+  <mat-paginator [pageSizeOptions]="[10, 15, 20]" showFirstLastButtons></mat-paginator>
+
+</div>
 
