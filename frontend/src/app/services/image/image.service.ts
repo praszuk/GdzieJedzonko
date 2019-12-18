@@ -9,9 +9,6 @@ import {throwError} from 'rxjs';
 })
 export class ImageService {
 
-  headers = new HttpHeaders({
-    'Content-type': 'multipart/form-data'
-  });
   constructor(private http: HttpClient) {
   }
 
@@ -19,7 +16,9 @@ export class ImageService {
     console.log('inside imageservice');
     const formData = new FormData();
     formData.append('thumbnail', image);
-    return this.http.post(`${environment.apiUrl}${environment.articlesUrl}${articleId}${environment.imagesUrl}`, formData, this.headers)
+    return this.http.post(`${environment.apiUrl}${environment.articlesUrl}${articleId}${environment.imagesUrl}`, formData, {
+      headers: new HttpHeaders().set('Content-type', 'multipart/form-data'),
+    })
       .pipe(
         catchError(
           (err) => throwError(err)
@@ -31,7 +30,9 @@ export class ImageService {
     console.log('inside imageservice');
     const formData = new FormData();
     formData.append('photo', image);
-    return this.http.post(`${environment.apiUrl}${environment.articlesUrl}${articleId}${environment.imagesUrl}`, formData ,this.headers)
+    return this.http.post(`${environment.apiUrl}${environment.articlesUrl}${articleId}${environment.imagesUrl}`, formData , {
+      headers: new HttpHeaders().set('Content-type', 'multipart/form-data'),
+    })
       .pipe(
         catchError(
           (err) => throwError(err)
