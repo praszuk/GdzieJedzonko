@@ -1,9 +1,8 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {User} from '../models/user.model';
+import {User} from '../../../../models/user.model';
 import {MatSort} from '@angular/material/sort';
 import {MatPaginator} from '@angular/material';
-import {NgxSpinnerService} from 'ngx-spinner';
-import {UserService} from '../services/user/user.service';
+import {UserService} from '../../../../services/user/user.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {Subscription} from 'rxjs';
 import {MatRipple} from '@angular/material/core';

@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {User} from '../../models/user.model';
+import {User} from '../../../models/user.model';
 import {Tokens} from '../tokens.model';
 import {Observable, of} from 'rxjs';
 import {environment} from 'src/environments/environment';
 import {catchError, mapTo, switchMap, tap} from 'rxjs/operators';
 import {Router} from '@angular/router';
-import {UserService} from '../../services/user/user.service';
-import {Role} from '../../models/role.enum';
+import {UserService} from '../../../services/user/user.service';
+import {Role} from '../../../models/role.enum';
 
 @Injectable({
   providedIn: 'root'

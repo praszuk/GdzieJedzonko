@@ -6,7 +6,7 @@ import {ArticleComponent} from './components/article/article.component';
 import {RegisterComponent} from './register/register.component';
 import {HomeComponent} from './components/home/home.component';
 import {LoginComponent} from './login/login.component';
-import {AuthGuard} from './auth/guards/AuthGuard';
+import {AuthGuard} from './modules/auth/guards/AuthGuard';
 import {UserProfileComponent} from './components/user-profile/user-profile.component';
 import {NewReviewComponent} from './components/new-review/new-review.component';
 import {EditProfileComponent} from './edit-profile/edit-profile.component';
@@ -14,9 +14,9 @@ import {BasicInformationComponent} from './edit-profile/basic-information/basic-
 import {ChangePasswordComponent} from './edit-profile/change-password/change-password.component';
 import {DeleteAccountComponent} from './edit-profile/delete-account/delete-account.component';
 import {ChangeRoleComponent} from './edit-profile/change-role/change-role.component';
-import {UserGuard} from './auth/guards/user.guard';
-import {AdminGuard} from './auth/guards/admin.guard';
-import {AdminPanelUsersComponent} from './admin-panel-users/admin-panel-users.component';
+import {UserGuard} from './modules/auth/guards/user.guard';
+import {AdminGuard} from './modules/auth/guards/admin.guard';
+import {AdminPanelUsersComponent} from './modules/admin/components/admin-panel-users/admin-panel-users.component';
 
 
 const routes: Routes = [ {

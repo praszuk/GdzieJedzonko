@@ -16,7 +16,7 @@ import { ArticleComponent } from './components/article/article.component';
 import { CommentSectionComponent } from './components/comment-section/comment-section.component';
 import { CommentComponent } from './components/comment/comment.component';
 import { HomeComponent } from './components/home/home.component';
-import {AuthModule} from './auth/auth.module';
+import {AuthModule} from './modules/auth/auth.module';
 import {UserProfileComponent} from './components/user-profile/user-profile.component';
 import { NewReviewComponent } from './components/new-review/new-review.component';
 import {QuillModule} from 'ngx-quill';
@@ -28,10 +28,10 @@ import { DeleteAccountComponent } from './edit-profile/delete-account/delete-acc
 import { StickySidebarComponent } from './sticky-sidebar/sticky-sidebar.component';
 import { ChangeRoleComponent } from './edit-profile/change-role/change-role.component';
 import { ImageUploadComponent } from './image-upload/image-upload.component';
-import { AdminPanelUsersComponent } from './admin-panel-users/admin-panel-users.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatRippleModule} from '@angular/material/core';
+import {AdminModule} from './modules/admin/admin.module';
 
 
 @NgModule({
@@ -55,7 +55,6 @@ import {MatRippleModule} from '@angular/material/core';
     StickySidebarComponent,
     ChangeRoleComponent,
     ImageUploadComponent,
-    AdminPanelUsersComponent,
   ],
   imports: [
     BrowserModule,
@@ -76,6 +75,7 @@ import {MatRippleModule} from '@angular/material/core';
     MatFormFieldModule,
     MatInputModule,
     MatRippleModule,
+    AdminModule
   ],
   providers: [],
   bootstrap: [AppComponent]
