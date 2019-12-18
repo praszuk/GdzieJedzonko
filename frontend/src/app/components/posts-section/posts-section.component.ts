@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Post} from '../models/post.model';
-import {ArticleService} from '../services/article/article.service';
+import {Post} from '../../models/post.model';
+import {ArticleService} from '../../services/article/article.service';
 import {NgxSpinnerService} from 'ngx-spinner';
 
 @Component({

@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {AuthService} from '../auth/services/auth-service';
+import {AuthService} from '../../auth/services/auth-service';
 import {Subscription} from 'rxjs';
 import {Router} from '@angular/router';
-import {Role} from '../models/role.enum';
-import {User} from '../models/user.model';
+import {Role} from '../../models/role.enum';
+import {User} from '../../models/user.model';
 
 
 @Component({

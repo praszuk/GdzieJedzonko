@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Post} from '../models/post.model';
+import {Post} from '../../models/post.model';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({

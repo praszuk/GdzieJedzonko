@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Comment} from '../models/comment.model';
+import {Comment} from '../../models/comment.model';
 import { NgxSpinnerService} from 'ngx-spinner';
 
 @Component({

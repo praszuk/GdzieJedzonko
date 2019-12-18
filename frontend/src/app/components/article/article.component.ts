@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ArticleService} from '../services/article/article.service';
-import {Article} from '../models/article.model';
+import {ArticleService} from '../../services/article/article.service';
+import {Article} from '../../models/article.model';
 import {NgxSpinnerService} from 'ngx-spinner';
 
 @Component({

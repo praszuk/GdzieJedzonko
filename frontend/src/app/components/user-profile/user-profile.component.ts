@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {User} from '../models/user.model';
+import {User} from '../../models/user.model';
 import {NgxSpinnerService} from 'ngx-spinner';
-import {UserService} from '../services/user/user.service';
+import {UserService} from '../../services/user/user.service';
 import {Subscription} from 'rxjs';
 
 @Component({
