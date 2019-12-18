@@ -13,10 +13,8 @@ import {EditProfileComponent} from './modules/shared/components/edit-profile/edi
 import {BasicInformationComponent} from './modules/shared/components/edit-profile/basic-information/basic-information.component';
 import {ChangePasswordComponent} from './modules/shared/components/edit-profile/change-password/change-password.component';
 import {DeleteAccountComponent} from './modules/shared/components/edit-profile/delete-account/delete-account.component';
-import {ChangeRoleComponent} from './modules/shared/components/edit-profile/change-role/change-role.component';
 import {UserGuard} from './modules/auth/guards/user.guard';
 import {AdminGuard} from './modules/auth/guards/admin.guard';
-import {AdminPanelUsersComponent} from './modules/admin/components/admin-panel-users/admin-panel-users.component';
 
 
 const routes: Routes = [ {
@@ -67,29 +65,8 @@ const routes: Routes = [ {
     canActivate: [UserGuard]
   }, {
     path: 'admin',
-    component: AdminPanelUsersComponent,
-    canActivate: [AdminGuard]
-  }, {
-    path: 'editprofile/:id',
-    component: EditProfileComponent,
-    canActivate: [AdminGuard],
-    children: [{
-      path: '',
-      redirectTo: 'basic-information',
-      pathMatch: 'full'
-    }, {
-      path: 'basic-information',
-      component: BasicInformationComponent
-    }, {
-      path: 'password',
-      component: ChangePasswordComponent
-    }, {
-      path: 'role',
-      component: ChangeRoleComponent
-    }, {
-      path: 'delete',
-      component: DeleteAccountComponent
-    }]
+    loadChildren: () => import('./modules/admin/admin.module').then(module => module.AdminModule),
+    canLoad: [AdminGuard],
   }, {
     path: '404',
     component: PageNotFoundComponent

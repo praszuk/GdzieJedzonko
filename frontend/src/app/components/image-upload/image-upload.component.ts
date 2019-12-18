@@ -35,20 +35,20 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
     console.log('in upload images');
     this.mainImageSubscription = this.imageService.uploadImage(articleId, this.selectedMainImageFile).subscribe(
       (next) => {
-          console.log("uploaded main image");
+          console.log('uploaded main image');
           this.selectedFiles.forEach((file) => {
           this.imagesSubscription = this.imageService.uploadImage(articleId, file).subscribe(
             (response) => {
-              console.log("uploaded some image");
+              console.log('uploaded some image');
             },
             (error) => {
-              console.log("error some image");
+              console.log('error some image');
             }
           );
         });
       },
       (error) => {
-        console.log("error main image");
+        console.log('error main image');
         console.log(error);
       },
       () => {

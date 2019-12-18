@@ -6,6 +6,8 @@ import {ChangeRoleComponent} from './components/edit-profile/change-role/change-
 import {ChangePasswordComponent} from './components/edit-profile/change-password/change-password.component';
 import {BasicInformationComponent} from './components/edit-profile/basic-information/basic-information.component';
 import {StickySidebarComponent} from './components/sticky-sidebar/sticky-sidebar.component';
+import {RouterModule} from "@angular/router";
+import {FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 
 
@@ -19,7 +21,10 @@ import {StickySidebarComponent} from './components/sticky-sidebar/sticky-sidebar
     StickySidebarComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
     EditProfileComponent,

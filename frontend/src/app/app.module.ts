@@ -1,8 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatTableModule, MatToolbarModule, MatSidenavModule, MatIconModule,
-  MatListModule, MatSortModule, MatPaginatorModule} from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,9 +20,6 @@ import { NewReviewComponent } from './components/new-review/new-review.component
 import {QuillModule} from 'ngx-quill';
 import {NgxSpinnerModule} from 'ngx-spinner';
 import { ImageUploadComponent } from './components/image-upload/image-upload.component';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {MatRippleModule} from '@angular/material/core';
 import {AdminModule} from './modules/admin/admin.module';
 import {SharedModule} from './modules/shared/shared.module';
 
@@ -54,16 +49,6 @@ import {SharedModule} from './modules/shared/shared.module';
     AuthModule,
     QuillModule.forRoot(),
     NgxSpinnerModule,
-    MatTableModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatIconModule,
-    MatListModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatRippleModule,
     AdminModule,
     SharedModule
   ],
