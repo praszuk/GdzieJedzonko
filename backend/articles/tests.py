@@ -418,6 +418,31 @@ class CreateImageForArticleTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_thumbnail_is_replaced_by_new_objects(self):
+        self.auth_user(self.USERS[0])
+
+        response1 = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': self.article1.id}
+            ),
+            {'thumbnail': self.create_test_image_file()},
+            format='multipart'
+        )
+        self.assertEqual(response1.status_code, status.HTTP_201_CREATED)
+
+        response2 = self.client.post(
+            reverse(
+                'articles:images-list',
+                kwargs={'article_id': self.article1.id}
+            ),
+            {'thumbnail': self.create_test_image_file()},
+            format='multipart'
+        )
+        self.assertEqual(response2.status_code, status.HTTP_201_CREATED)
+
+        self.assertNotEqual(response1.data['id'], response2.data['id'])
+        self.assertEqual(self.article1.thumbnail.id, response2.data['id'])
 
 
 class ImageValidatorsTest(CreateImageForArticleTest):
