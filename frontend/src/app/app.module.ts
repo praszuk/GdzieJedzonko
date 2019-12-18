@@ -21,7 +21,7 @@ import {UserProfileComponent} from './components/user-profile/user-profile.compo
 import { NewReviewComponent } from './components/new-review/new-review.component';
 import {QuillModule} from 'ngx-quill';
 import {NgxSpinnerModule} from 'ngx-spinner';
-import { ImageUploadComponent } from './image-upload/image-upload.component';
+import { ImageUploadComponent } from './components/image-upload/image-upload.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatRippleModule} from '@angular/material/core';

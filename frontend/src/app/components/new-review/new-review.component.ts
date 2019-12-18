@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ArticleService} from '../../services/article/article.service';
 import {Subscription} from 'rxjs';
 import {Router} from '@angular/router';
-import {ImageUploadComponent} from '../../image-upload/image-upload.component';
+import {ImageUploadComponent} from '../image-upload/image-upload.component';
 
 @Component({
   selector: 'app-new-review',
