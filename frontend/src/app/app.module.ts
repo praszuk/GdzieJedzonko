@@ -26,6 +26,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatRippleModule} from '@angular/material/core';
 import {AdminModule} from './modules/admin/admin.module';
+import {SharedModule} from './modules/shared/shared.module';
 
 
 @NgModule({
@@ -63,7 +64,8 @@ import {AdminModule} from './modules/admin/admin.module';
     MatFormFieldModule,
     MatInputModule,
     MatRippleModule,
-    AdminModule
+    AdminModule,
+    SharedModule
   ],
   providers: [],
   bootstrap: [AppComponent]
