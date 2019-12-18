@@ -1,10 +1,10 @@
 <div class="border rounded shadow min-height-50 mb-5" >
 
   <div class="row">
-    <mat-form-field class="ml-3 col-4 mt-3">
+    <mat-form-field class="ml-3 col-3 mt-3">
       <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtruj">
     </mat-form-field>
-    <div class="offset-5 col-2 mt-3 text-center">
+    <div class="offset-6 col-2 mt-3 text-center">
       <button [disabled]="!selectedRowIndex" class="btn btn-light mt-2" [routerLink]="['/admin/editprofile', selectedRowIndex]"> Edytuj </button>
     </div>
   </div>
@@ -33,7 +33,7 @@
 
     <ng-container matColumnDef="birth_date">
       <mat-header-cell *matHeaderCellDef mat-sort-header> Data urodzenia </mat-header-cell>
-      <mat-cell *matCellDef="let user">{{user.birth_date}}</mat-cell>
+      <mat-cell *matCellDef="let user">{{user.birth_date? user.birth_date : "---"}}</mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="date_joined">
