@@ -1,22 +1,20 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {PostsSectionComponent} from './posts-section/posts-section.component';
-import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
-import {ArticleComponent} from './article/article.component';
-import {RegisterComponent} from './register/register.component';
-import {HomeComponent} from './home/home.component';
-import {LoginComponent} from './login/login.component';
-import {AuthGuard} from './auth/guards/AuthGuard';
-import {UserProfileComponent} from './user-profile/user-profile.component';
-import {NewReviewComponent} from './new-review/new-review.component';
-import {EditProfileComponent} from './edit-profile/edit-profile.component';
-import {BasicInformationComponent} from './edit-profile/basic-information/basic-information.component';
-import {ChangePasswordComponent} from './edit-profile/change-password/change-password.component';
-import {DeleteAccountComponent} from './edit-profile/delete-account/delete-account.component';
-import {ChangeRoleComponent} from './edit-profile/change-role/change-role.component';
-import {UserGuard} from './auth/guards/user.guard';
-import {AdminGuard} from './auth/guards/admin.guard';
-import {AdminPanelUsersComponent} from './admin-panel-users/admin-panel-users.component';
+import {PostsSectionComponent} from './components/posts-section/posts-section.component';
+import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
+import {ArticleComponent} from './components/article/article.component';
+import {RegisterComponent} from './modules/auth/components/register/register.component';
+import {HomeComponent} from './components/home/home.component';
+import {LoginComponent} from './modules/auth/components/login/login.component';
+import {AuthGuard} from './modules/auth/guards/AuthGuard';
+import {UserProfileComponent} from './components/user-profile/user-profile.component';
+import {NewReviewComponent} from './components/new-review/new-review.component';
+import {EditProfileComponent} from './modules/shared/components/edit-profile/edit-profile.component';
+import {BasicInformationComponent} from './modules/shared/components/edit-profile/basic-information/basic-information.component';
+import {ChangePasswordComponent} from './modules/shared/components/edit-profile/change-password/change-password.component';
+import {DeleteAccountComponent} from './modules/shared/components/edit-profile/delete-account/delete-account.component';
+import {UserGuard} from './modules/auth/guards/user.guard';
+import {AdminGuard} from './modules/auth/guards/admin.guard';
 
 
 const routes: Routes = [ {
@@ -67,29 +65,8 @@ const routes: Routes = [ {
     canActivate: [UserGuard]
   }, {
     path: 'admin',
-    component: AdminPanelUsersComponent,
-    canActivate: [AdminGuard]
-  }, {
-    path: 'editprofile/:id',
-    component: EditProfileComponent,
-    canActivate: [AdminGuard],
-    children: [{
-      path: '',
-      redirectTo: 'basic-information',
-      pathMatch: 'full'
-    }, {
-      path: 'basic-information',
-      component: BasicInformationComponent
-    }, {
-      path: 'password',
-      component: ChangePasswordComponent
-    }, {
-      path: 'role',
-      component: ChangeRoleComponent
-    }, {
-      path: 'delete',
-      component: DeleteAccountComponent
-    }]
+    loadChildren: () => import('./modules/admin/admin.module').then(module => module.AdminModule),
+    canLoad: [AdminGuard],
   }, {
     path: '404',
     component: PageNotFoundComponent
