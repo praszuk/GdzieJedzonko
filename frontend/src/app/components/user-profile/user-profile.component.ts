@@ -37,7 +37,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         this.loadingService.show('userProfileLoading');
         this.isLoading = true;
       }
-    )
+    );
 
   }
 
