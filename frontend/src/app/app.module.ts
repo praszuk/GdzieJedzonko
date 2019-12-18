@@ -1,7 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatTableModule, MatToolbarModule, MatSidenavModule, MatIconModule, MatListModule, MatSortModule, MatPaginatorModule} from '@angular/material';
+import {MatTableModule, MatToolbarModule, MatSidenavModule, MatIconModule,
+  MatListModule, MatSortModule, MatPaginatorModule} from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,8 +18,6 @@ import { CommentComponent } from './comment/comment.component';
 import { HomeComponent } from './home/home.component';
 import {AuthModule} from './auth/auth.module';
 import {UserProfileComponent} from './user-profile/user-profile.component';
-import {AdminPanelUserInfoComponent} from './admin-panel-user-info/admin-panel-user-info.component';
-import { AdminPanelUserSectionComponent } from './admin-panel-user-section/admin-panel-user-section.component';
 import { NewReviewComponent } from './new-review/new-review.component';
 import {QuillModule} from 'ngx-quill';
 import {NgxSpinnerModule} from 'ngx-spinner';
@@ -48,8 +47,6 @@ import {MatRippleModule} from '@angular/material/core';
     CommentComponent,
     HomeComponent,
     UserProfileComponent,
-    AdminPanelUserInfoComponent,
-    AdminPanelUserSectionComponent,
     NewReviewComponent,
     EditProfileComponent,
     BasicInformationComponent,
