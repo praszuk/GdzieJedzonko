@@ -25,7 +25,7 @@ export class AdminPanelUsersComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   @ViewChild(MatRipple, {static: true}) ripple: MatRipple;
 
-  private selectedRowIndex: number;
+  selectedRowIndex: number;
 
   constructor(private userService: UserService) { }
 
