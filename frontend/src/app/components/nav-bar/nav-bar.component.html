@@ -9,10 +9,10 @@
         <a class="nav-link text-decoration-none" routerLink="/home">Strona głowna <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item" *ngIf="loggedIn">
-        <a class="nav-link" [routerLink]="['/newreview']" tabindex="-1" aria-disabled="true">Nowa recenzja</a>
+        <a class="nav-link no-outline" [routerLink]="['/newreview']" tabindex="-1" aria-disabled="true">Nowa recenzja</a>
       </li>
-      <li class="nav-item" *ngIf="isAdmin">
-        <a class="nav-link" [routerLink]="['/admin']" tabindex="-1" aria-disabled="true">Admin panel</a>
+      <li class="nav-item " *ngIf="isAdmin">
+        <a class="nav-link no-outline" [routerLink]="['/admin']" tabindex="-1" aria-disabled="true">Admin panel</a>
       </li>
     </ul>
     <div class="form-inline my-2 my-lg-0" *ngIf="!loggedIn">
