@@ -16,10 +16,9 @@ import {MatRipple} from '@angular/material/core';
 })
 export class AdminPanelUsersComponent implements OnInit, OnDestroy {
   userDataSource: MatTableDataSource<User>;
-  isLoading = true;
   subscription: Subscription;
 
-  roles = ['Gość', 'Użytkownik', 'Pracownik', 'Admin'];
+  roles = ['Gość', 'Użytkownik', 'Moderator', 'Admin'];
   displayedColumns = ['id', 'email', 'first_name', 'last_name', 'birth_date', 'date_joined', 'role'];
 
   @ViewChild(MatPaginator, {static: true} ) paginator: MatPaginator;
@@ -28,13 +27,12 @@ export class AdminPanelUsersComponent implements OnInit, OnDestroy {
 
   private selectedRowIndex: number;
 
-  constructor(private loadingService: NgxSpinnerService, private userService: UserService) { }
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
     this.userDataSource = new MatTableDataSource();
     this.userDataSource.sort = this.sort;
     this.userDataSource.paginator = this.paginator;
-    this.loadingService.show('admin-panel-user-section');
     this.getAllUsers();
   }
 
@@ -42,12 +40,9 @@ export class AdminPanelUsersComponent implements OnInit, OnDestroy {
     this. subscription = this.userService.getAllUsers().subscribe(
       (users) => {
         this.userDataSource.data = users;
-        this.loadingService.hide('admin-panel-user-section');
-        this.isLoading = false;
       },
       (error) => {
-        this.loadingService.show('admin-panel-user-section');
-        this.isLoading = true;
+        // todo
       }
     );
   }
