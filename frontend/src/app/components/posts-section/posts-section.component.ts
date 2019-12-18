@@ -16,7 +16,7 @@ export class PostsSectionComponent implements OnInit {
   constructor(private articleService: ArticleService, private loadingService: NgxSpinnerService) {  }
 
   ngOnInit() {
-    this.loadingService.show('posts-section-loading');
+    // this.loadingService.show('posts-section-loading');
     if (this.userId) {
       this.getUserArticles(this.userId);
     } else {
@@ -39,7 +39,7 @@ export class PostsSectionComponent implements OnInit {
           }
         }, 70);
         this.isLoading = false;
-        this.loadingService.hide('posts-section-loading');
+        // this.loadingService.hide('posts-section-loading');
       },
       (error) => {
         this.isError = true;
@@ -63,7 +63,7 @@ export class PostsSectionComponent implements OnInit {
           }, 50);
 
         this.isLoading = false;
-        this.loadingService.hide('posts-section-loading');
+        // this.loadingService.hide('posts-section-loading');
       },
       (error) => {
         this.isError = true;
