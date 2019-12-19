@@ -15,7 +15,7 @@ export class ImageService {
   uploadThumbnail(articleId: number, image: File) {
     const headers = new HttpHeaders();
     headers.append('Content-type', 'multipart/form-data');
-    console.log('inside imageservice');
+
     const formData = new FormData();
     formData.append('thumbnail', image);
     return this.http.post(`${environment.apiUrl}${environment.articlesUrl}${articleId}${environment.imagesUrl}`, formData,
@@ -31,7 +31,6 @@ export class ImageService {
     const headers = new HttpHeaders();
     headers.append('Content-type', 'multipart/form-data');
 
-    console.log('inside imageservice');
     const formData = new FormData();
     formData.append('photo', image);
     return this.http.post(`${environment.apiUrl}${environment.articlesUrl}${articleId}${environment.imagesUrl}`, formData ,

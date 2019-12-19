@@ -1,6 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ImageService} from '../../services/image/image.service';
-import {Subscription} from 'rxjs';
+import {forkJoin, Observable, Subscription, throwError} from 'rxjs';
+import {Router} from '@angular/router';
+import {catchError} from 'rxjs/operators';
 
 @Component({
   selector: 'app-image-upload',
@@ -14,10 +16,8 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
   selectedMainImageFile: File;
   previewMainImage: any;
   mainImageSubscription: Subscription;
-  imagesSubscription: Subscription;
 
-
-  constructor(private imageService: ImageService) { }
+  constructor(private imageService: ImageService, private router: Router) { }
 
   ngOnInit() {
   }
@@ -26,36 +26,41 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
     if (this.mainImageSubscription) {
       this.mainImageSubscription.unsubscribe();
     }
-    if (this.imagesSubscription) {
-      this.imagesSubscription.unsubscribe();
-    }
   }
 
   uploadImages(articleId: number) {
-    console.log('in upload images');
     this.mainImageSubscription = this.imageService.uploadThumbnail(articleId, this.selectedMainImageFile).subscribe(
       (next) => {
-          console.log('uploaded main image');
-          this.selectedFiles.forEach((file) => {
-          this.imagesSubscription = this.imageService.uploadImage(articleId, file).subscribe(
-            (response) => {
-              console.log('uploaded some image');
+
+        if (this.selectedFiles.length) {
+          const sentImages = new Array<Observable<any>>();
+          this.selectedFiles.forEach((file: File) => {
+            sentImages.push(this.imageService.uploadImage(articleId, file)
+              .pipe(
+                catchError(
+                  (err) =>
+                    throwError(file.name)
+                )
+              ));
+            });
+
+          forkJoin(sentImages).subscribe(
+            (result) => {},
+            (filename) => {
+              // todo popup with filenames that was not uploaded
             },
-            (error) => {
-              console.log('error some image');
+            () => {
+              this.router.navigate([`article/${articleId}`]);
             }
           );
-        });
+        } else {
+          this.router.navigate([`article/${articleId}`]);
+        }
       },
       (error) => {
-        console.log('error main image');
+        console.log('Error uploading thumbnail');
         console.log(error);
-      },
-      () => {
-        console.log('complete');
-      }
-    );
-
+      });
 
   }
 

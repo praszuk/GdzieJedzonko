@@ -44,11 +44,7 @@ export class NewReviewComponent implements OnInit, OnDestroy {
     this.subscription = this.articleService.newReview(article).subscribe(
       (id) => {
           this.titleExists = false;
-          // todo
           this.imageUpload.uploadImages(id.id);
-          console.log("after sending");
-          console.log("redirecting to article with id = " + id.id );
-          this.router.navigate([`article/${id.id}`]);
         },
       error => {
         if (error.error.title !== undefined) {
