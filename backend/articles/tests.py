@@ -149,7 +149,7 @@ class GetAllArticlesTest(BaseViewTest):
         )
 
     def test_everyone_can_get_list_of_articles(self):
-        expected = Article.objects.all()
+        expected = Article.objects.order_by('-creation_date')
         response = self.client.get(reverse('articles:article-list'))
         serialized = ArticleListSerializer(expected, many=True)
 
@@ -193,7 +193,10 @@ class GetAllArticlesFilteredByUserTest(BaseViewTest):
         )
 
     def test_get_articles_user_exists(self):
-        expected = Article.objects.filter(user_id=self.user1.id)
+        expected = Article.objects.filter(
+            user_id=self.user1.id
+        ).order_by('-creation_date')
+
         response = self.client.get(
             reverse('articles:article-list'),
             {'user': self.user1.id}
@@ -204,7 +207,7 @@ class GetAllArticlesFilteredByUserTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_articles_user_not_exists(self):
-        expected = Article.objects.all()
+        expected = Article.objects.order_by('-creation_date')
         response = self.client.get(
             reverse('articles:article-list'),
             {'user': 999999}
@@ -215,7 +218,7 @@ class GetAllArticlesFilteredByUserTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_articles_user_incorrect_value(self):
-        expected = Article.objects.all()
+        expected = Article.objects.order_by('-creation_date')
         response = self.client.get(
             reverse('articles:article-list'),
             {'user': 'incorrect_value'}
