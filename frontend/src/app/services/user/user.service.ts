@@ -84,6 +84,10 @@ export class UserService {
     return JSON.parse(atob(token.split('.')[1])).user_id;
   }
 
+  getUserRoleFromTokens(token: string): number {
+    return JSON.parse(atob(token.split('.')[1])).role;
+  }
+
   getAccessToken() {
     return localStorage.getItem('access');
   }
@@ -97,7 +101,7 @@ export class UserService {
   }
 
   getUserRole() {
-    return this.user.role;
+    return this.getUserRoleFromTokens(this.getAccessToken());
   }
 
   setUser(user: User) {
