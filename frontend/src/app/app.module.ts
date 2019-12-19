@@ -26,6 +26,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {NgxGalleryModule} from 'ngx-gallery';
 import {CustomHammerConfig} from './models/custom-hammer-config';
 import {EditReviewComponent} from './components/edit-review/edit-review.component';
+import {MatCardModule} from "@angular/material/card";
 
 
 @NgModule({
@@ -57,7 +58,8 @@ import {EditReviewComponent} from './components/edit-review/edit-review.componen
     AdminModule,
     SharedModule,
     MatButtonModule,
-    NgxGalleryModule
+    NgxGalleryModule,
+    MatCardModule
   ],
   providers: [{ provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig }],
   bootstrap: [AppComponent]

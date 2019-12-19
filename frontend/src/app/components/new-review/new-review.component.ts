@@ -61,6 +61,7 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   }
 
    onSubmit() {
+    console.log(this.editorForm.value.content);
     const article = this.editorForm.value;
     this.subscription = this.articleService.newReview(article).subscribe(
       (id) => {

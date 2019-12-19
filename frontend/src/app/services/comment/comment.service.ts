@@ -12,7 +12,7 @@ export class CommentService {
 
   constructor(private http: HttpClient) { }
 
-  createComment(articleId: number, comment: Comment): Observable<Comment> {
+  createComment(articleId: number, comment: {user: number, comment: string}): Observable<Comment> {
     return this.http.post<Comment>(`${environment.apiUrl}${environment.articlesUrl}${articleId}${environment.commentsUrl}`,
       comment)
       .pipe(

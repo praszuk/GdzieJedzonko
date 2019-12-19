@@ -1,7 +1,27 @@
 <h2 class="offset-3 font-weight-light mt-4">Komentarze</h2>
-<div class="offset-3 col-6 mt-2 mb-5 border rounded border-light min-height-20">
+
+<div *ngIf="isLogged">
+  <form [formGroup]="newCommentForm" (ngSubmit)="newComment()">
+    <div class="row">
+      <quill-editor class="offset-3 col-6"
+                    [styles]="editorStyle"
+                    [modules]="modules"
+                    format="json"
+                    formControlName="comment">
+      </quill-editor>
+      <button [disabled]="newCommentForm.invalid" mat-raised-button class="col-1">Wyslij</button>
+    </div>
+    <div class="alert alert-danger offset-4 col-4"
+         *ngIf="newCommentForm.controls.comment.errors && newCommentForm.controls.comment.dirty">
+      <p *ngIf="newCommentForm.controls.comment.errors?.required"> Komentarz jest wymagany </p>
+      <p *ngIf="newCommentForm.controls.comment.errors?.maxlength"> Komentarz może miec maksymalnie 400 znakow </p>
+    </div>
+  </form>
+</div>
+
+<div class="offset-3 col-7 mt-2 mb-5 min-height-20">
   <ngx-spinner name="comments-section-loading" bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
   <div *ngIf="!isLoading">
-    <app-comment *ngFor="let comment of comments" [comment]="comment"></app-comment>
+    <app-comment *ngFor="let comment of comments; let i = index" [comment]="comment"></app-comment>
   </div>
 </div>
