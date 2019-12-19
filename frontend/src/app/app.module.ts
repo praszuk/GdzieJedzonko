@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import {BrowserModule, HAMMER_GESTURE_CONFIG} from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
@@ -24,6 +24,7 @@ import {AdminModule} from './modules/admin/admin.module';
 import {SharedModule} from './modules/shared/shared.module';
 import {MatButtonModule} from '@angular/material/button';
 import {NgxGalleryModule} from 'ngx-gallery';
+import {CustomHammerConfig} from './models/custom-hammer-config';
 
 
 @NgModule({
@@ -56,7 +57,7 @@ import {NgxGalleryModule} from 'ngx-gallery';
     MatButtonModule,
     NgxGalleryModule
   ],
-  providers: [],
+  providers: [{ provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
