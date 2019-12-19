@@ -12,5 +12,5 @@ export class Article {
   comments?: Comment[];
   tags?: string[];
   thumbnail?: Image;
-  images?: Image[];
+  photos?: Image[];
 }

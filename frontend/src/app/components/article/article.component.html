@@ -21,8 +21,13 @@
     <quill-view [content]="article.content" format="html" theme="snow"></quill-view>
   </div>
 
-  <div id="images">
+  <div class="min-height-5"></div>
 
+  <div *ngIf="showGallery" class="offset-1 col-10 my-5">
+    <div class="text-center">
+      <h2> Galeria </h2>
+      <ngx-gallery class="mt-3" [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+    </div>
   </div>
 </article>
 <app-comment-section></app-comment-section>
