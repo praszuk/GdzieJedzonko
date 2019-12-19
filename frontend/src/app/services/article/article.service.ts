@@ -50,4 +50,15 @@ export class ArticleService {
         )
       );
   }
+
+  deleteArticle(articleId: number): Observable<boolean> {
+    return this.http.delete<Article>(`${environment.apiUrl}${environment.articlesUrl}${articleId}`)
+      .pipe(
+        mapTo(true),
+        catchError(
+          err => throwError(err)
+        )
+      );
+  }
+
 }

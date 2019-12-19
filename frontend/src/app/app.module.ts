@@ -22,6 +22,8 @@ import {NgxSpinnerModule} from 'ngx-spinner';
 import { ImageUploadComponent } from './components/image-upload/image-upload.component';
 import {AdminModule} from './modules/admin/admin.module';
 import {SharedModule} from './modules/shared/shared.module';
+import {MatButtonModule} from '@angular/material/button';
+import {NgxGalleryModule} from 'ngx-gallery';
 
 
 @NgModule({
@@ -50,7 +52,9 @@ import {SharedModule} from './modules/shared/shared.module';
     QuillModule.forRoot(),
     NgxSpinnerModule,
     AdminModule,
-    SharedModule
+    SharedModule,
+    MatButtonModule,
+    NgxGalleryModule
   ],
   providers: [],
   bootstrap: [AppComponent]

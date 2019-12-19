@@ -29,39 +29,42 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
   }
 
   uploadImages(articleId: number) {
-    this.mainImageSubscription = this.imageService.uploadThumbnail(articleId, this.selectedMainImageFile).subscribe(
-      (next) => {
+    if (this.selectedMainImageFile) {
+      this.mainImageSubscription = this.imageService.uploadThumbnail(articleId, this.selectedMainImageFile).subscribe(
+        (next) => {
 
-        if (this.selectedFiles.length) {
-          const sentImages = new Array<Observable<any>>();
-          this.selectedFiles.forEach((file: File) => {
-            sentImages.push(this.imageService.uploadImage(articleId, file)
-              .pipe(
-                catchError(
-                  (err) =>
-                    throwError(file.name)
-                )
-              ));
-            });
+          if (this.selectedFiles.length) {
+            const sentImages = new Array<Observable<any>>();
+            this.selectedFiles.forEach((file: File) => {
+              sentImages.push(this.imageService.uploadImage(articleId, file)
+                .pipe(
+                  catchError(
+                    (err) =>
+                      throwError(file.name)
+                  )
+                ));
+              });
 
-          forkJoin(sentImages).subscribe(
-            (result) => {},
-            (filename) => {
-              // todo popup with filenames that was not uploaded
-            },
-            () => {
-              this.router.navigate([`article/${articleId}`]);
-            }
-          );
-        } else {
-          this.router.navigate([`article/${articleId}`]);
-        }
-      },
-      (error) => {
-        console.log('Error uploading thumbnail');
-        console.log(error);
-      });
-
+            forkJoin(sentImages).subscribe(
+              (result) => {},
+              (filename) => {
+                // todo popup with filenames that was not uploaded
+              },
+              () => {
+                this.router.navigate([`article/${articleId}`]);
+              }
+            );
+          } else {
+            this.router.navigate([`article/${articleId}`]);
+          }
+        },
+        (error) => {
+          console.log('Error uploading thumbnail');
+          console.log(error);
+        });
+    } else {
+      this.router.navigate([`article/${articleId}`]);
+    }
   }
 
   addImages(selected: any) {

@@ -85,6 +85,10 @@ export class AuthService {
     return this.userService.getUserById(id);
   }
 
+  getCurrentUserId(): number {
+    return this.getUserIdFromTokens(this.getAccessToken());
+  }
+
   getUserIdFromTokens(token: string): number {
     return JSON.parse(atob(token.split('.')[1])).user_id;
   }
