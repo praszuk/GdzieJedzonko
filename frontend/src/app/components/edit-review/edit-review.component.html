@@ -18,7 +18,7 @@
         <div class="mt-3">
           <h4> Recenzja </h4>
           <div class="">
-            <quill-editor [styles]="editorStyle" [modules]="modules" formControlName="content"></quill-editor>
+            <quill-editor [styles]="editorStyle" [modules]="modules" format="json" formControlName="content"></quill-editor>
             <div *ngIf="editorForm.controls.content.errors && editorForm.controls.content.dirty"
                  class="alert alert-danger text-center my-2">
               <p *ngIf="editorForm.controls.content.errors?.required"> Recenzja jest wymagana </p>
