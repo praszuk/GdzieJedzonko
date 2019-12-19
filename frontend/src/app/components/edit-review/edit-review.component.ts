@@ -75,10 +75,10 @@ export class EditReviewComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     const article = this.editorForm.value;
-    this.subscription = this.articleService.newReview(article).subscribe(
+    this.subscription = this.articleService.updateArticle(this.articleId, article).subscribe(
       (id) => {
         this.titleExists = false;
-        this.imageUpload.uploadImages(id.id);
+        this.imageUpload.uploadImages(this.articleId);
       },
       error => {
         if (error.error.title !== undefined) {

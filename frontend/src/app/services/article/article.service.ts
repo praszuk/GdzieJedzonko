@@ -61,4 +61,14 @@ export class ArticleService {
       );
   }
 
+  updateArticle(articleId: number, article: {title?: string; content?: string}) {
+    return this.http.patch(`${environment.apiUrl}${environment.articlesUrl}${articleId}`, article)
+      .pipe(
+        mapTo(true),
+        catchError(
+          err => throwError(err)
+        )
+      );
+  }
+
 }
