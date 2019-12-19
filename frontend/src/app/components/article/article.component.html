@@ -9,11 +9,12 @@
         <p *ngIf="!article.user">[deleted]</p>
         <small class="ml-3 mt-1">{{article.creation_date}}</small>
       </div>
-      <div *ngIf="showDelete" class="offset-4 col-2  mt-1 text-center">
-        <button mat-raised-button (click)="deleteArticle()"> Usuń recenzje </button>
+      <div *ngIf="showOptionButtons" class="offset-2 col-4  mt-1 text-center">
+        <button mat-raised-button  [routerLink]="['/editreview', articleId]" [state]="{data: 'fsfdsf'}"> Edytuj recenzje </button>
+        <button mat-raised-button class="ml-2" (click)="deleteArticle()"> Usuń recenzje </button>
       </div>
-
     </div>
+
     <h2>{{article.title}}</h2>
     <div id="article-map" class="align-content-center">
       <p class="text-center"> MAP GOES HERE</p>

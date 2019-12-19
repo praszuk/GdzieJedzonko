@@ -41,4 +41,15 @@ export class ImageService {
         )
       );
   }
+
+  deleteImage(articleId: number, imageId: number) {
+    return this.http.delete(`${environment.apiUrl}${environment.articlesUrl}${articleId}${environment.imagesUrl}${imageId}`)
+      .pipe(
+        catchError(
+          (err) => throwError(err)
+        )
+      );
+  }
+
+
 }

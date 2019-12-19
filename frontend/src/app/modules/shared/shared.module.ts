@@ -18,13 +18,13 @@ import {FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
     ChangeRoleComponent,
     ChangePasswordComponent,
     BasicInformationComponent,
-    StickySidebarComponent
+    StickySidebarComponent,
   ],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   exports: [
     EditProfileComponent,
@@ -32,7 +32,7 @@ import {FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
     ChangeRoleComponent,
     ChangePasswordComponent,
     BasicInformationComponent,
-    StickySidebarComponent
+    StickySidebarComponent,
   ]
 })
 export class SharedModule { }
