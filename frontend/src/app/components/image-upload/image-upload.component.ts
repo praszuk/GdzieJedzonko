@@ -1,8 +1,9 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {ImageService} from '../../services/image/image.service';
 import {forkJoin, Observable, Subscription, throwError} from 'rxjs';
 import {Router} from '@angular/router';
 import {catchError} from 'rxjs/operators';
+import {Image} from '../../models/image.model';
 
 @Component({
   selector: 'app-image-upload',
@@ -10,12 +11,16 @@ import {catchError} from 'rxjs/operators';
   styleUrls: ['./image-upload.component.css']
 })
 export class ImageUploadComponent implements OnInit, OnDestroy {
+  @Input() articleId: number;
+  @Input() uploadedImages: Image[];
+  @Input() uploadedThumbnail: Image;
+
   selectedFiles = [];
   previewUrlArray = [];
-  private maxImageCount = 9;
-  selectedMainImageFile: File;
-  previewMainImage: any;
+  selectedThumbnailFile: File;
+  previewThumbnailImage: any;
   mainImageSubscription: Subscription;
+  private maxImageCount = 9;
 
   constructor(private imageService: ImageService, private router: Router) { }
 
@@ -29,8 +34,8 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
   }
 
   uploadImages(articleId: number) {
-    if (this.selectedMainImageFile) {
-      this.mainImageSubscription = this.imageService.uploadThumbnail(articleId, this.selectedMainImageFile).subscribe(
+    if (this.selectedThumbnailFile) {
+      this.mainImageSubscription = this.imageService.uploadThumbnail(articleId, this.selectedThumbnailFile).subscribe(
         (next) => {
 
           if (this.selectedFiles.length) {
@@ -69,7 +74,12 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
 
   addImages(selected: any) {
     const selectedArr = Object.values(selected.target.files);
-    const isOverLimit =  (this.selectedFiles.length + selectedArr.length) <= this.maxImageCount;
+    let isOverLimit;
+    if (this.uploadedImages) {
+      isOverLimit = (this.selectedFiles.length + selectedArr.length + this.uploadedImages.length) <= this.maxImageCount;
+    } else {
+      isOverLimit = (this.selectedFiles.length + selectedArr.length) <= this.maxImageCount;
+    }
     if (isOverLimit) {
         selectedArr.forEach((file) => {
         this.selectedFiles.push(file);
@@ -93,12 +103,12 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
     };
   }
 
-  addMainImage(selected: any) {
-    this.selectedMainImageFile = selected.target.files[0] as File;
-    this.previewMain(this.selectedMainImageFile);
+  addThumbnail(selected: any) {
+    this.selectedThumbnailFile = selected.target.files[0] as File;
+    this.previewThumbnail(this.selectedThumbnailFile);
   }
 
-  previewMain(fileData) {
+  previewThumbnail(fileData) {
     const mimeType = fileData.type;
     if (mimeType.match(/image\/*/) == null) {
       return;
@@ -106,7 +116,7 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
     const reader = new FileReader();
     reader.readAsDataURL(fileData);
     reader.onload = (event) => {
-      this.previewMainImage = reader.result;
+      this.previewThumbnailImage = reader.result;
     };
   }
 
@@ -117,13 +127,41 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
   }
 
 
-  removeMainImage(preview: any) {
-    this.previewMainImage = null;
-    this.selectedMainImageFile = null;
+  removeThumbnail(preview: any) {
+    this.previewThumbnailImage = null;
+    this.selectedThumbnailFile = null;
   }
 
   showModalPreview(preview: any) {
     // todo fullscreen preview
     alert('todo modal fullscreen preview');
+  }
+
+  removeUploadedImage(image: Image) {
+    const fileIndex = this.uploadedImages.map((photo) => photo.image).indexOf(image.image);
+    this.uploadedImages.splice(fileIndex, 1);
+    if (this.uploadedImages.length === 0) {
+      this.uploadedImages = null;
+    }
+    this.imageService.deleteImage(this.articleId, image.id).subscribe(
+      (next) => {
+        // todo popup deletion information
+      },
+      (error) => {
+        // todo popup error deletion information
+      }
+    );
+  }
+
+  removeUploadedThumbnail(image: Image) {
+    this.uploadedThumbnail = null;
+    this.imageService.deleteImage(this.articleId, image.id).subscribe(
+      (next) => {
+        // todo popup deletion information
+      },
+      (error) => {
+        // todo popup error deletion information
+      }
+    );
   }
 }

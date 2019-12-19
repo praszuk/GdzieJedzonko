@@ -15,6 +15,8 @@ import {ChangePasswordComponent} from './modules/shared/components/edit-profile/
 import {DeleteAccountComponent} from './modules/shared/components/edit-profile/delete-account/delete-account.component';
 import {UserGuard} from './modules/auth/guards/user.guard';
 import {AdminGuard} from './modules/auth/guards/admin.guard';
+import {EditReviewComponent} from "./components/edit-review/edit-review.component";
+import {OwnerGuard} from "./modules/auth/guards/owner.guard";
 
 
 const routes: Routes = [ {
@@ -59,6 +61,10 @@ const routes: Routes = [ {
       path: 'delete',
       component: DeleteAccountComponent
     }]
+  }, {
+    path: 'editreview/:id',
+    component: EditReviewComponent,
+    canActivate: [OwnerGuard]
   }, {
     path: 'userprofile/:id',
     component: UserProfileComponent,

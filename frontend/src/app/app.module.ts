@@ -25,6 +25,7 @@ import {SharedModule} from './modules/shared/shared.module';
 import {MatButtonModule} from '@angular/material/button';
 import {NgxGalleryModule} from 'ngx-gallery';
 import {CustomHammerConfig} from './models/custom-hammer-config';
+import {EditReviewComponent} from './components/edit-review/edit-review.component';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import {CustomHammerConfig} from './models/custom-hammer-config';
     UserProfileComponent,
     NewReviewComponent,
     ImageUploadComponent,
+    EditReviewComponent
   ],
   imports: [
     BrowserModule,

@@ -17,7 +17,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   article: Article;
   subscription: any;
   isLoading = true;
-  showDelete = false;
+  showOptionButtons = false;
   showGallery: boolean;
 
   galleryOptions: Array<NgxGalleryOptions> = [];
@@ -73,7 +73,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
         this.article = article;
         this.isLoading = false;
         this.loadingService.hide('articleLoading');
-        this.showDeleteButton();
+        this.isOwner();
         this.setGalleryImages();
       },
       (error) => {
@@ -81,12 +81,12 @@ export class ArticleComponent implements OnInit, OnDestroy {
     );
   }
 
-  showDeleteButton() {
+  isOwner() {
     if (this.authService.isLoggedIn()) {
       const isAuthor = this.authService.getCurrentUserId() === this.article.user.id;
       const userRole = this.authService.getRoleFromTokens();
       if (isAuthor || userRole === Role.MODERATOR || userRole === Role.ADMIN) {
-        this.showDelete = true;
+        this.showOptionButtons = true;
       }
     }
   }
