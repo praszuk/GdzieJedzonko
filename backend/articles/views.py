@@ -38,17 +38,18 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user_id = self.request.query_params.get('user', None)
+        query_set = Article.objects.all()
 
         if user_id:
             try:
                 user_id = int(user_id)
                 if User.objects.filter(id=user_id).exists():
-                    return Article.objects.filter(user__id=user_id)
+                    query_set = query_set.filter(user__id=user_id)
 
             except ValueError:
                 pass
 
-        return Article.objects.all()
+        return query_set.order_by('-creation_date')
 
 
 class ImageViewSet(viewsets.ModelViewSet):
