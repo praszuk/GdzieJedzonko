@@ -9,7 +9,8 @@ export const environment = {
   refreshUrl: '/api/sessions/refresh/',
   userUrl: '/api/users/',
   articlesUrl: '/api/articles/',
-  imagesUrl: '/images/'
+  imagesUrl: '/images/',
+  commentsUrl: '/comment/'
 };
 
 /*
