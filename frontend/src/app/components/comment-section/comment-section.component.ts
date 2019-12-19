@@ -68,7 +68,7 @@ export class CommentSectionComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.newCommentForm = this.formBuilder.group({
-      user: [this.authService.getCurrentUserId()],
+      user: [''],
       comment: ['', [Validators.required, Validators.maxLength(400)]]
     });
     this.loadingService.hide('comments-section-loading');
@@ -112,11 +112,14 @@ export class CommentSectionComponent implements OnInit, OnDestroy {
       comment: this.newCommentForm.value.comment,
       creation_date: '2019-05-22'
     });
+    this.newCommentForm.get('user').setValue(this.authService.getCurrentUserId());
     this.newCommentForm.get('comment').reset();
+
+
     this.subscription = this.commentService.createComment(this.articleId, this.newCommentForm.value).subscribe(
       (comment) => {
-
-
+        // this.comments.unshift(comment);
+        // this.newCommentForm.get('comment').reset();
       },
       (error) => {
         // todo show error
