@@ -486,6 +486,24 @@ class DeleteImageFromArticleTest(BaseViewTest):
         self.upload_image(self.USERS[1], self.article2)
         self.upload_image(self.USERS[1], self.article2)
 
+    def delete_image(self, user, article_id, image_id, is_thumbnail=False):
+        self.auth_user(user)
+
+        response = self.client.delete(reverse(
+            'articles:images-detail',
+            kwargs={
+                'article_id': article_id,
+                'image_id': image_id
+            }
+        ))
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        if is_thumbnail:
+            self.assertFalse(Thumbnail.objects.filter(pk=image_id).exists())
+        else:
+            self.assertFalse(Photo.objects.filter(pk=image_id).exists())
+
+
     def test_unauthenticated_user_cannot_delete_image(self):
         response = self.client.delete(reverse(
             'articles:images-detail',
@@ -498,31 +516,17 @@ class DeleteImageFromArticleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_user_owner_can_delete_image(self):
-        self.auth_user(self.USERS[0])
-
-        photo_id = self.article1.photos.all()[0].id
-        response = self.client.delete(reverse(
-            'articles:images-detail',
-            kwargs={
-                'article_id': self.article1.id,
-                'image_id': photo_id
-            }
-        ))
-
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(Photo.objects.filter(pk=photo_id).exists())
-
-        thumbnail_id = self.article1.thumbnail.id
-        response = self.client.delete(reverse(
-            'articles:images-detail',
-            kwargs={
-                'article_id': self.article1.id,
-                'image_id': thumbnail_id
-            }
-        ))
-
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(Thumbnail.objects.filter(pk=thumbnail_id).exists())
+        self.delete_image(
+            self.USERS[0],
+            self.article1.id,
+            self.article1.photos.all()[0].id
+        )
+        self.delete_image(
+            self.USERS[0],
+            self.article1.id,
+            self.article1.thumbnail.id,
+            is_thumbnail=True
+        )
 
     def test_user_not_owner_cannot_delete(self):
         self.auth_user(self.USERS[1])
@@ -538,6 +542,19 @@ class DeleteImageFromArticleTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(Photo.objects.filter(pk=photo_id).exists())
+
+    def test_mod_and_admin_not_owners_can_delete(self):
+        self.delete_image(
+            self.MODS[0],
+            self.article1.id,
+            self.article1.photos.all()[0].id
+        )
+        self.delete_image(
+            self.ADMINS[0],
+            self.article1.id,
+            self.article1.thumbnail.id,
+            is_thumbnail=True
+        )
 
 
 class ImageValidatorsTest(CreateImageForArticleTest):
