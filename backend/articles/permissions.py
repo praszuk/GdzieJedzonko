@@ -1,4 +1,5 @@
 from rest_framework.permissions import BasePermission
+from rest_framework.exceptions import NotAuthenticated
 
 from django.shortcuts import get_object_or_404
 
@@ -60,7 +61,7 @@ class ImageArticlePermission(BasePermission):
         article_id = request.resolver_match.kwargs.get('article_id')
         article = get_object_or_404(Article, pk=article_id)
 
-        if view.action in ('create', ):
+        if view.action in ('create', 'destroy'):
             if IsAuthenticated.has_permission(None, request, view):
                 # Next hacky solution changing view.action to use
                 # existing permissions instead of creating almost the same
@@ -73,8 +74,11 @@ class ImageArticlePermission(BasePermission):
                     view,
                     article
                 )
-            return False
+            else:
+                raise NotAuthenticated()
+
+        return False
 
     def has_object_permission(self, request, view, obj):
-        if view.action == 'create':
+        if view.action in ('create', 'destroy'):
             return True
