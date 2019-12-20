@@ -524,6 +524,21 @@ class DeleteImageFromArticleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Thumbnail.objects.filter(pk=thumbnail_id).exists())
 
+    def test_user_not_owner_cannot_delete(self):
+        self.auth_user(self.USERS[1])
+
+        photo_id = self.article1.photos.all()[0].id
+        response = self.client.delete(reverse(
+            'articles:images-detail',
+            kwargs={
+                'article_id': self.article1.id,
+                'image_id': photo_id
+            }
+        ))
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(Photo.objects.filter(pk=photo_id).exists())
+
 
 class ImageValidatorsTest(CreateImageForArticleTest):
     def test_image_number_limit_validator(self):
