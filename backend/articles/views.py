@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 
 from users.models import User
@@ -102,3 +103,42 @@ class ImageViewSet(viewsets.ModelViewSet):
             data={'id': serializer.data['id']},
             status=status.HTTP_201_CREATED
         )
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            article_id = self.kwargs.get('article_id')
+            article = get_object_or_404(Article, pk=article_id)
+
+            image_id = self.kwargs.get('image_id')
+            thumbnail = Thumbnail.objects.filter(pk=image_id)
+            photo = Photo.objects.filter(pk=image_id)
+
+            if thumbnail.exists():
+                image = Thumbnail.objects.get(pk=image_id)
+            elif photo.exists():
+                image = Photo.objects.get(pk=image_id)
+            else:
+                raise ObjectDoesNotExist('Image not found')
+
+            if image.article == article:
+                image.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response(
+                    data={
+                        'detail': 'Image does not belong to this article.'
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        except Article.DoesNotExist:
+            return Response(
+                data={'detail': 'Article not found.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        except ObjectDoesNotExist:
+            return Response(
+                data={'detail': 'Image not found.'},
+                status=status.HTTP_404_NOT_FOUND
+            )
