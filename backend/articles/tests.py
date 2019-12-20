@@ -557,7 +557,7 @@ class DeleteImageFromArticleTest(BaseViewTest):
         )
 
     def test_article_not_exists(self):
-        self.auth_user(self.USERS[1])
+        self.auth_user(self.USERS[0])
 
         photo_id = self.article1.photos.all()[0].id
         response = self.client.delete(reverse(
@@ -570,6 +570,19 @@ class DeleteImageFromArticleTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertTrue(Photo.objects.filter(pk=photo_id).exists())
+
+    def test_image_not_exists(self):
+        self.auth_user(self.USERS[0])
+
+        response = self.client.delete(reverse(
+            'articles:images-detail',
+            kwargs={
+                'article_id': self.article1.id,
+                'image_id': 999999999
+            }
+        ))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class ImageValidatorsTest(CreateImageForArticleTest):
