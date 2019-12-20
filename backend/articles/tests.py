@@ -13,7 +13,7 @@ import tempfile
 from io import BytesIO
 
 from .constants import MAX_IMAGES_PER_ARTICLE, ALLOWED_IMAGE_EXTENSION
-from .models import Article, Photo
+from .models import Article, Photo, Thumbnail
 from .serializers import ArticleSerializer, ArticleListSerializer
 from users.models import User, Role
 
@@ -496,6 +496,33 @@ class DeleteImageFromArticleTest(BaseViewTest):
         ))
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_owner_can_delete_image(self):
+        self.auth_user(self.USERS[0])
+
+        photo_id = self.article1.photos.all()[0].id
+        response = self.client.delete(reverse(
+            'articles:images-detail',
+            kwargs={
+                'article_id': self.article1.id,
+                'image_id': photo_id
+            }
+        ))
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Photo.objects.filter(pk=photo_id).exists())
+
+        thumbnail_id = self.article1.thumbnail.id
+        response = self.client.delete(reverse(
+            'articles:images-detail',
+            kwargs={
+                'article_id': self.article1.id,
+                'image_id': thumbnail_id
+            }
+        ))
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Thumbnail.objects.filter(pk=thumbnail_id).exists())
 
 
 class ImageValidatorsTest(CreateImageForArticleTest):
