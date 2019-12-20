@@ -584,6 +584,21 @@ class DeleteImageFromArticleTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_image_belong_to_other_article_cannot_delete(self):
+        self.auth_user(self.USERS[0])
+
+        photo_id = self.article2.photos.all()[0].id
+        response = self.client.delete(reverse(
+            'articles:images-detail',
+            kwargs={
+                'article_id': self.article1.id,
+                'image_id': photo_id
+            }
+        ))
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(Photo.objects.filter(pk=photo_id).exists())
+
 
 class ImageValidatorsTest(CreateImageForArticleTest):
     def test_image_number_limit_validator(self):
