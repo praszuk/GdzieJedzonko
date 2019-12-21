@@ -12,7 +12,11 @@ import tempfile
 
 from io import BytesIO
 
-from .constants import MAX_IMAGES_PER_ARTICLE, ALLOWED_IMAGE_EXTENSION
+from .constants import (
+    MAX_IMAGES_PER_ARTICLE,
+    ALLOWED_IMAGE_EXTENSION,
+    MAX_ARTICLE_SIZE
+)
 from .models import Article, Photo, Thumbnail
 from .serializers import ArticleSerializer, ArticleListSerializer
 from users.models import User, Role
@@ -616,6 +620,38 @@ class DeleteImageFromArticleTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue(Photo.objects.filter(pk=photo_id).exists())
+
+
+class ArticleValidatorsTest(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+
+    def test_over_max_size_of_article(self):
+        too_long_content = {
+            'ops': [
+                {
+                    'attributes': {'bold': True},
+                    'insert': '.' * MAX_ARTICLE_SIZE
+                },
+                {
+                    'insert': '.'
+                }
+            ]
+        }
+        article_data = {
+            'title': 'Title',
+            'content': too_long_content,
+        }
+
+        self.auth_user(self.USERS[0])
+
+        response = self.client.post(
+            reverse('articles:article-list'),
+            data=article_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class ImageValidatorsTest(CreateImageForArticleTest):
