@@ -12,7 +12,11 @@ import tempfile
 
 from io import BytesIO
 
-from .constants import MAX_IMAGES_PER_ARTICLE, ALLOWED_IMAGE_EXTENSION
+from .constants import (
+    MAX_IMAGES_PER_ARTICLE,
+    ALLOWED_IMAGE_EXTENSION,
+    MAX_ARTICLE_SIZE
+)
 from .models import Article, Photo, Thumbnail
 from .serializers import ArticleSerializer, ArticleListSerializer
 from users.models import User, Role
@@ -26,6 +30,18 @@ class BaseViewTest(APITestCase):
     client = APIClient()
 
     def setUp(self):
+        self.article_content = {
+            'ops': [
+                {
+                    'insert': 'Test article with '
+                },
+                {
+                    'attributes': {'bold': True},
+                    'insert': 'bold'
+                }
+            ]
+        }
+
         self.USERS = [
             {
                 'email': 'articleuser1@gdziejedzonko.pl',
@@ -142,10 +158,12 @@ class BaseViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         return response.data['id']
+
+
 class GetDetailArticleTest(BaseViewTest):
 
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
+        super().setUp()
         user = User.objects.create_user(
             email='test@gdziejedzonko.pl',
             password='password1234',
@@ -155,7 +173,7 @@ class GetDetailArticleTest(BaseViewTest):
         )
         Article.objects.create(
             title='Test title',
-            content='Content of the article',
+            content=self.article_content,
             user=user
         )
 
@@ -171,8 +189,9 @@ class GetDetailArticleTest(BaseViewTest):
 
 
 class GetAllArticlesTest(BaseViewTest):
-    @classmethod
-    def setUpTestData(cls):
+
+    def setUp(self):
+        super().setUp()
         user = User.objects.create_user(
             email='user1@gdziejedzonko.pl',
             password='password1234',
@@ -183,17 +202,17 @@ class GetAllArticlesTest(BaseViewTest):
 
         Article.objects.create(
             title='Title',
-            content='Content of the article',
+            content=self.article_content,
             user=user
         )
         Article.objects.create(
             title='Test title',
-            content='No content',
+            content=self.article_content,
             user=user
         )
         Article.objects.create(
             title='Test title title',
-            content='Test content',
+            content=self.article_content,
             user=user
         )
 
@@ -209,6 +228,8 @@ class GetAllArticlesTest(BaseViewTest):
 class GetAllArticlesFilteredByUserTest(BaseViewTest):
 
     def setUp(self):
+        super().setUp()
+
         self.user1 = User.objects.create_user(
             email='filteruser@gdziejedzonko.pl',
             password='password1234',
@@ -227,17 +248,17 @@ class GetAllArticlesFilteredByUserTest(BaseViewTest):
 
         Article.objects.create(
             title='Title1',
-            content='Content of the article',
+            content=self.article_content,
             user=self.user1
         )
         Article.objects.create(
             title='Test title2',
-            content='No content',
+            content=self.article_content,
             user=self.user1
         )
         Article.objects.create(
             title='Test title title3',
-            content='Test content',
+            content=self.article_content,
             user=self.user2
         )
 
@@ -283,11 +304,12 @@ class CreateArticleTest(BaseViewTest):
     def test_unauthenticated_user_cannot_create(self):
         article_data = {
             'title': 'Title',
-            'content': 'Content of the article',
+            'content': self.article_content,
         }
         response = self.client.post(
             reverse('articles:article-list'),
-            data=article_data
+            data=article_data,
+            format='json'
         )
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -295,14 +317,15 @@ class CreateArticleTest(BaseViewTest):
     def test_authenticated_user_can_create(self):
         article_data = {
             'title': 'Title',
-            'content': 'Content of the article',
+            'content': self.article_content,
         }
 
         self.auth_user(self.USERS[0])
 
         response = self.client.post(
             reverse('articles:article-list'),
-            data=article_data
+            data=article_data,
+            format='json'
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -321,7 +344,7 @@ class DeleteArticleTest(BaseViewTest):
 
         self.article1 = Article.objects.create(
             title='Title1',
-            content='Content of the article',
+            content=self.article_content,
             user=User.objects.filter(email=self.USERS[0]['email'])[0]
         )
 
@@ -370,12 +393,12 @@ class CreateImageForArticleTest(BaseViewTest):
 
         self.article1 = Article.objects.create(
             title='Title1',
-            content='Content of the article',
+            content=self.article_content,
             user=User.objects.filter(email=self.USERS[0]['email'])[0]
         )
         self.article2 = Article.objects.create(
             title='Title2',
-            content='Content of the article',
+            content=self.article_content,
             user=User.objects.filter(email=self.USERS[1]['email'])[0]
         )
 
@@ -469,12 +492,12 @@ class DeleteImageFromArticleTest(BaseViewTest):
 
         self.article1 = Article.objects.create(
             title='Title1',
-            content='Content of the article',
+            content=self.article_content,
             user=User.objects.filter(email=self.USERS[0]['email'])[0]
         )
         self.article2 = Article.objects.create(
             title='Title2',
-            content='Content of the article',
+            content=self.article_content,
             user=User.objects.filter(email=self.USERS[1]['email'])[0]
         )
 
@@ -502,7 +525,6 @@ class DeleteImageFromArticleTest(BaseViewTest):
             self.assertFalse(Thumbnail.objects.filter(pk=image_id).exists())
         else:
             self.assertFalse(Photo.objects.filter(pk=image_id).exists())
-
 
     def test_unauthenticated_user_cannot_delete_image(self):
         response = self.client.delete(reverse(
@@ -598,6 +620,64 @@ class DeleteImageFromArticleTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertTrue(Photo.objects.filter(pk=photo_id).exists())
+
+
+class ArticleValidatorsTest(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+
+    def test_over_max_size_of_article(self):
+        too_long_content = {
+            'ops': [
+                {
+                    'attributes': {'bold': True},
+                    'insert': '.' * MAX_ARTICLE_SIZE
+                },
+                {
+                    'insert': '.'
+                }
+            ]
+        }
+        article_data = {
+            'title': 'Title',
+            'content': too_long_content,
+        }
+
+        self.auth_user(self.USERS[0])
+
+        response = self.client.post(
+            reverse('articles:article-list'),
+            data=article_data,
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_equal_max_size_of_article(self):
+        max_size_content = {
+            'ops': [
+                {
+                    'attributes': {'bold': True},
+                    'insert': '.' * (MAX_ARTICLE_SIZE - 1)
+                },
+                {
+                    'insert': '.'
+                }
+            ]
+        }
+        article_data = {
+            'title': 'Title',
+            'content': max_size_content,
+        }
+
+        self.auth_user(self.USERS[0])
+
+        response = self.client.post(
+            reverse('articles:article-list'),
+            data=article_data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class ImageValidatorsTest(CreateImageForArticleTest):

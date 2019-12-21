@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from .constants import MAX_ARTICLE_SIZE
 from .models import Article, BaseImage, Photo, Thumbnail
 from users.models import User
 
@@ -50,6 +51,28 @@ class ArticleSerializer(serializers.ModelSerializer):
                 "Only letters, numbers and spaces are allowed."
             )
         return title
+
+    def validate_content(self, content: dict):
+        if type(content) != dict or 'ops' not in content:
+            raise serializers.ValidationError('Bad format of data.')
+
+        '''
+            Iterate over quill prepared objects.
+            Each object can contain:
+            - insert key with plain text data 
+            - attributes (describe format of insert like bold) with insert
+        '''
+        size = 0
+        for obj in content['ops']:
+            if 'insert' in obj:
+                size += len(obj['insert'])
+
+        if size > MAX_ARTICLE_SIZE:
+            raise serializers.ValidationError(
+                f'Article too long! Max {MAX_ARTICLE_SIZE} characters allowed'
+            )
+
+        return content
 
     def create(self, validated_data):
         # if self.context['request'].user.is_authenticated:

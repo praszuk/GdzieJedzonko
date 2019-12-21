@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 import os
@@ -15,9 +16,18 @@ from .validators import (
 
 class Article(models.Model):
     title = models.CharField(max_length=100, unique=True, blank=False)
-    content = models.TextField(max_length=3000, blank=False)
+    content = JSONField()
     creation_date = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return (
+            f'id: {self.id}, '
+            f'title: {self.title}, '
+            f'creation_date: {self.creation_date}, '
+            f'user_id: {self.user.id}, '
+            f'content: {self.content}'
+        )
 
 
 def generate_image_path(instance, filename):
