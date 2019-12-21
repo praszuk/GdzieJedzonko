@@ -653,6 +653,32 @@ class ArticleValidatorsTest(BaseViewTest):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_equal_max_size_of_article(self):
+        max_size_content = {
+            'ops': [
+                {
+                    'attributes': {'bold': True},
+                    'insert': '.' * (MAX_ARTICLE_SIZE - 1)
+                },
+                {
+                    'insert': '.'
+                }
+            ]
+        }
+        article_data = {
+            'title': 'Title',
+            'content': max_size_content,
+        }
+
+        self.auth_user(self.USERS[0])
+
+        response = self.client.post(
+            reverse('articles:article-list'),
+            data=article_data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
 
 class ImageValidatorsTest(CreateImageForArticleTest):
     def test_image_number_limit_validator(self):
