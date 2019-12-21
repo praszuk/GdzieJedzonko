@@ -7,6 +7,7 @@ from django.core.files.base import File
 from django.urls import reverse
 from django.test import override_settings
 
+import json
 import shutil
 import tempfile
 
@@ -41,6 +42,7 @@ class BaseViewTest(APITestCase):
                 }
             ]
         }
+        self.article_content_str = json.dumps(self.article_content)
 
         self.USERS = [
             {
@@ -173,7 +175,7 @@ class GetDetailArticleTest(BaseViewTest):
         )
         Article.objects.create(
             title='Test title',
-            content=self.article_content,
+            content=self.article_content_str,
             user=user
         )
 
@@ -202,17 +204,17 @@ class GetAllArticlesTest(BaseViewTest):
 
         Article.objects.create(
             title='Title',
-            content=self.article_content,
+            content=self.article_content_str,
             user=user
         )
         Article.objects.create(
             title='Test title',
-            content=self.article_content,
+            content=self.article_content_str,
             user=user
         )
         Article.objects.create(
             title='Test title title',
-            content=self.article_content,
+            content=self.article_content_str,
             user=user
         )
 
@@ -248,17 +250,17 @@ class GetAllArticlesFilteredByUserTest(BaseViewTest):
 
         Article.objects.create(
             title='Title1',
-            content=self.article_content,
+            content=self.article_content_str,
             user=self.user1
         )
         Article.objects.create(
             title='Test title2',
-            content=self.article_content,
+            content=self.article_content_str,
             user=self.user1
         )
         Article.objects.create(
             title='Test title title3',
-            content=self.article_content,
+            content=self.article_content_str,
             user=self.user2
         )
 
@@ -304,7 +306,7 @@ class CreateArticleTest(BaseViewTest):
     def test_unauthenticated_user_cannot_create(self):
         article_data = {
             'title': 'Title',
-            'content': self.article_content,
+            'content': self.article_content_str,
         }
         response = self.client.post(
             reverse('articles:article-list'),
@@ -317,7 +319,7 @@ class CreateArticleTest(BaseViewTest):
     def test_authenticated_user_can_create(self):
         article_data = {
             'title': 'Title',
-            'content': self.article_content,
+            'content': self.article_content_str,
         }
 
         self.auth_user(self.USERS[0])
@@ -344,7 +346,7 @@ class DeleteArticleTest(BaseViewTest):
 
         self.article1 = Article.objects.create(
             title='Title1',
-            content=self.article_content,
+            content=self.article_content_str,
             user=User.objects.filter(email=self.USERS[0]['email'])[0]
         )
 
@@ -393,12 +395,12 @@ class CreateImageForArticleTest(BaseViewTest):
 
         self.article1 = Article.objects.create(
             title='Title1',
-            content=self.article_content,
+            content=self.article_content_str,
             user=User.objects.filter(email=self.USERS[0]['email'])[0]
         )
         self.article2 = Article.objects.create(
             title='Title2',
-            content=self.article_content,
+            content=self.article_content_str,
             user=User.objects.filter(email=self.USERS[1]['email'])[0]
         )
 
@@ -492,12 +494,12 @@ class DeleteImageFromArticleTest(BaseViewTest):
 
         self.article1 = Article.objects.create(
             title='Title1',
-            content=self.article_content,
+            content=self.article_content_str,
             user=User.objects.filter(email=self.USERS[0]['email'])[0]
         )
         self.article2 = Article.objects.create(
             title='Title2',
-            content=self.article_content,
+            content=self.article_content_str,
             user=User.objects.filter(email=self.USERS[1]['email'])[0]
         )
 
@@ -640,7 +642,7 @@ class ArticleValidatorsTest(BaseViewTest):
         }
         article_data = {
             'title': 'Title',
-            'content': too_long_content,
+            'content': json.dumps(too_long_content),
         }
 
         self.auth_user(self.USERS[0])
@@ -667,7 +669,7 @@ class ArticleValidatorsTest(BaseViewTest):
         }
         article_data = {
             'title': 'Title',
-            'content': max_size_content,
+            'content': json.dumps(max_size_content),
         }
 
         self.auth_user(self.USERS[0])
