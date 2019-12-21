@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+import json
+
 from .constants import MAX_ARTICLE_SIZE
 from .models import Article, BaseImage, Photo, Thumbnail
 from users.models import User
@@ -45,6 +47,12 @@ class ArticleSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id', 'creation_date', 'photos', 'thumbnail')
 
+    def to_representation(self, instance):
+        data = super(ArticleSerializer, self).to_representation(instance)
+        data['content'] = json.dumps(data['content'])
+
+        return data
+
     def validate_title(self, title):
         if not all(c.isalnum() or c.isspace() for c in title):
             raise serializers.ValidationError(
@@ -52,7 +60,12 @@ class ArticleSerializer(serializers.ModelSerializer):
             )
         return title
 
-    def validate_content(self, content: dict):
+    def validate_content(self, content: str):
+        try:
+            content = json.loads(content, strict=False)
+        except json.JSONDecodeError:
+            raise serializers.ValidationError('Bad format of data.')
+
         if type(content) != dict or 'ops' not in content:
             raise serializers.ValidationError('Bad format of data.')
 
