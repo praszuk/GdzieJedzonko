@@ -13,7 +13,7 @@ export class ArticleService {
 
   constructor(private http: HttpClient) {}
 
-  newReview(article: {title: string, content: string}): Observable<any> {
+  newReview(article: {title: string, content: any}): Observable<any> {
     return this.http.post(`${environment.apiUrl}${environment.articlesUrl}`, article)
       .pipe(
         catchError((err) => {
