@@ -1,3 +1,4 @@
+from bleach import clean as bleach_clean
 from rest_framework import serializers
 
 from .constants import MAX_ARTICLE_SIZE
@@ -46,6 +47,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'creation_date', 'photos', 'thumbnail')
 
     def validate_title(self, title):
+        title = bleach_clean(title)
         if not all(c.isalnum() or c.isspace() for c in title):
             raise serializers.ValidationError(
                 "Only letters, numbers and spaces are allowed."
@@ -66,6 +68,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         for obj in content['ops']:
             if 'insert' in obj:
                 size += len(obj['insert'])
+                obj['insert'] = bleach_clean(obj['insert'])
 
         if size > MAX_ARTICLE_SIZE:
             raise serializers.ValidationError(
