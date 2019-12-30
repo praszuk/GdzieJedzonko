@@ -33,14 +33,14 @@ class ArticlePermission(BasePermission):
         if view.action in ('list', 'retrieve'):
             return True
 
-        elif view.action in ('create', 'destroy'):
+        elif view.action in ('create', 'destroy', 'partial_update'):
             return IsAuthenticated.has_permission(None, request, view)
 
     def has_object_permission(self, request, view, obj):
         if view.action == 'retrieve':
             return True
 
-        elif view.action == 'destroy':
+        elif view.action in ('destroy', 'partial_update'):
 
             return bool(
                 IsAdminUser.has_permission(None, request, view) or
@@ -65,8 +65,7 @@ class ImageArticlePermission(BasePermission):
             if IsAuthenticated.has_permission(None, request, view):
                 # Next hacky solution changing view.action to use
                 # existing permissions instead of creating almost the same
-                # TODO change to "update" when article-update will be done
-                view.action = 'destroy'
+                view.action = 'partial_update'
 
                 return ArticlePermission.has_object_permission(
                     None,
