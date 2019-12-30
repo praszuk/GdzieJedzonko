@@ -387,6 +387,71 @@ class DeleteArticleTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
+class UpdateArticleTest(BaseViewTest):
+
+    def setUp(self):
+        super().setUp()
+
+        self.article1 = Article.objects.create(
+            title='Title1',
+            content={'content': self.article_content},
+            user=User.objects.filter(email=self.USERS[0]['email'])[0]
+        )
+
+    def test_unauthenticated_user(self):
+        response = self.client.patch(
+            reverse('articles:article-detail', args=[self.article1.id]),
+            data={'content': self.article_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_not_owner_cannot(self):
+        self.auth_user(self.USERS[1])
+
+        response = self.client.patch(
+            reverse('articles:article-detail', args=[self.article1.id]),
+            data={'content': self.article_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_owner_can(self):
+        self.auth_user(self.USERS[0])
+
+        article = self.article_content
+        new_text = {'insert': 'Updated article'}
+        article['ops'].append(new_text)
+
+        response = self.client.patch(
+            reverse('articles:article-detail', args=[self.article1.id]),
+            data={'content': article},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(new_text, response.data['content']['ops'])
+
+    def test_mod_not_owner_can(self):
+        self.auth_user(self.MODS[0])
+
+        response = self.client.patch(
+            reverse('articles:article-detail', args=[self.article1.id]),
+            data={'content': self.article_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_admin_not_owner_can(self):
+        self.auth_user(self.ADMINS[0])
+
+        response = self.client.patch(
+            reverse('articles:article-detail', args=[self.article1.id]),
+            data={'content': self.article_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
 class CreateImageForArticleTest(BaseViewTest):
     def setUp(self):
         super().setUp()
