@@ -47,12 +47,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'creation_date', 'photos', 'thumbnail')
 
     def validate_title(self, title):
-        title = bleach_clean(title)
-        if not all(c.isalnum() or c.isspace() for c in title):
-            raise serializers.ValidationError(
-                "Only letters, numbers and spaces are allowed."
-            )
-        return title
+        return bleach_clean(title)
 
     def validate_content(self, content: dict):
         if type(content) != dict or 'ops' not in content:
