@@ -10,12 +10,15 @@ from users.models import User
 from .validators import (
     validate_image_size_limit,
     validate_image_number_limit,
-    validate_image_file_extension
+    validate_image_file_extension,
+    validate_title
 )
 
 
 class Article(models.Model):
-    title = models.CharField(max_length=100, unique=True, blank=False)
+    title = models.CharField(
+        max_length=100, unique=True, blank=False, validators=(validate_title,)
+    )
     content = JSONField()
     creation_date = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
