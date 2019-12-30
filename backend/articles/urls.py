@@ -9,6 +9,7 @@ app_name = 'articles'
 article_detail = ArticleViewSet.as_view({
     'get': 'retrieve',
     'delete': 'destroy',
+    'patch': 'partial_update',
 })
 
 article_list = ArticleViewSet.as_view({
