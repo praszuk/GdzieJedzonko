@@ -60,7 +60,7 @@ export class EditReviewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.editorForm = this.formBuilder.group({
-      title: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9 ]+$'), Validators.maxLength(100)]],
+      title: ['', [Validators.required, Validators.pattern('^[\\w\\,\\.\\-\\!\\?\\d\\s]+$'), Validators.maxLength(100)]],
       content: ['', [Validators.required, Validators.maxLength(3000)]]
     });
     this.articleId = +this.activatedRoute.snapshot.params.id;

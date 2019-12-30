@@ -9,7 +9,7 @@
           </div>
           <div *ngIf="(editorForm.controls.title.errors && editorForm.controls.title.dirty) || titleExists"
                class="alert alert-danger text-center my-2 offset-2 col-8">
-            <p *ngIf="editorForm.controls.title.errors?.pattern"> Tytuł może zawierać tylko litery i liczby </p>
+            <p *ngIf="editorForm.controls.title.errors?.pattern"> Tytuł zawiera znaki niedozwolone </p>
             <p *ngIf="editorForm.controls.title.errors?.required"> Tytuł jest wymagany </p>
             <p *ngIf="editorForm.controls.title.errors?.maxlength"> Maksymalna ilość znaków wynosi 100 </p>
             <p *ngIf="titleExists"> Taki tytuł już istnieje, wybierz inny </p>
