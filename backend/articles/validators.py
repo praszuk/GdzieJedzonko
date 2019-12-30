@@ -1,11 +1,19 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
+import re
+
 from .constants import (
     MAX_IMAGES_PER_ARTICLE,
     MAX_IMAGE_FILE_SIZE_MB,
     ALLOWED_IMAGE_EXTENSION
 )
+
+
+def validate_title(title):
+    reg = re.compile('^[\w\,\.\-\!\?\d\s]+$')
+    if not reg.match(title):
+        raise ValidationError('Incorrect characters in title!')
 
 
 def validate_image_size_limit(image):

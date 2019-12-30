@@ -744,6 +744,36 @@ class ArticleValidatorsTest(BaseViewTest):
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
+    def test_title_all_allowed_special_characters(self):
+        article_data = {
+            'title': 'Title1234567890Łążźó!?-.,',
+            'content': self.article_content,
+        }
+
+        self.auth_user(self.USERS[0])
+
+        response = self.client.post(
+            reverse('articles:article-list'),
+            data=article_data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_title_incorrect_characters_disallowed(self):
+        article_data = {
+            'title': 'Title<script>',
+            'content': self.article_content,
+        }
+
+        self.auth_user(self.USERS[0])
+
+        response = self.client.post(
+            reverse('articles:article-list'),
+            data=article_data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class ImageValidatorsTest(CreateImageForArticleTest):
     def test_image_number_limit_validator(self):
