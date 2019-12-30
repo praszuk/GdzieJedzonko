@@ -75,6 +75,7 @@ export class EditReviewComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     const article = this.editorForm.value;
+    article.content = JSON.parse(this.editorForm.value.content);
     this.subscription = this.articleService.updateArticle(this.articleId, article).subscribe(
       (id) => {
         this.titleExists = false;
