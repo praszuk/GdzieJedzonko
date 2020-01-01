@@ -1,8 +1,8 @@
-import {User} from './user.model';
+import {SimpleUser} from './simple-user';
 
 export class Comment {
   id: number;
-  user: User;
+  user: SimpleUser;
   comment: string;
-  creationDate: string;
+  creation_date: string;
 }

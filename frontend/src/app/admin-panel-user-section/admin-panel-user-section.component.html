@@ -1,8 +1,0 @@
-<div class="offset-1 col-10 border rounded bg-light min-height-50">
-  <ngx-spinner name="admin-panel-user-section"  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
-  <div *ngIf="!isLoading">
-    <h1 class="offset-2 my-3">Użytkownicy</h1>
-    <app-admin-panel-user-info *ngFor="let user of users" [user]="user"></app-admin-panel-user-info>
-  </div>
-</div>
-
