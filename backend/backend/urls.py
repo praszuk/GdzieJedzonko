@@ -1,6 +1,24 @@
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+from users.urls import role_list
 
 
 urlpatterns = [
-    path('api/', include('gdzie_jedzonko.urls'))
+    # Auth
+    path('api/sessions/', include('authentication.urls')),
+
+    # Users
+    path('api/users/', include('users.urls')),
+    path('api/roles/', role_list, name='role-list'),
+
+    # Articles
+    path('api/articles/', include('articles.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

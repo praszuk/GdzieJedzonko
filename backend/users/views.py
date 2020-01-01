@@ -1,17 +1,8 @@
-from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import viewsets
 
 from .models import User, Role
 from .permissions import UserPermission, IsAuthenticated
-from .serializers import (
-    MyTokenObtainPairSerializer,
-    UserSerializer,
-    RoleSerializer
-)
-
-
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
+from .serializers import UserSerializer, RoleSerializer
 
 
 class RoleViewSet(viewsets.ReadOnlyModelViewSet):

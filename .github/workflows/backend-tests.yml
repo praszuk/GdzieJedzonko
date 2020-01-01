@@ -6,6 +6,7 @@ jobs:
         PROJECT_NAME: ci
         BACKEND_CONTAINER: ci_backend_1
         DB_CONTAINER: ci_db_1
+        BACKEND_IMAGE: ci_backend
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v1
@@ -23,4 +24,4 @@ jobs:
         run: |
             docker kill $BACKEND_CONTAINER $DB_CONTAINER
             docker rm $BACKEND_CONTAINER $DB_CONTAINER
-
+            docker rmi $BACKEND_IMAGE

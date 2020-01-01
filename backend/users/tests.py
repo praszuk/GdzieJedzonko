@@ -102,9 +102,10 @@ class BaseViewTest(APITestCase):
         """
         data = {'email': email, 'password': password}
         response = self.client.post(
-            reverse('gdzie_jedzonko:token_obtain_pair'),
+            reverse('authentication:token_obtain_pair'),
             data=data
         )
+
         return 'Bearer ' + response.data['access']
 
     def auth_user(self, user: dict):
@@ -119,25 +120,25 @@ class BaseViewTest(APITestCase):
 class GetAllUsersTest(BaseViewTest):
 
     def test_unauthenticated_user(self):
-        response = self.client.get(reverse('gdzie_jedzonko:user-list'))
+        response = self.client.get(reverse('users:user-list'))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_unauthorized_user(self):
         self.auth_user(self.USERS[0])
 
-        response = self.client.get(reverse('gdzie_jedzonko:user-list'))
+        response = self.client.get(reverse('users:user-list'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_unauthorized_mod(self):
         self.auth_user(self.MODS[0])
 
-        response = self.client.get(reverse('gdzie_jedzonko:user-list'))
+        response = self.client.get(reverse('users:user-list'))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_authorized_admin(self):
         self.auth_user(self.ADMINS[0])
 
-        response = self.client.get(reverse('gdzie_jedzonko:user-list'))
+        response = self.client.get(reverse('users:user-list'))
         expected = User.objects.all()
         serialized = UserSerializer(expected, many=True)
 
@@ -148,9 +149,7 @@ class GetAllUsersTest(BaseViewTest):
 class GetDetailUserTest(BaseViewTest):
 
     def test_unauthenticated_user(self):
-        response = self.client.get(
-            reverse('gdzie_jedzonko:user-detail', args=[1])
-        )
+        response = self.client.get(reverse('users:user-detail', args=[1]))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_success(self):
@@ -158,7 +157,7 @@ class GetDetailUserTest(BaseViewTest):
 
         self.auth_user(self.USERS[0])
         response = self.client.get(
-            reverse('gdzie_jedzonko:user-detail', args=[user.id])
+            reverse('users:user-detail', args=[user.id])
         )
 
         expected = User.objects.get(pk=user.id)
@@ -169,22 +168,20 @@ class GetDetailUserTest(BaseViewTest):
 
     def test_authenticated_user_not_found(self):
         self.auth_user(self.USERS[0])
-        response = self.client.get(
-            reverse('gdzie_jedzonko:user-detail', args=[999])
-        )
 
+        response = self.client.get(reverse('users:user-detail', args=[999]))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class GetAllRolesTest(BaseViewTest):
 
     def test_unauthenticated_user(self):
-        response = self.client.get(reverse('gdzie_jedzonko:role-list'))
+        response = self.client.get(reverse('role-list'))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_success(self):
         self.auth_user(self.USERS[0])
-        response = self.client.get(reverse('gdzie_jedzonko:role-list'))
+        response = self.client.get(reverse('role-list'))
 
         expected = Role.items()
         serialized = RoleSerializer(expected, many=True)
@@ -197,7 +194,7 @@ class DeleteUserTest(BaseViewTest):
 
     def test_unauthenticated_user(self):
         response = self.client.delete(
-            reverse('gdzie_jedzonko:user-detail', args=[1])
+            reverse('users:user-detail', args=[1])
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -206,7 +203,7 @@ class DeleteUserTest(BaseViewTest):
 
         self.auth_user(self.USERS[0])
         response = self.client.delete(
-            reverse('gdzie_jedzonko:user-detail', args=[user2.id])
+            reverse('users:user-detail', args=[user2.id])
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -217,7 +214,7 @@ class DeleteUserTest(BaseViewTest):
 
         self.auth_user(self.MODS[0])
         response = self.client.delete(
-            reverse('gdzie_jedzonko:user-detail', args=[user2.id])
+            reverse('users:user-detail', args=[user2.id])
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -230,7 +227,7 @@ class DeleteUserTest(BaseViewTest):
         self.auth_user(self.USERS[0])
 
         response = self.client.delete(
-            reverse('gdzie_jedzonko:user-detail', args=[user.id])
+            reverse('users:user-detail', args=[user.id])
         )
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -243,7 +240,7 @@ class DeleteUserTest(BaseViewTest):
 
         self.auth_user(self.ADMINS[0])
         response = self.client.delete(
-            reverse('gdzie_jedzonko:user-detail', args=[user.id])
+            reverse('users:user-detail', args=[user.id])
         )
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -265,7 +262,7 @@ class CreateUserTest(BaseViewTest):
 
     def test_create_user(self):
         response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
+            reverse('users:user-list'),
             data=self.test_user_data
         )
 
@@ -276,12 +273,12 @@ class CreateUserTest(BaseViewTest):
 
     def test_user_already_exists_and_email_unique(self):
         self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
+            reverse('users:user-list'),
             data=self.test_user_data
         )
 
         response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
+            reverse('users:user-list'),
             data=self.test_user_data
         )
 
@@ -294,11 +291,7 @@ class CreateUserTest(BaseViewTest):
         data = self.test_user_data
         data.pop('email')
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('email', response.data)
 
@@ -306,11 +299,7 @@ class CreateUserTest(BaseViewTest):
         data = self.test_user_data
         data.pop('password')
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('password', response.data)
 
@@ -318,11 +307,7 @@ class CreateUserTest(BaseViewTest):
         data = self.test_user_data
         data.pop('first_name')
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('first_name', response.data)
 
@@ -330,11 +315,7 @@ class CreateUserTest(BaseViewTest):
         data = self.test_user_data
         data.pop('last_name')
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('last_name', response.data)
 
@@ -342,11 +323,7 @@ class CreateUserTest(BaseViewTest):
         data = self.test_user_data
         data.pop('birth_date')
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIsNone(User.objects.get(email=data['email']).birth_date)
 
@@ -366,7 +343,7 @@ class UpdateUserTest(BaseViewTest):
     def test_unauthenticated_user(self):
         user_id = User.objects.filter(email=self.USERS[0]['email'])[0].id
         response = self.client.patch(
-            reverse('gdzie_jedzonko:user-detail', args=[user_id]),
+            reverse('users:user-detail', args=[user_id]),
             data=self.new_data
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -386,7 +363,7 @@ class UpdateUserTest(BaseViewTest):
 
         self.auth_user(user_data)
         response = self.client.patch(
-            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            reverse('users:user-detail', args=[user.id]),
             data=self.new_data
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -411,7 +388,7 @@ class UpdateUserTest(BaseViewTest):
 
         self.auth_user(user_data)
         response = self.client.patch(
-            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            reverse('users:user-detail', args=[user.id]),
             data={'role': Role.ADMIN}
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -425,7 +402,7 @@ class UpdateUserTest(BaseViewTest):
 
         self.auth_user(mod_data)
         response = self.client.patch(
-            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            reverse('users:user-detail', args=[user.id]),
             data={'role': Role.ADMIN}
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -440,7 +417,7 @@ class UpdateUserTest(BaseViewTest):
 
         self.auth_user(user_data)
         response = self.client.patch(
-            reverse('gdzie_jedzonko:user-detail', args=[user2.id]),
+            reverse('users:user-detail', args=[user2.id]),
             data=self.new_data
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -456,7 +433,7 @@ class UpdateUserTest(BaseViewTest):
 
         self.auth_user(mod_data)
         response = self.client.patch(
-            reverse('gdzie_jedzonko:user-detail', args=[user2.id]),
+            reverse('users:user-detail', args=[user2.id]),
             data=self.new_data
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -469,7 +446,7 @@ class UpdateUserTest(BaseViewTest):
 
         self.auth_user(admin_data)
         response = self.client.patch(
-            reverse('gdzie_jedzonko:user-detail', args=[admin.id]),
+            reverse('users:user-detail', args=[admin.id]),
             data={'role': Role.USER.value}
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -484,7 +461,7 @@ class UpdateUserTest(BaseViewTest):
 
         self.auth_user(admin_data)
         response = self.client.patch(
-            reverse('gdzie_jedzonko:user-detail', args=[user.id]),
+            reverse('users:user-detail', args=[user.id]),
             data=self.new_data
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -515,11 +492,7 @@ class CreateUserIncorrectDataTest(BaseViewTest):
         data = self.test_user_data
         data['email'] = 'test'
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('email', response.data)
 
@@ -530,11 +503,7 @@ class CreateUserIncorrectDataTest(BaseViewTest):
         data = self.test_user_data
         data['password'] = password_too_short
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
             'at least 6 characters',
@@ -545,11 +514,7 @@ class CreateUserIncorrectDataTest(BaseViewTest):
         data = self.test_user_data
         data['password'] = password_too_long
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
             'no more than 128 characters',
@@ -562,22 +527,14 @@ class CreateUserIncorrectDataTest(BaseViewTest):
         data = self.test_user_data
         data['first_name'] = 'John1'
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('Only letters', response.data['first_name'][0])
 
         data = self.test_user_data
         data['last_name'] = 'Smith2'
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('Only letters', response.data['last_name'][0])
 
@@ -588,22 +545,14 @@ class CreateUserIncorrectDataTest(BaseViewTest):
         data = self.test_user_data
         data['first_name'] = 'toolongfirstname'*5
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('no more than 50', response.data['first_name'][0])
 
         data = self.test_user_data
         data['last_name'] = 'toolonglastname' * 5
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('no more than 50', response.data['last_name'][0])
 
@@ -611,11 +560,7 @@ class CreateUserIncorrectDataTest(BaseViewTest):
         data = self.test_user_data
         data['birth_date'] = '2202-2-2-2'
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('instead: YYYY-MM-DD', str(response.data['birth_date']))
 
@@ -625,11 +570,7 @@ class CreateUserIncorrectDataTest(BaseViewTest):
 
         data['birth_date'] = tomorrow.strftime(settings.DATE_FORMAT)
 
-        response = self.client.post(
-            reverse('gdzie_jedzonko:user-list'),
-            data=data
-        )
-
+        response = self.client.post(reverse('users:user-list'), data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         self.assertIn(
