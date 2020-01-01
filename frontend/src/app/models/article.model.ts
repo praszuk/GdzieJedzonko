@@ -1,5 +1,6 @@
-import {User} from './user.model';
 import {Comment} from './comment.model';
+import {Image} from './image.model';
+import {SimpleUser} from './simple-user';
 
 export class Article {
   id: number;
@@ -7,7 +8,9 @@ export class Article {
   content: string;
   creation_date: string;
   restaurant?: object;
-  user?: User;
+  user?: SimpleUser;
   comments?: Comment[];
   tags?: string[];
+  thumbnail?: Image;
+  photos?: Image[];
 }

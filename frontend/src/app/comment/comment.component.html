@@ -1,8 +1,0 @@
-<div class="ml-md-1 border border-light mt-2 rounded bg-creamy">
-  <div class="ml-md-1">
-    <a *ngIf="comment.user" [routerLink]="['/userprofile', comment.user.id]">{{comment.user.first_name}} {{comment.user.last_name}}</a>
-    <p *ngIf="comment.user"> [deleted] </p>
-    <p class="small">{{comment.creationDate}}</p>
-    <p class="ml-md-2 mt-md-1">{{comment.comment}}</p>
-  </div>
-</div>

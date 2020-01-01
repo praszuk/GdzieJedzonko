@@ -1,0 +1,41 @@
+table {
+  width: 98%;
+}
+.mat-column-id {
+  flex: 0 0 5vw;
+}
+
+.mat-column-email {
+  flex: 0 0 15vw;
+}
+
+.highlight{
+  animation: background-fade 2s forwards;
+  -webkit-animation: background-fade 2s forwards;
+  -moz-animation: background-fade 2s forwards;
+}
+
+@-webkit-keyframes background-fade {
+  0% {
+    background:#ffffff;
+  }
+  100% {
+    background:#E6E6E6;
+  }
+}
+@-moz-keyframes background-fade {
+  0% {
+    background:#ffffff;
+  }
+  100% {
+    background:#E6E6E6;
+  }
+}
+@keyframes background-fade {
+  0% {
+    background:#ffffff;
+  }
+  100% {
+    background:#E6E6E6;
+  }
+}

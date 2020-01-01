@@ -13,7 +13,7 @@ export class ArticleService {
 
   constructor(private http: HttpClient) {}
 
-  newReview(article: {title: string, content: string}): Observable<any> {
+  newReview(article: {title: string, content: any}): Observable<any> {
     return this.http.post(`${environment.apiUrl}${environment.articlesUrl}`, article)
       .pipe(
         catchError((err) => {
@@ -50,4 +50,25 @@ export class ArticleService {
         )
       );
   }
+
+  deleteArticle(articleId: number): Observable<boolean> {
+    return this.http.delete<Article>(`${environment.apiUrl}${environment.articlesUrl}${articleId}`)
+      .pipe(
+        mapTo(true),
+        catchError(
+          err => throwError(err)
+        )
+      );
+  }
+
+  updateArticle(articleId: number, article: {title?: string; content?: string}) {
+    return this.http.patch(`${environment.apiUrl}${environment.articlesUrl}${articleId}`, article)
+      .pipe(
+        mapTo(true),
+        catchError(
+          err => throwError(err)
+        )
+      );
+  }
+
 }
