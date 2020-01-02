@@ -162,3 +162,33 @@ class GetAllCommentsTest(BaseViewTest):
             )
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class CreateCommentTest(BaseViewTest):
+
+    def setUp(self):
+        super().setUp()
+        self.user = User.objects.create_user(
+            email='user1@gdziejedzonko.pl',
+            password='password1234',
+            first_name='John',
+            last_name='Smith',
+            role=Role.USER
+        )
+
+        self.article = Article.objects.create(
+            title='Title',
+            content=self.article_content,
+            user=self.user
+        )
+
+    def test_unauthenticated_cannot_create(self):
+        response = self.client.post(
+            reverse(
+                'articles:comments:comment-list',
+                kwargs={'article_id': self.article.id}
+            ),
+            data={'content': self.article_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
