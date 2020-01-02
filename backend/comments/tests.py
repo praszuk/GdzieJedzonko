@@ -6,6 +6,7 @@ from django.urls import reverse
 from articles.models import Article
 from users.models import User, Role
 
+from .constants import MAX_COMMENT_SIZE
 from .models import Comment
 from .serializers import CommentSerializer
 
@@ -104,6 +105,20 @@ class BaseViewTest(APITestCase):
         for admin in self.ADMINS:
             User.objects.create_user(**admin)
 
+        self.user = User.objects.create_user(
+            email='user1@gdziejedzonko.pl',
+            password='password1234',
+            first_name='John',
+            last_name='Smith',
+            role=Role.USER
+        )
+
+        self.article = Article.objects.create(
+            title='Title',
+            content=self.article_content,
+            user=self.user
+        )
+
     def generate_credentials(self, email: str, password: str):
         """
         Generating credentials string using token_obtain_pair endpoint.
@@ -131,19 +146,6 @@ class GetAllCommentsTest(BaseViewTest):
 
     def setUp(self):
         super().setUp()
-        self.user = User.objects.create_user(
-            email='user1@gdziejedzonko.pl',
-            password='password1234',
-            first_name='John',
-            last_name='Smith',
-            role=Role.USER
-        )
-
-        self.article = Article.objects.create(
-            title='Title',
-            content=self.article_content,
-            user=self.user
-        )
 
         self.comment1 = Comment.objects.create(
             content=self.comment_content1,
@@ -188,22 +190,6 @@ class GetAllCommentsTest(BaseViewTest):
 
 class CreateCommentTest(BaseViewTest):
 
-    def setUp(self):
-        super().setUp()
-        self.user = User.objects.create_user(
-            email='user1@gdziejedzonko.pl',
-            password='password1234',
-            first_name='John',
-            last_name='Smith',
-            role=Role.USER
-        )
-
-        self.article = Article.objects.create(
-            title='Title',
-            content=self.article_content,
-            user=self.user
-        )
-
     def test_unauthenticated_cannot_create(self):
         response = self.client.post(
             reverse(
@@ -234,3 +220,29 @@ class CreateCommentTest(BaseViewTest):
             Comment.objects.get(pk=response.data['id']),
             self.article.comment_set.all()
         )
+
+
+class CommentValidatorsTest(BaseViewTest):
+
+    def test_over_max_size_of_comment(self):
+        too_long_content = {
+            'ops': [
+                {
+                    'attributes': {'bold': True},
+                    'insert': '.' * MAX_COMMENT_SIZE
+                },
+                {
+                    'insert': '.'
+                }
+            ]
+        }
+        self.auth_user(self.USERS[0])
+        response = self.client.post(
+            reverse(
+                'articles:comments:comment-list',
+                kwargs={'article_id': self.article.id}
+            ),
+            data={'content': too_long_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
