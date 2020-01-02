@@ -153,3 +153,12 @@ class GetAllCommentsTest(BaseViewTest):
 
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_incorrect_article_id_return_404(self):
+        response = self.client.get(
+            reverse(
+                'articles:comments:comment-list',
+                kwargs={'article_id': 55555}
+            )
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
