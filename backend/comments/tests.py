@@ -6,6 +6,7 @@ from django.urls import reverse
 from articles.models import Article
 from users.models import User, Role
 
+from .constants import MAX_COMMENT_SIZE
 from .models import Comment
 from .serializers import CommentSerializer
 
@@ -104,11 +105,6 @@ class BaseViewTest(APITestCase):
         for admin in self.ADMINS:
             User.objects.create_user(**admin)
 
-
-class GetAllCommentsTest(BaseViewTest):
-
-    def setUp(self):
-        super().setUp()
         self.user = User.objects.create_user(
             email='user1@gdziejedzonko.pl',
             password='password1234',
@@ -122,6 +118,34 @@ class GetAllCommentsTest(BaseViewTest):
             content=self.article_content,
             user=self.user
         )
+
+    def generate_credentials(self, email: str, password: str):
+        """
+        Generating credentials string using token_obtain_pair endpoint.
+        :return: Credentials string in format 'Bearer <access token>'
+        :rtype: str
+        """
+        data = {'email': email, 'password': password}
+        response = self.client.post(
+            reverse('authentication:token_obtain_pair'),
+            data=data
+        )
+
+        return 'Bearer ' + response.data['access']
+
+    def auth_user(self, user: dict):
+        """
+        Helper method for generating credentials
+        :param user: user_data with keys (it has to contain email and password)
+        """
+        auth_data = self.generate_credentials(user['email'], user['password'])
+        self.client.credentials(HTTP_AUTHORIZATION=auth_data)
+
+
+class GetAllCommentsTest(BaseViewTest):
+
+    def setUp(self):
+        super().setUp()
 
         self.comment1 = Comment.objects.create(
             content=self.comment_content1,
@@ -162,3 +186,99 @@ class GetAllCommentsTest(BaseViewTest):
             )
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class CreateCommentTest(BaseViewTest):
+
+    def test_unauthenticated_cannot_create(self):
+        response = self.client.post(
+            reverse(
+                'articles:comments:comment-list',
+                kwargs={'article_id': self.article.id}
+            ),
+            data={'content': self.article_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_can_create(self):
+        article_data = {'content': self.article_content}
+        user = User.objects.filter(email=self.USERS[0]['email'])[0]
+
+        self.auth_user(self.USERS[0])
+        response = self.client.post(
+            reverse(
+                'articles:comments:comment-list',
+                kwargs={'article_id': self.article.id}
+            ),
+            data=article_data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['user']['id'], user.id)
+        self.assertIn(
+            Comment.objects.get(pk=response.data['id']),
+            self.article.comment_set.all()
+        )
+
+    def test_article_does_not_exists(self):
+        self.auth_user(self.USERS[0])
+        response = self.client.post(
+            reverse(
+                'articles:comments:comment-list',
+                kwargs={'article_id': 55555}
+            ),
+            data={'content': self.article_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class CommentValidatorsTest(BaseViewTest):
+
+    def test_over_max_size_of_comment(self):
+        too_long_content = {
+            'ops': [
+                {
+                    'attributes': {'bold': True},
+                    'insert': '.' * MAX_COMMENT_SIZE
+                },
+                {
+                    'insert': '.'
+                }
+            ]
+        }
+        self.auth_user(self.USERS[0])
+        response = self.client.post(
+            reverse(
+                'articles:comments:comment-list',
+                kwargs={'article_id': self.article.id}
+            ),
+            data={'content': too_long_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_equal_max_size_of_comment(self):
+        max_size_content = {
+            'ops': [
+                {
+                    'attributes': {'bold': True},
+                    'insert': '.' * (MAX_COMMENT_SIZE - 1)
+                },
+                {
+                    'insert': '.'
+                }
+            ]
+        }
+
+        self.auth_user(self.USERS[0])
+        response = self.client.post(
+            reverse(
+                'articles:comments:comment-list',
+                kwargs={'article_id': self.article.id}
+            ),
+            data={'content': max_size_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

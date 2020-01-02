@@ -8,6 +8,7 @@ app_name = 'comments'
 
 comment_list = CommentViewSet.as_view({
     'get': 'list',
+    'post': 'create',
 })
 
 urlpatterns = [
