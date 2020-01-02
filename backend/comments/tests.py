@@ -221,6 +221,18 @@ class CreateCommentTest(BaseViewTest):
             self.article.comment_set.all()
         )
 
+    def test_article_does_not_exists(self):
+        self.auth_user(self.USERS[0])
+        response = self.client.post(
+            reverse(
+                'articles:comments:comment-list',
+                kwargs={'article_id': 55555}
+            ),
+            data={'content': self.article_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
 
 class CommentValidatorsTest(BaseViewTest):
 
