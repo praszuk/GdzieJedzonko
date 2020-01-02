@@ -246,3 +246,27 @@ class CommentValidatorsTest(BaseViewTest):
             format='json'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_equal_max_size_of_comment(self):
+        max_size_content = {
+            'ops': [
+                {
+                    'attributes': {'bold': True},
+                    'insert': '.' * (MAX_COMMENT_SIZE - 1)
+                },
+                {
+                    'insert': '.'
+                }
+            ]
+        }
+
+        self.auth_user(self.USERS[0])
+        response = self.client.post(
+            reverse(
+                'articles:comments:comment-list',
+                kwargs={'article_id': self.article.id}
+            ),
+            data={'content': max_size_content},
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
