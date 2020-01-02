@@ -104,6 +104,28 @@ class BaseViewTest(APITestCase):
         for admin in self.ADMINS:
             User.objects.create_user(**admin)
 
+    def generate_credentials(self, email: str, password: str):
+        """
+        Generating credentials string using token_obtain_pair endpoint.
+        :return: Credentials string in format 'Bearer <access token>'
+        :rtype: str
+        """
+        data = {'email': email, 'password': password}
+        response = self.client.post(
+            reverse('authentication:token_obtain_pair'),
+            data=data
+        )
+
+        return 'Bearer ' + response.data['access']
+
+    def auth_user(self, user: dict):
+        """
+        Helper method for generating credentials
+        :param user: user_data with keys (it has to contain email and password)
+        """
+        auth_data = self.generate_credentials(user['email'], user['password'])
+        self.client.credentials(HTTP_AUTHORIZATION=auth_data)
+
 
 class GetAllCommentsTest(BaseViewTest):
 
@@ -192,3 +214,23 @@ class CreateCommentTest(BaseViewTest):
             format='json'
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_can_create(self):
+        article_data = {'content': self.article_content}
+        user = User.objects.filter(email=self.USERS[0]['email'])[0]
+
+        self.auth_user(self.USERS[0])
+        response = self.client.post(
+            reverse(
+                'articles:comments:comment-list',
+                kwargs={'article_id': self.article.id}
+            ),
+            data=article_data,
+            format='json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['user']['id'], user.id)
+        self.assertIn(
+            Comment.objects.get(pk=response.data['id']),
+            self.article.comment_set.all()
+        )
