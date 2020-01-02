@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import BasePermission
 
+from users.permissions import IsAuthenticated
 from .models import Article
 
 
@@ -17,4 +18,11 @@ class CommentArticlePermission(BasePermission):
         get_object_or_404(Article, pk=article_id)
 
         if view.action == 'list':
+            return True
+
+        elif view.action == 'create':
+            return bool(IsAuthenticated.has_permission(None, request, view))
+
+    def has_object_permission(self, request, view, obj):
+        if view.action == 'create':
             return True
