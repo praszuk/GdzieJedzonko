@@ -20,6 +20,7 @@ export class CommentSectionComponent implements OnInit, OnDestroy {
   isLoading = false;
   subscription: Subscription;
   isLogged: boolean;
+  commentLength: number;
 
   toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],
@@ -48,7 +49,7 @@ export class CommentSectionComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.newCommentForm = this.formBuilder.group({
-      content: ['', [Validators.required, Validators.maxLength(400)]]
+      content: ['', [Validators.required, Validators.maxLength(300)]]
     });
     this.loadingService.hide('comments-section-loading');
     this.IsLoggedIn();
@@ -81,9 +82,7 @@ export class CommentSectionComponent implements OnInit, OnDestroy {
 
   newComment() {
     const commentContent = this.newCommentForm.get('content').value;
-    console.log(this.newCommentForm.value);
     this.newCommentForm.value.content = JSON.parse(commentContent);
-    console.log(this.newCommentForm.value);
     this.subscription = this.commentService.createComment(this.articleId, this.newCommentForm.value).subscribe(
       (comment) => {
         this.comments.unshift(comment);
@@ -95,5 +94,9 @@ export class CommentSectionComponent implements OnInit, OnDestroy {
         });
       }
     );
+  }
+
+  textChanged($event: { content: any; delta: any; editor: any; html: string | null; oldDelta: any; source: string; text: string }) {
+    this.commentLength = $event.editor.getLength() - 1;
   }
 }
