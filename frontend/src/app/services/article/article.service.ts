@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
 import {Observable, throwError} from 'rxjs';
 import {environment} from '../../../environments/environment';
-import {catchError, mapTo} from 'rxjs/operators';
+import {catchError, map, mapTo} from 'rxjs/operators';
 import {Post} from '../../models/post.model';
 import {Article} from '../../models/article.model';
 
@@ -11,9 +11,10 @@ import {Article} from '../../models/article.model';
 })
 export class ArticleService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
-  newReview(article: {title: string, content: any}): Observable<any> {
+  newReview(article: { title: string, content: any }): Observable<any> {
     return this.http.post(`${environment.apiUrl}${environment.articlesUrl}`, article)
       .pipe(
         catchError((err) => {
@@ -43,8 +44,12 @@ export class ArticleService {
   }
 
   getArticle(articleId: number): Observable<Article> {
-    return this.http.get<Article>(`${environment.apiUrl}${environment.articlesUrl}${articleId}`)
+    return this.http.get<Article>(`${environment.apiUrl}${environment.articlesUrl}${articleId}/`)
       .pipe(
+        map((article: Article) => {
+          article.content = JSON.stringify(article.content);
+          return article;
+        }),
         catchError(
           err => throwError(err)
         )
@@ -52,7 +57,7 @@ export class ArticleService {
   }
 
   deleteArticle(articleId: number): Observable<boolean> {
-    return this.http.delete<Article>(`${environment.apiUrl}${environment.articlesUrl}${articleId}`)
+    return this.http.delete<Article>(`${environment.apiUrl}${environment.articlesUrl}${articleId}/`)
       .pipe(
         mapTo(true),
         catchError(
@@ -61,8 +66,8 @@ export class ArticleService {
       );
   }
 
-  updateArticle(articleId: number, article: {title?: string; content?: string}) {
-    return this.http.patch(`${environment.apiUrl}${environment.articlesUrl}${articleId}`, article)
+  updateArticle(articleId: number, article: { title?: string; content?: string }) {
+    return this.http.patch(`${environment.apiUrl}${environment.articlesUrl}${articleId}/`, article)
       .pipe(
         mapTo(true),
         catchError(
