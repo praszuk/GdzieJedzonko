@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {latLng, tileLayer, Map} from 'leaflet';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
@@ -8,8 +8,9 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit {
-  xCord: number;
-  yCord: number;
+  @Input() coordinates;
+  lat: number;
+  lon: number;
   map: Map;
 
   options = {
@@ -22,20 +23,26 @@ export class MapComponent implements OnInit {
     center: latLng([52.229958, 21.012008])
   };
 
-
   constructor(private snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
+    if (this.coordinates) {
+      this.lat = this.coordinates.lat;
+      this.lon = this.coordinates.lon;
+      this.map.flyTo(latLng(this.lat, this.lon));
+    } else {
     this.getLocation();
+    }
   }
 
   getLocation(): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          this.xCord = position.coords.longitude;
-          this.yCord = position.coords.latitude;
+          this.lat = position.coords.longitude;
+          this.lon = position.coords.latitude;
+          this.map.flyTo(latLng(this.lat, this.lon));
         },
         () => this.setDefaultGeoLocation());
     } else {
