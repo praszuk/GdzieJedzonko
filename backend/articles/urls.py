@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from .views import ArticleViewSet, ImageViewSet
 
@@ -28,6 +28,9 @@ images_detail = ImageViewSet.as_view({
 urlpatterns = [
     path('', article_list, name='article-list'),
     path('<int:pk>/', article_detail, name='article-detail'),
+
+    path('<int:article_id>/comments/', include('comments.urls')),
+
     path('<int:article_id>/images/', images_list, name='images-list'),
     path(
         '<int:article_id>/images/<int:image_id>/',

@@ -7,15 +7,18 @@
                     [styles]="editorStyle"
                     [modules]="modules"
                     format="json"
-                    formControlName="comment" placeholder="Pisz tutaj...">
+                    formControlName="content"
+                    placeholder="Pisz tutaj..."
+                    (onContentChanged)="textChanged($event)">
       </quill-editor>
       <button [disabled]="newCommentForm.invalid" mat-raised-button class="col-1">Wyslij</button>
     </div>
     <div class="alert alert-danger offset-4 col-4"
-         *ngIf="newCommentForm.controls.comment.errors && newCommentForm.controls.comment.dirty">
-      <p *ngIf="newCommentForm.controls.comment.errors?.required"> Komentarz jest wymagany </p>
-      <p *ngIf="newCommentForm.controls.comment.errors?.maxlength"> Komentarz może miec maksymalnie 400 znakow </p>
+         *ngIf="newCommentForm.get('content').errors && newCommentForm.get('content').dirty">
+      <p *ngIf="newCommentForm.get('content').errors?.required"> Komentarz jest wymagany </p>
+      <p *ngIf="newCommentForm.get('content').errors?.maxlength"> Komentarz może miec maksymalnie 300 znakow </p>
     </div>
+    <small class="offset-3 col-2">{{commentLength || 0}}/300</small>
   </form>
 </div>
 

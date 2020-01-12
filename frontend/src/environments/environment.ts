@@ -10,7 +10,7 @@ export const environment = {
   userUrl: '/api/users/',
   articlesUrl: '/api/articles/',
   imagesUrl: '/images/',
-  commentsUrl: '/comment/'
+  commentsUrl: '/comments/'
 };
 
 /*
