@@ -32,34 +32,29 @@ export class MapComponent implements OnInit {
       this.lon = this.coordinates.lon;
       this.map.flyTo(latLng(this.lat, this.lon));
     } else {
-    this.getLocation();
+      this.getLocation();
     }
   }
 
-  getLocation(): void {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.lat = position.coords.longitude;
-          this.lon = position.coords.latitude;
-          this.map.flyTo(latLng(this.lat, this.lon));
+  getLocation() {
+    if (window.navigator && window.navigator.geolocation) {
+      window.navigator.geolocation.getCurrentPosition(
+        position => {
+          console.log(position);
+          this.map.flyTo(latLng(position.coords.latitude, position.coords.longitude));
         },
-        () => this.setDefaultGeoLocation());
-    } else {
-      this.setDefaultGeoLocation();
+        error => {
+          this.snackBar.open('Nie udało się ustalić twojej lokalizacji.', '', {
+            duration: 4000,
+            panelClass: ['snack-bar-multiline']
+          });
+        }
+      );
     }
   }
 
   onMapReady(map: L.Map) {
     this.map = map;
-  }
-
-  setDefaultGeoLocation() {
-    // this.map.flyTo(latLng(this.xCord, this.yCord));
-    this.snackBar.open('Nie udało się ustalić twojej lokalizacji.', '', {
-      duration: 4000,
-      panelClass: ['snack-bar-multiline']
-    });
   }
 
 }
