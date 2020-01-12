@@ -1,10 +1,11 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {Comment} from '../../models/comment.model';
-import { NgxSpinnerService} from 'ngx-spinner';
+import {NgxSpinnerService} from 'ngx-spinner';
 import {CommentService} from '../../services/comment/comment.service';
 import {Subscription} from 'rxjs';
 import {AuthService} from '../../modules/auth/services/auth-service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-comment-section',
@@ -19,36 +20,14 @@ export class CommentSectionComponent implements OnInit, OnDestroy {
   isLoading = false;
   subscription: Subscription;
   isLogged: boolean;
-
-  dummyData = [
-    {
-      id: 1,
-  user: {
-    id: 1,
-    first_name: 'Karol',
-    last_name: 'Meszko'
-  },
-  comment: '{"ops":[{"insert":"Też byłem "},{"attributes":{"bold":true},"insert":"NAPRAWDE WARTE POLECENIA"},{"insert":"\\n"}]}',
-  creation_date: '2019-05-22'
-}, {
-  id: 2,
-  user: {
-    id: 2,
-      first_name: 'Krelo',
-      last_name: 'Karolow'
-  },
-  comment: '{"ops":[{"insert":"Bardzo"},{"attributes":{"underline":true},"insert":" interesująca recenzja,"},' +
-    '{"insert":" pozdrawiam "},{"attributes":{"bold":true},"insert":"Mirek"},{"insert":"\\n"}]}',
-  creation_date: '2019-05-22'
-  }
-];
+  commentLength: number;
 
   toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],
-    [{ list: 'ordered'}, { list: 'bullet' }],
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    [{ color: [] }, { background: [] }],
-    [{ font: [] }],
+    [{list: 'ordered'}, {list: 'bullet'}],
+    [{header: [1, 2, 3, 4, 5, 6, false]}],
+    [{color: []}, {background: []}],
+    [{font: []}],
     ['clean']
   ];
 
@@ -63,18 +42,18 @@ export class CommentSectionComponent implements OnInit, OnDestroy {
   constructor(private loadingService: NgxSpinnerService,
               private commentService: CommentService,
               private authService: AuthService,
-              private formBuilder: FormBuilder) { }
+              private formBuilder: FormBuilder,
+              private snackBar: MatSnackBar) {
+  }
 
   ngOnInit() {
 
     this.newCommentForm = this.formBuilder.group({
-      user: [''],
-      comment: ['', [Validators.required, Validators.maxLength(400)]]
+      content: ['', [Validators.required, Validators.maxLength(300)]]
     });
     this.loadingService.hide('comments-section-loading');
     this.IsLoggedIn();
-    // this.getAllComments();
-    this.comments = this.dummyData;
+    this.getAllComments();
   }
 
   getAllComments() {
@@ -84,17 +63,17 @@ export class CommentSectionComponent implements OnInit, OnDestroy {
         this.loadingService.hide('comments-section-loading');
       },
       (error) => {
-        // todo show error
+        this.snackBar.open('Wyświetlanie komentarzy zakończone niepowodzeniem, spróbuj odświeżyć strone', '', {
+          duration: 3000
+        });
         this.loadingService.hide('comments-section-loading');
-        console.log(error);
       }
     );
   }
 
 
-
   ngOnDestroy() {
-   // this.subscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   IsLoggedIn() {
@@ -102,29 +81,22 @@ export class CommentSectionComponent implements OnInit, OnDestroy {
   }
 
   newComment() {
-    this.comments.unshift({
-      id: 2,
-      user: {
-        id: 2,
-        first_name: 'Krelo',
-        last_name: 'Karolow'
-      },
-      comment: this.newCommentForm.value.comment,
-      creation_date: '2019-05-22'
-    });
-    this.newCommentForm.get('user').setValue(this.authService.getCurrentUserId());
-    this.newCommentForm.get('comment').reset();
-
-
+    const commentContent = this.newCommentForm.get('content').value;
+    this.newCommentForm.value.content = JSON.parse(commentContent);
     this.subscription = this.commentService.createComment(this.articleId, this.newCommentForm.value).subscribe(
       (comment) => {
-        // this.comments.unshift(comment);
-        // this.newCommentForm.get('comment').reset();
+        this.comments.unshift(comment);
+        this.newCommentForm.get('content').reset();
       },
       (error) => {
-        // todo show error
-        console.log(error);
+        this.snackBar.open('Dodanie komentarza się nie powiodło, spróbuj za chwilę', '', {
+          duration: 3000
+        });
       }
     );
+  }
+
+  textChanged($event: { content: any; delta: any; editor: any; html: string | null; oldDelta: any; source: string; text: string }) {
+    this.commentLength = $event.editor.getLength() - 1;
   }
 }

@@ -15,6 +15,7 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   editorForm: FormGroup;
   titleExists = false;
   subscription: Subscription = null;
+  articleLength: number;
 
   toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -45,6 +46,7 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   };
 
 
+
   constructor(private formBuilder: FormBuilder, private articleService: ArticleService, private router: Router) { }
 
   ngOnInit() {
@@ -73,5 +75,9 @@ export class NewReviewComponent implements OnInit, OnDestroy {
           this.titleExists = true;
         }
       });
+  }
+
+  textChanged($event: { content: any; delta: any; editor: any; html: string | null; oldDelta: any; source: string; text: string }) {
+    this.articleLength = $event.editor.getLength() - 1;
   }
 }
