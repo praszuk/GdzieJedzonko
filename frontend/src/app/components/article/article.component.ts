@@ -22,6 +22,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
   galleryOptions: Array<NgxGalleryOptions> = [];
   galleryImages: Array<NgxGalleryImage> = [];
+  coordinates: any;
 
   constructor(private activatedroute: ActivatedRoute,
               private articleService: ArticleService,
