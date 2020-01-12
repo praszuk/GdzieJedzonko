@@ -4,6 +4,11 @@ import {ArticleService} from '../../services/article/article.service';
 import {Subscription} from 'rxjs';
 import {Router} from '@angular/router';
 import {ImageUploadComponent} from '../image-upload/image-upload.component';
+import {MatDialog} from '@angular/material/dialog';
+import {AddRestaurantComponent} from './add-restaurant/add-restaurant.component';
+import {Restaurant} from '../../models/restaurant.model';
+import {RestaurantService} from '../../services/restaurant/restaurant.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-new-review',
@@ -16,23 +21,25 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   titleExists = false;
   subscription: Subscription = null;
   articleLength: number;
+  restaurant: Restaurant;
+  coordinates = null;
 
   toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
     ['blockquote', 'code-block'],
 
-    [{ header: 1 }, { header: 2 }],               // custom button values
-    [{ list: 'ordered'}, { list: 'bullet' }],
-    [{ script: 'sub'}, { script: 'super' }],      // superscript/subscript
-    [{ indent: '-1'}, { indent: '+1' }],          // outdent/indent
-    [{ direction: 'rtl' }],                         // text direction
+    [{header: 1}, {header: 2}],               // custom button values
+    [{list: 'ordered'}, {list: 'bullet'}],
+    [{script: 'sub'}, {script: 'super'}],      // superscript/subscript
+    [{indent: '-1'}, {indent: '+1'}],          // outdent/indent
+    [{direction: 'rtl'}],                         // text direction
 
-    [{ size: ['small', false, 'large', 'huge'] }],  // custom dropdown
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    [{size: ['small', false, 'large', 'huge']}],  // custom dropdown
+    [{header: [1, 2, 3, 4, 5, 6, false]}],
 
-    [{ color: [] }, { background: [] }],          // dropdown with defaults from theme
-    [{ font: [] }],
-    [{ align: [] }],
+    [{color: []}, {background: []}],          // dropdown with defaults from theme
+    [{font: []}],
+    [{align: []}],
 
     ['clean']                                         // remove formatting button
   ];
@@ -46,8 +53,13 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   };
 
 
-
-  constructor(private formBuilder: FormBuilder, private articleService: ArticleService, private router: Router) { }
+  constructor(private formBuilder: FormBuilder,
+              private articleService: ArticleService,
+              private router: Router,
+              private dialog: MatDialog,
+              private restaurantService: RestaurantService,
+              private snackBar: MatSnackBar) {
+  }
 
   ngOnInit() {
     this.editorForm = this.formBuilder.group({
@@ -62,22 +74,65 @@ export class NewReviewComponent implements OnInit, OnDestroy {
     }
   }
 
-   onSubmit() {
+  onSubmit() {
+    this.saveRestaurant();
+  }
+
+  saveRestaurant() {
+    this.restaurantService.addRestaurant(this.restaurant).subscribe(
+      (restaurant: Restaurant) => {
+        this.addReview();
+      },
+      (error) => {
+        this.snackBar.open('Zapisanie restauracji się nie powiodło, spróbuj za chwile', '', {
+          duration: 3000
+        });
+      }
+    );
+  }
+
+  addReview() {
     const article = this.editorForm.value;
     article.content = JSON.parse(this.editorForm.value.content);
     this.subscription = this.articleService.newReview(article).subscribe(
       (id) => {
-          this.titleExists = false;
-          this.imageUpload.uploadImages(id.id);
-        },
+        this.titleExists = false;
+        this.imageUpload.uploadImages(id.id);
+      },
       error => {
         if (error.error.title !== undefined) {
           this.titleExists = true;
+          this.snackBar.open(`Taki tytuł już istnieje`, '', {
+            duration: 3000
+          });
+        } else {
+          this.snackBar.open(`Zapisanie recenzji się nie powiodło`, '', {
+            duration: 3000
+          });
         }
       });
   }
 
   textChanged($event: { content: any; delta: any; editor: any; html: string | null; oldDelta: any; source: string; text: string }) {
     this.articleLength = $event.editor.getLength() - 1;
+  }
+
+  openAddRestaurantDialog() {
+    const addRestaurantDialogRef = this.dialog.open(AddRestaurantComponent, {
+      minHeight: '30vh',
+      minWidth: '40wh'
+    });
+
+    addRestaurantDialogRef.afterClosed().subscribe(
+      (restaurant: Restaurant) => {
+        if (restaurant) {
+          this.restaurant = restaurant;
+          this.coordinates = {
+            lon: restaurant.lon,
+            lat: restaurant.lat
+          };
+        }
+      }
+    );
   }
 }
