@@ -4,6 +4,7 @@ import {forkJoin, Observable, Subscription, throwError} from 'rxjs';
 import {Router} from '@angular/router';
 import {catchError} from 'rxjs/operators';
 import {Image} from '../../models/image.model';
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-image-upload',
@@ -22,7 +23,9 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
   mainImageSubscription: Subscription;
   private maxImageCount = 9;
 
-  constructor(private imageService: ImageService, private router: Router) { }
+  constructor(private imageService: ImageService,
+              private router: Router,
+              private snackBar: MatSnackBar) { }
 
   ngOnInit() {
   }
@@ -53,7 +56,9 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
             forkJoin(sentImages).subscribe(
               (result) => {},
               (filename) => {
-                // todo popup with filenames that was not uploaded
+                this.snackBar.open(`Nie powiodło się wysyłanie zdjęć: ${filename}`, '', {
+                  duration: 3000
+                });
               },
               () => {
                 this.router.navigate([`article/${articleId}`]);
@@ -86,8 +91,9 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
         this.preview(file);
       });
     } else {
-      // todo change to angularMaterial toast
-      alert(`Załączanie przerwane \nmaksymalna ilość załączonych zdjęć wynosi ${this.maxImageCount}`);
+      this.snackBar.open(`Załączanie przerwane, maksymalna ilość załączonych zdjęć wynosi ${this.maxImageCount}`, '', {
+        duration: 5000
+      });
     }
   }
 
@@ -133,8 +139,6 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
   }
 
   showModalPreview(preview: any) {
-    // todo fullscreen preview
-    alert('todo modal fullscreen preview');
   }
 
   removeUploadedImage(image: Image) {
@@ -145,10 +149,11 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
     }
     this.imageService.deleteImage(this.articleId, image.id).subscribe(
       (next) => {
-        // todo popup deletion information
       },
       (error) => {
-        // todo popup error deletion information
+        this.snackBar.open(`Usunięcie zdjęcia się nie powiodło`, '', {
+          duration: 3000
+        });
       }
     );
   }
@@ -157,10 +162,11 @@ export class ImageUploadComponent implements OnInit, OnDestroy {
     this.uploadedThumbnail = null;
     this.imageService.deleteImage(this.articleId, image.id).subscribe(
       (next) => {
-        // todo popup deletion information
       },
       (error) => {
-        // todo popup error deletion information
+        this.snackBar.open(`Usunięcie zdjęcia głównego się nie powiodło`, '', {
+          duration: 3000
+        });
       }
     );
   }
