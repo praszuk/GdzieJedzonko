@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {Routes, RouterModule} from '@angular/router';
 import {PostsSectionComponent} from './components/posts-section/posts-section.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import {ArticleComponent} from './components/article/article.component';
@@ -15,19 +15,19 @@ import {ChangePasswordComponent} from './modules/shared/components/edit-profile/
 import {DeleteAccountComponent} from './modules/shared/components/edit-profile/delete-account/delete-account.component';
 import {UserGuard} from './modules/auth/guards/user.guard';
 import {AdminGuard} from './modules/auth/guards/admin.guard';
-import {EditReviewComponent} from "./components/edit-review/edit-review.component";
-import {OwnerGuard} from "./modules/auth/guards/owner.guard";
+import {EditReviewComponent} from './components/edit-review/edit-review.component';
+import {OwnerGuard} from './modules/auth/guards/owner.guard';
 
 
-const routes: Routes = [ {
+const routes: Routes = [{
   path: 'login',
   component: LoginComponent,
   canActivate: [AuthGuard]
-  }, {
+}, {
   path: 'register',
   component: RegisterComponent,
   canActivate: [AuthGuard]
-  }, {
+}, {
   path: '',
   component: HomeComponent,
   children: [{
@@ -80,11 +80,12 @@ const routes: Routes = [ {
     path: '**',
     redirectTo: '/404'
   }]
-  }
+}
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'})],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

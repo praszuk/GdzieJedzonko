@@ -1,3 +1,4 @@
+<div class="min-height-15"></div>
 <article class="offset-2 col-9  my-2 rounded gradient min-height-40">
   <ngx-spinner name="articleLoading"  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
   <div *ngIf="!isLoading">
@@ -16,8 +17,8 @@
     </div>
 
     <h2>{{article.title}}</h2>
-    <div id="article-map" class="align-content-center">
-      <p class="text-center"> MAP GOES HERE</p>
+    <div id="article-map" class="align-content-center offset-2 col-8">
+      <app-map [coordinates]="coordinates"></app-map>
     </div>
     <quill-view [content]="article.content" format="json" theme="snow"></quill-view>
   </div>
