@@ -25,8 +25,9 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
 
     'articles.apps.ArticlesConfig',
-    'comments.apps.CommentsConfig',
     'authentication.apps.AuthenticationConfig',
+    'comments.apps.CommentsConfig',
+    'restaurants.apps.RestaurantsConfig',
     'users.apps.UsersConfig',
 ]
 
