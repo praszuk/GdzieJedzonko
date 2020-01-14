@@ -60,7 +60,6 @@ class BaseViewTest(APITestCase):
         for admin in self.ADMINS:
             User.objects.create_user(**admin)
 
-
     def generate_credentials(self, email: str, password: str):
         """
         Generating credentials string using token_obtain_pair endpoint.
@@ -130,6 +129,36 @@ class CreateCityTest(BaseViewTest):
             CitySerializer(City.objects.all()[0], many=False).data,
             response.data
         )
+
+
+class DeleteCityTest(BaseViewTest):
+
+    def test_only_admin_can_destroy(self):
+        city_data = {'name': 'Warsaw', 'lat': '52.23704', 'lon': '21.01753'}
+        city_id = City.objects.create(**city_data).id
+        self.assertTrue(City.objects.filter(pk=city_id).exists())
+
+        url = reverse('restaurants:cities-detail', args=[city_id])
+
+        # Not authenticated
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # User
+        self.auth_user(self.USERS[0])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Mod
+        self.auth_user(self.MODS[0])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Admin
+        self.auth_user(self.ADMINS[0])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(City.objects.filter(pk=city_id).exists())
 
 
 class TestLocationValidators(APITestCase):
