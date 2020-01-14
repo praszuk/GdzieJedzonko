@@ -141,3 +141,11 @@ class TestLocationValidators(APITestCase):
         self.assertIsNone(validate_lat(90.00000))
         self.assertIsNone(validate_lat(0.0))
         self.assertIsNone(validate_lat(-90.00000))
+
+    def test_lon(self):
+        self.assertRaises(ValidationError, validate_lon, 180.00001)
+        self.assertRaises(ValidationError, validate_lon, -180.00001)
+
+        self.assertIsNone(validate_lon(180.00000))
+        self.assertIsNone(validate_lon(0.0))
+        self.assertIsNone(validate_lon(-180.00000))
