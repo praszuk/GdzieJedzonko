@@ -31,6 +31,8 @@ class Restaurant(Location):
     website = models.URLField()
     is_approved = models.BooleanField(default=False)
 
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
+
     def __str__(self):
         return (
             f'id: {self.id}, '
@@ -38,5 +40,7 @@ class Restaurant(Location):
             f'address: {self.address}, '
             f'website: {self.website}, '
             f'is_approved: {self.is_approved}, '
+            f'City: {self.city}, '
             + Location.__str__(self)
+
         )
