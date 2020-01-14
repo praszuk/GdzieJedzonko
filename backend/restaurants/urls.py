@@ -8,6 +8,7 @@ app_name = 'restaurants'
 
 cities_list = CityViewSet.as_view({
     'get': 'list',
+    'post': 'create'
 })
 
 
