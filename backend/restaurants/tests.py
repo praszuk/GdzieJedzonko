@@ -1,12 +1,14 @@
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from users.models import User, Role
 
 from .models import City
 from .serializers import CitySerializer
+from .validators import validate_lat, validate_lon
 
 
 class BaseViewTest(APITestCase):
@@ -128,3 +130,22 @@ class CreateCityTest(BaseViewTest):
             CitySerializer(City.objects.all()[0], many=False).data,
             response.data
         )
+
+
+class TestLocationValidators(APITestCase):
+
+    def test_lat(self):
+        self.assertRaises(ValidationError, validate_lat, 90.00001)
+        self.assertRaises(ValidationError, validate_lat, -90.00001)
+
+        self.assertIsNone(validate_lat(90.00000))
+        self.assertIsNone(validate_lat(0.0))
+        self.assertIsNone(validate_lat(-90.00000))
+
+    def test_lon(self):
+        self.assertRaises(ValidationError, validate_lon, 180.00001)
+        self.assertRaises(ValidationError, validate_lon, -180.00001)
+
+        self.assertIsNone(validate_lon(180.00000))
+        self.assertIsNone(validate_lon(0.0))
+        self.assertIsNone(validate_lon(-180.00000))
