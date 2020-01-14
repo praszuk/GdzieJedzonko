@@ -15,6 +15,9 @@ urlpatterns = [
 
     # Articles
     path('api/articles/', include('articles.urls')),
+
+    # Restaurants
+    path('api/restaurants/', include('restaurants.urls')),
 ]
 
 if settings.DEBUG:
