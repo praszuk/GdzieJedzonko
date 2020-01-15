@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'articles.apps.ArticlesConfig',
     'authentication.apps.AuthenticationConfig',
     'comments.apps.CommentsConfig',
+    'maps.apps.MapsConfig',
     'restaurants.apps.RestaurantsConfig',
     'users.apps.UsersConfig',
 ]
