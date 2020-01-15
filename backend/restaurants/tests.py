@@ -7,7 +7,11 @@ from django.urls import reverse
 from users.models import User, Role
 
 from .models import City, Restaurant
-from .serializers import CitySerializer, RestaurantListSerializer
+from .serializers import (
+    CitySerializer,
+    RestaurantSerializer,
+    RestaurantListSerializer
+)
 from .validators import validate_lat, validate_lon
 
 
@@ -161,7 +165,7 @@ class DeleteCityTest(BaseViewTest):
         self.assertFalse(City.objects.filter(pk=city_id).exists())
 
 
-class GetAllRestaurantsTest(BaseViewTest):
+class GetAllRestaurantsTest(APITestCase):
     def setUp(self):
         self.client = APIClient()
 
@@ -226,6 +230,57 @@ class GetAllRestaurantsTest(BaseViewTest):
             {'city': '<non int value>'}
         )
         serialized = RestaurantListSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class GetDetailRestaurantTest(BaseViewTest):
+    def setUp(self):
+        self.client = APIClient()
+
+        self.c1 = City.objects.create(name='a', lat='52.52000', lon='13.40495')
+        self.c2 = City.objects.create(name='b', lat='48.86471', lon='2.34901')
+        self.c3 = City.objects.create(name='c', lat='52.23704', lon='21.01753')
+
+        self.r1 = Restaurant.objects.create(
+            name='Restaurant one',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=True,
+            city=self.c1
+        )
+        self.r2 = Restaurant.objects.create(
+            name='Restaurant two',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=True,
+            city=self.c1
+        )
+        self.r3 = Restaurant.objects.create(
+            name='Restaurant three',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=False,
+            city=self.c1
+        )
+        self.r4 = Restaurant.objects.create(
+            name='Restaurant four',
+            lat='48.86471',
+            lon='2.34901',
+            is_approved=True,
+            city=self.c2,
+        )
+
+    def test_everyone_can_get_approved_restaurant(self):
+        expected = Restaurant.objects.get(id=self.r1.id)
+        response = self.client.get(
+            reverse(
+                'restaurants:restaurants-detail',
+                args=[self.r1.id]
+            )
+        )
+        serialized = RestaurantSerializer(expected, many=False)
 
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
