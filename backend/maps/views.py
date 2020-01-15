@@ -3,14 +3,17 @@ import requests
 
 from django.conf import settings
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import Response
+
+from users.permissions import IsAuthenticated
 
 
 OSM_API_URL = 'https://nominatim.openstreetmap.org/search'
 
 
 @api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
 def coordinates(request):
     address = request.query_params.get('address')
     if address:
