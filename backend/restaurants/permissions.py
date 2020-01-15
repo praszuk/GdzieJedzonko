@@ -26,9 +26,13 @@ class CityPermission(BasePermission):
 
 
 class RestaurantPermission(BasePermission):
+    # noinspection PyTypeChecker
     def has_permission(self, request, view):
         if view.action in ('list', 'retrieve'):
             return True
+
+        elif view.action in ('destroy',):
+            return IsAuthenticated.has_permission(None, request, view)
 
     # noinspection PyTypeChecker
     def has_object_permission(self, request, view, obj: Restaurant):
@@ -43,6 +47,11 @@ class RestaurantPermission(BasePermission):
                         IsAdminUser.has_permission(None, request, view)
                     )
                 )
+        elif view.action == 'destroy':
+            return bool(
+                IsModeratorUser.has_permission(None, request, view) or
+                IsAdminUser.has_permission(None, request, view)
+            )
 
 
 class RestaurantPendingPermission(BasePermission):
