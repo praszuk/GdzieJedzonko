@@ -43,3 +43,19 @@ class RestaurantPermission(BasePermission):
                         IsAdminUser.has_permission(None, request, view)
                     )
                 )
+
+
+class RestaurantPendingPermission(BasePermission):
+    """
+        Handle with not approved restaurants list.
+    """
+    # noinspection PyTypeChecker
+    def has_permission(self, request, view):
+        if view.action == 'list':
+            return bool(
+                IsAuthenticated.has_permission(None, request, view) and
+                bool(
+                    IsModeratorUser.has_permission(None, request, view) or
+                    IsAdminUser.has_permission(None, request, view)
+                )
+            )
