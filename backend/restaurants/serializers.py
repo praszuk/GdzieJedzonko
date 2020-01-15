@@ -22,7 +22,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         depth = 1
-        fields = ('id', 'name', 'lat', 'lon')
+        fields = ('id', 'name', 'lat', 'lon', 'address')
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
