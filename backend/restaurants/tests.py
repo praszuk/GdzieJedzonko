@@ -389,7 +389,12 @@ class DeleteRestaurantTest(BaseViewTest):
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-
+    def test_admin_can_delete(self):
+        self.auth_user(self.ADMINS[0])
+        response = self.client.delete(
+            reverse('restaurants:restaurants-detail', args=[self.r1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class TestLocationValidators(APITestCase):
