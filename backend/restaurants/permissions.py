@@ -23,3 +23,8 @@ class CityPermission(BasePermission):
         if view.action == 'destroy':
             return True
 
+
+class RestaurantPermission(BasePermission):
+    def has_permission(self, request, view):
+        if view.action == 'list':
+            return True
