@@ -21,7 +21,8 @@ restaurants_detail = RestaurantViewSet.as_view({
 })
 
 restaurants_list = RestaurantViewSet.as_view({
-    'get': 'list'
+    'get': 'list',
+    'post': 'create'
 })
 
 restaurants_list_pending = RestaurantListPendingViewSet.as_view({
