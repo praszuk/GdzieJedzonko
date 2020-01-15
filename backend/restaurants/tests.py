@@ -382,6 +382,20 @@ class DeleteRestaurantTest(BaseViewTest):
             city=self.c1
         )
 
+    def test_unauthenticated_and_user_cannot_delete(self):
+        # Unauthenticated
+        response = self.client.delete(
+            reverse('restaurants:restaurants-detail', args=[self.r1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # User
+        self.auth_user(self.USERS[0])
+        response = self.client.delete(
+            reverse('restaurants:restaurants-detail', args=[self.r1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_mod_can_delete(self):
         self.auth_user(self.MODS[0])
         response = self.client.delete(
