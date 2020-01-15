@@ -1,6 +1,7 @@
 from rest_framework.permissions import BasePermission
 
-from users.permissions import IsAdminUser, IsAuthenticated
+from users.permissions import IsAdminUser, IsModeratorUser, IsAuthenticated
+from .models import Restaurant
 
 
 class CityPermission(BasePermission):
@@ -26,5 +27,19 @@ class CityPermission(BasePermission):
 
 class RestaurantPermission(BasePermission):
     def has_permission(self, request, view):
-        if view.action == 'list':
+        if view.action in ('list', 'retrieve'):
             return True
+
+    # noinspection PyTypeChecker
+    def has_object_permission(self, request, view, obj: Restaurant):
+        if view.action == 'retrieve':
+            if obj.is_approved:
+                return True
+            else:
+                return bool(
+                    IsAuthenticated.has_permission(None, request, view) and
+                    bool(
+                        IsModeratorUser.has_permission(None, request, view) or
+                        IsAdminUser.has_permission(None, request, view)
+                    )
+                )
