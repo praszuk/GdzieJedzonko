@@ -237,7 +237,7 @@ class GetAllRestaurantsTest(APITestCase):
 
 class GetDetailRestaurantTest(BaseViewTest):
     def setUp(self):
-        self.client = APIClient()
+        super().setUp()
 
         self.c1 = City.objects.create(name='a', lat='52.52000', lon='13.40495')
         self.c2 = City.objects.create(name='b', lat='48.86471', lon='2.34901')
@@ -283,6 +283,28 @@ class GetDetailRestaurantTest(BaseViewTest):
         serialized = RestaurantSerializer(expected, many=False)
 
         self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_only_mod_and_admin_can_not_approved(self):
+        url = reverse('restaurants:restaurants-detail', args=[self.r3.id])
+
+        # Unauthenticated
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # User
+        self.auth_user(self.USERS[0])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Mod
+        self.auth_user(self.MODS[0])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Admin
+        self.auth_user(self.ADMINS[0])
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
