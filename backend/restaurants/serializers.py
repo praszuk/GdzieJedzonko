@@ -30,5 +30,15 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Restaurant
-        depth = 1
+        depth = 0
         fields = '__all__'
+
+    def validate_name(self, name):
+        return bleach_clean(name)
+
+    def validate_address(self, address):
+        return bleach_clean(address)
+
+    def create(self, validated_data):
+        validated_data.pop('is_approved')
+        return Restaurant.objects.create(**validated_data)

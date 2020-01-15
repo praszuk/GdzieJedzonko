@@ -31,7 +31,7 @@ class RestaurantPermission(BasePermission):
         if view.action in ('list', 'retrieve'):
             return True
 
-        elif view.action in ('destroy',):
+        elif view.action in ('destroy', 'create'):
             return IsAuthenticated.has_permission(None, request, view)
 
     # noinspection PyTypeChecker
