@@ -27,8 +27,8 @@ class City(Location):
 
 class Restaurant(Location):
     name = models.CharField(max_length=100)
-    address = models.CharField(max_length=100)
-    website = models.URLField()
+    address = models.CharField(max_length=100, blank=True)
+    website = models.URLField(blank=True)
     is_approved = models.BooleanField(default=False)
 
     city = models.ForeignKey(City, on_delete=models.CASCADE)
