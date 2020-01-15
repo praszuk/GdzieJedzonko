@@ -466,6 +466,7 @@ class UpdateRestaurantsTest(BaseViewTest):
 
     def test_unauthenticated_and_user_cannot_update(self):
         patch_data = {'is_approved': True}
+
         # Unauthenticated
         response = self.client.patch(self.url, patch_data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -474,6 +475,29 @@ class UpdateRestaurantsTest(BaseViewTest):
         self.auth_user(self.USERS[0])
         response = self.client.patch(self.url, patch_data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_mod_and_admin_can_update(self):
+        patch_data1 = {'is_approved': True}
+        patch_data2 = {'name': 'New name'}
+
+        self.assertFalse(self.r1.is_approved)
+        self.assertNotEqual(self.r1.name, patch_data2['name'])
+
+        # Moderator
+        self.auth_user(self.MODS[0])
+        response = self.client.patch(self.url, patch_data1)
+
+        self.r1.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(self.r1.is_approved)
+
+        # Admin
+        self.auth_user(self.ADMINS[0])
+        response = self.client.patch(self.url, patch_data2)
+
+        self.r1.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.r1.name, patch_data2['name'])
 
 
 class TestLocationValidators(APITestCase):
