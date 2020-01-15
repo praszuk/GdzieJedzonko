@@ -346,6 +346,28 @@ class GetAllRestaurantsPendingTest(BaseViewTest):
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_only_mod_and_admin_can(self):
+        url = reverse('restaurants:restaurants-list-pending')
+
+        # Unauthenticated
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # User
+        self.auth_user(self.USERS[0])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # Mod
+        self.auth_user(self.MODS[0])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Admin
+        self.auth_user(self.ADMINS[0])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class TestLocationValidators(APITestCase):
 
