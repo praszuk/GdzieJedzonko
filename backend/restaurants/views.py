@@ -1,7 +1,11 @@
 from rest_framework import viewsets
 
 from .models import City, Restaurant
-from .permissions import CityPermission, RestaurantPermission
+from .permissions import (
+    CityPermission,
+    RestaurantPermission,
+    RestaurantPendingPermission
+)
 from .serializers import (
     CitySerializer,
     RestaurantListSerializer,
@@ -39,3 +43,9 @@ class RestaurantViewSet(viewsets.ModelViewSet):
             return RestaurantListSerializer
 
         return RestaurantSerializer
+
+
+class RestaurantListPendingViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (RestaurantPendingPermission,)
+    queryset = Restaurant.objects.filter(is_approved=False)
+    serializer_class = RestaurantSerializer
