@@ -135,3 +135,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 AUTH_USER_MODEL = 'users.User'
+
+USER_AGENT_API = os.environ.get('USER_AGENT_API', 'GDZIEJEDZONKO/1.0')
