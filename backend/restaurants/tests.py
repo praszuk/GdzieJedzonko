@@ -369,6 +369,48 @@ class GetAllRestaurantsPendingTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+class DeleteRestaurantTest(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+
+        self.c1 = City.objects.create(name='a', lat='52.52000', lon='13.40495')
+        self.r1 = Restaurant.objects.create(
+            name='Restaurant one',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=True,
+            city=self.c1
+        )
+
+    def test_unauthenticated_and_user_cannot_delete(self):
+        # Unauthenticated
+        response = self.client.delete(
+            reverse('restaurants:restaurants-detail', args=[self.r1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # User
+        self.auth_user(self.USERS[0])
+        response = self.client.delete(
+            reverse('restaurants:restaurants-detail', args=[self.r1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_mod_can_delete(self):
+        self.auth_user(self.MODS[0])
+        response = self.client.delete(
+            reverse('restaurants:restaurants-detail', args=[self.r1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_admin_can_delete(self):
+        self.auth_user(self.ADMINS[0])
+        response = self.client.delete(
+            reverse('restaurants:restaurants-detail', args=[self.r1.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
 class TestLocationValidators(APITestCase):
 
     def test_lat(self):
