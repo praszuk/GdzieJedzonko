@@ -388,7 +388,24 @@ class CreateRestaurantTest(BaseViewTest):
         )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_user_can_create(self):
+        restaurant_data = {
+            'name': 'Restaurant',
+            'lat': '52.52001',
+            'lon': '13.40494',
+            'city': self.c1.id,
+        }
 
+        self.auth_user(self.USERS[0])
+        response = self.client.post(
+            reverse('restaurants:restaurants-list'),
+            restaurant_data
+        )
+
+        restaurant = Restaurant.objects.get(pk=response.data['id'])
+
+        self.assertFalse(restaurant.is_approved)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class DeleteRestaurantTest(BaseViewTest):
