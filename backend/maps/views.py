@@ -3,8 +3,13 @@ import requests
 
 from django.conf import settings
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import (
+    api_view,
+    permission_classes,
+    throttle_classes
+)
 from rest_framework.views import Response
+from rest_framework.throttling import UserRateThrottle
 
 from users.permissions import IsAuthenticated
 
@@ -12,8 +17,13 @@ from users.permissions import IsAuthenticated
 OSM_API_URL = 'https://nominatim.openstreetmap.org/search'
 
 
+class CoordinatesThrottle(UserRateThrottle):
+    rate = '1/sec'
+
+
 @api_view(['GET'])
 @permission_classes((IsAuthenticated, ))
+@throttle_classes((CoordinatesThrottle,))
 def coordinates(request):
     address = request.query_params.get('address')
     if address:
