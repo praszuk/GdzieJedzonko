@@ -219,6 +219,17 @@ class GetAllRestaurantsTest(BaseViewTest):
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_city_filter_incorrect_value(self):
+        expected = Restaurant.objects.filter(is_approved=True)
+        response = self.client.get(
+            reverse('restaurants:restaurants-list'),
+            {'city': '<non int value>'}
+        )
+        serialized = RestaurantListSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class TestLocationValidators(APITestCase):
 
