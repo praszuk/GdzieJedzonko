@@ -308,6 +308,45 @@ class GetDetailRestaurantTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+class GetAllRestaurantsPendingTest(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+
+        self.c1 = City.objects.create(name='a', lat='52.52000', lon='13.40495')
+        self.r1 = Restaurant.objects.create(
+            name='Restaurant one',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=True,
+            city=self.c1
+        )
+        self.r2 = Restaurant.objects.create(
+            name='Restaurant two',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=False,
+            city=self.c1
+        )
+        self.r3 = Restaurant.objects.create(
+            name='Restaurant three',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=False,
+            city=self.c1
+        )
+
+    def test_get_list_of_not_approved_restaurants(self):
+        self.auth_user(self.ADMINS[0])
+        expected = Restaurant.objects.filter(is_approved=False)
+        response = self.client.get(
+            reverse('restaurants:restaurants-list-pending')
+        )
+        serialized = RestaurantSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
 class TestLocationValidators(APITestCase):
 
     def test_lat(self):
