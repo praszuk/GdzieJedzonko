@@ -21,6 +21,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         query_set = Restaurant.objects.all()
         if self.action == 'list':
+            query_set = query_set.filter(is_approved=True)
             city_id = self.request.query_params.get('city', None)
             if city_id:
                 try:
@@ -31,7 +32,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
                 except ValueError:
                     pass
 
-        return query_set.filter(is_approved=True)
+        return query_set
 
     def get_serializer_class(self):
         if self.action == 'list':

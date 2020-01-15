@@ -2,6 +2,7 @@ from bleach import clean as bleach_clean
 
 from rest_framework import serializers
 
+# from articles.serializers import ArticleListSerializer
 from .models import City, Restaurant
 
 
@@ -24,8 +25,8 @@ class RestaurantListSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'lat', 'lon')
 
 
-# TODO for detail and create action
 class RestaurantSerializer(serializers.ModelSerializer):
+    # articles = ArticleListSerializer(read_only=True, many=True)
 
     class Meta:
         model = Restaurant
