@@ -369,6 +369,28 @@ class GetAllRestaurantsPendingTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+class CreateRestaurantTest(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+
+        self.c1 = City.objects.create(name='a', lat='52.52000', lon='13.40495')
+
+    def test_unauthenticated_cannot_create(self):
+        restaurant_data = {
+            'name': 'Restaurant',
+            'lat': '52.52001',
+            'lon': '13.40494',
+            'city': self.c1.id
+        }
+        response = self.client.post(
+            reverse('restaurants:restaurants-list'),
+            restaurant_data
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+
+
 class DeleteRestaurantTest(BaseViewTest):
     def setUp(self):
         super().setUp()
