@@ -17,7 +17,8 @@ cities_detail = CityViewSet.as_view({
 
 restaurants_detail = RestaurantViewSet.as_view({
     'get': 'retrieve',
-    'delete': 'destroy'
+    'delete': 'destroy',
+    'patch': 'partial_update',
 })
 
 restaurants_list = RestaurantViewSet.as_view({

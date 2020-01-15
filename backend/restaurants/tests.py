@@ -450,6 +450,56 @@ class DeleteRestaurantTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
+class UpdateRestaurantsTest(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+
+        self.c1 = City.objects.create(name='a', lat='52.52000', lon='13.40495')
+        self.r1 = Restaurant.objects.create(
+            name='Restaurant one',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=False,
+            city=self.c1
+        )
+        self.url = reverse('restaurants:restaurants-detail', args=[self.r1.id])
+
+    def test_unauthenticated_and_user_cannot_update(self):
+        patch_data = {'is_approved': True}
+
+        # Unauthenticated
+        response = self.client.patch(self.url, patch_data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # User
+        self.auth_user(self.USERS[0])
+        response = self.client.patch(self.url, patch_data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_mod_and_admin_can_update(self):
+        patch_data1 = {'is_approved': True}
+        patch_data2 = {'name': 'New name'}
+
+        self.assertFalse(self.r1.is_approved)
+        self.assertNotEqual(self.r1.name, patch_data2['name'])
+
+        # Moderator
+        self.auth_user(self.MODS[0])
+        response = self.client.patch(self.url, patch_data1)
+
+        self.r1.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(self.r1.is_approved)
+
+        # Admin
+        self.auth_user(self.ADMINS[0])
+        response = self.client.patch(self.url, patch_data2)
+
+        self.r1.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.r1.name, patch_data2['name'])
+
+
 class TestLocationValidators(APITestCase):
 
     def test_lat(self):
