@@ -1,9 +1,14 @@
 from bleach import clean as bleach_clean
+
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from .constants import MAX_ARTICLE_SIZE
 from .models import Article, BaseImage, Photo, Thumbnail
+
 from users.models import User
+from restaurants.models import Restaurant
+from restaurants.serializers import RestaurantSerializer
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -39,6 +44,12 @@ class ArticleSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)
     photos = PhotoSerializer(many=True, required=False)
     thumbnail = ThumbnailSerializer(many=False, required=False)
+    restaurant = RestaurantSerializer(many=False, read_only=True)
+    restaurant_id = serializers.PrimaryKeyRelatedField(
+        source='restaurant',
+        queryset=Restaurant.objects.all(),
+        write_only=True
+    )
 
     class Meta:
         model = Article
@@ -77,11 +88,9 @@ class ArticleSerializer(serializers.ModelSerializer):
         #     user = self.context['request'].user
         # else:
         #     user = None
-        user = self.context['request'].user
-        title = validated_data['title']
-        content = validated_data['content']
+        validated_data['user'] = self.context['request'].user
 
-        return Article.objects.create(title=title, content=content, user=user)
+        return Article.objects.create(**validated_data)
 
 
 class ArticleListSerializer(serializers.ModelSerializer):
@@ -91,5 +100,5 @@ class ArticleListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         depth = 1
-        exclude = ('content', )
+        exclude = ('content', 'restaurant')
         read_only_fields = ('id', 'creation_date', 'thumbnail')
