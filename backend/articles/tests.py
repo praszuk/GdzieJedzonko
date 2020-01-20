@@ -19,8 +19,9 @@ from .constants import (
 )
 from .models import Article, Photo, Thumbnail
 from .serializers import ArticleSerializer, ArticleListSerializer
-from users.models import User, Role
 
+from users.models import User, Role
+from restaurants.models import Restaurant, City
 
 TMP_MEDIA_ROOT = tempfile.mkdtemp()
 
@@ -86,6 +87,14 @@ class BaseViewTest(APITestCase):
 
         for admin in self.ADMINS:
             User.objects.create_user(**admin)
+
+        self.restaurant = Restaurant.objects.create(
+            name='Restaurant one',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=False,
+            city=City.objects.create(name='a', lat='52.52000', lon='13.40495')
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -174,7 +183,8 @@ class GetDetailArticleTest(BaseViewTest):
         Article.objects.create(
             title='Test title',
             content=self.article_content,
-            user=user
+            user=user,
+            restaurant=self.restaurant
         )
 
     def test_everyone_can_get_detail(self):
@@ -203,17 +213,20 @@ class GetAllArticlesTest(BaseViewTest):
         Article.objects.create(
             title='Title',
             content=self.article_content,
-            user=user
+            user=user,
+            restaurant=self.restaurant
         )
         Article.objects.create(
             title='Test title',
             content=self.article_content,
-            user=user
+            user=user,
+            restaurant=self.restaurant
         )
         Article.objects.create(
             title='Test title title',
             content=self.article_content,
-            user=user
+            user=user,
+            restaurant=self.restaurant
         )
 
     def test_everyone_can_get_list_of_articles(self):
@@ -249,17 +262,20 @@ class GetAllArticlesFilteredByUserTest(BaseViewTest):
         Article.objects.create(
             title='Title1',
             content=self.article_content,
-            user=self.user1
+            user=self.user1,
+            restaurant=self.restaurant
         )
         Article.objects.create(
             title='Test title2',
             content=self.article_content,
-            user=self.user1
+            user=self.user1,
+            restaurant=self.restaurant
         )
         Article.objects.create(
             title='Test title title3',
             content=self.article_content,
-            user=self.user2
+            user=self.user2,
+            restaurant=self.restaurant
         )
 
     def test_get_articles_user_exists(self):
@@ -305,6 +321,7 @@ class CreateArticleTest(BaseViewTest):
         article_data = {
             'title': 'Title',
             'content': self.article_content,
+            'restaurant': self.restaurant.id
         }
         response = self.client.post(
             reverse('articles:article-list'),
@@ -318,6 +335,7 @@ class CreateArticleTest(BaseViewTest):
         article_data = {
             'title': 'Title',
             'content': self.article_content,
+            'restaurant_id': self.restaurant.id
         }
 
         self.auth_user(self.USERS[0])
@@ -345,7 +363,8 @@ class DeleteArticleTest(BaseViewTest):
         self.article1 = Article.objects.create(
             title='Title1',
             content=self.article_content,
-            user=User.objects.filter(email=self.USERS[0]['email'])[0]
+            user=User.objects.filter(email=self.USERS[0]['email'])[0],
+            restaurant=self.restaurant
         )
 
     def test_unauthenticated_user(self):
@@ -395,7 +414,8 @@ class UpdateArticleTest(BaseViewTest):
         self.article1 = Article.objects.create(
             title='Title1',
             content={'content': self.article_content},
-            user=User.objects.filter(email=self.USERS[0]['email'])[0]
+            user=User.objects.filter(email=self.USERS[0]['email'])[0],
+            restaurant=self.restaurant
         )
 
     def test_unauthenticated_user(self):
@@ -459,12 +479,14 @@ class CreateImageForArticleTest(BaseViewTest):
         self.article1 = Article.objects.create(
             title='Title1',
             content=self.article_content,
-            user=User.objects.filter(email=self.USERS[0]['email'])[0]
+            user=User.objects.filter(email=self.USERS[0]['email'])[0],
+            restaurant=self.restaurant
         )
         self.article2 = Article.objects.create(
             title='Title2',
             content=self.article_content,
-            user=User.objects.filter(email=self.USERS[1]['email'])[0]
+            user=User.objects.filter(email=self.USERS[1]['email'])[0],
+            restaurant=self.restaurant
         )
 
     def test_unauthorized_cannot_create_image_for_article(self):
@@ -558,12 +580,14 @@ class DeleteImageFromArticleTest(BaseViewTest):
         self.article1 = Article.objects.create(
             title='Title1',
             content=self.article_content,
-            user=User.objects.filter(email=self.USERS[0]['email'])[0]
+            user=User.objects.filter(email=self.USERS[0]['email'])[0],
+            restaurant=self.restaurant
         )
         self.article2 = Article.objects.create(
             title='Title2',
             content=self.article_content,
-            user=User.objects.filter(email=self.USERS[1]['email'])[0]
+            user=User.objects.filter(email=self.USERS[1]['email'])[0],
+            restaurant=self.restaurant
         )
 
         self.upload_image(self.USERS[0], self.article1, is_thumbnail=True)
@@ -706,6 +730,7 @@ class ArticleValidatorsTest(BaseViewTest):
         article_data = {
             'title': 'Title',
             'content': too_long_content,
+            'restaurant': self.restaurant.id
         }
 
         self.auth_user(self.USERS[0])
@@ -733,6 +758,7 @@ class ArticleValidatorsTest(BaseViewTest):
         article_data = {
             'title': 'Title',
             'content': max_size_content,
+            'restaurant_id': self.restaurant.id
         }
 
         self.auth_user(self.USERS[0])
@@ -748,6 +774,7 @@ class ArticleValidatorsTest(BaseViewTest):
         article_data = {
             'title': 'Title1234567890Łążźó!?-.,',
             'content': self.article_content,
+            'restaurant_id': self.restaurant.id
         }
 
         self.auth_user(self.USERS[0])
@@ -763,6 +790,7 @@ class ArticleValidatorsTest(BaseViewTest):
         article_data = {
             'title': 'Title<script>',
             'content': self.article_content,
+            'restaurant_id': self.restaurant.id
         }
 
         self.auth_user(self.USERS[0])

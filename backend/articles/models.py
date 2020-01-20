@@ -5,6 +5,7 @@ import os
 
 from uuid import uuid4
 
+from restaurants.models import Restaurant
 from users.models import User
 
 from .validators import (
@@ -22,6 +23,8 @@ class Article(models.Model):
     content = JSONField()
     creation_date = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
 
     def __str__(self):
         return (
