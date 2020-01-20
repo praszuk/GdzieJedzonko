@@ -1,6 +1,5 @@
 from bleach import clean as bleach_clean
 
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from .constants import MAX_ARTICLE_SIZE
@@ -8,7 +7,6 @@ from .models import Article, BaseImage, Photo, Thumbnail
 
 from users.models import User
 from restaurants.models import Restaurant
-from restaurants.serializers import RestaurantSerializer
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -38,6 +36,13 @@ class ThumbnailSerializer(BaseImageSerializer):
         model = Thumbnail
         fields = ('id', 'image', 'article')
         extra_kwargs = {'article': {'write_only': True}}
+
+
+class RestaurantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Restaurant
+        depth = 0
+        fields = '__all__'
 
 
 class ArticleSerializer(serializers.ModelSerializer):
