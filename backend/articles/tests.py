@@ -180,28 +180,64 @@ class GetDetailArticleTest(BaseViewTest):
 
     def setUp(self):
         super().setUp()
-        user = User.objects.create_user(
-            email='test@gdziejedzonko.pl',
-            password='password1234',
-            first_name='John',
-            last_name='Smith',
-            role=Role.USER
-        )
-        Article.objects.create(
+        user = User.objects.get(email=self.USERS[0]['email'])
+
+        self.a1 = Article.objects.create(
             title='Test title',
             content=self.article_content,
             user=user,
             restaurant=self.restaurant
         )
+        self.a2 = Article.objects.create(
+            title='Test title2',
+            content=self.article_content,
+            user=user,
+            restaurant=self.restaurant2
+        )
 
-    def test_everyone_can_get_detail(self):
-        expected = Article.objects.all()[0]
+    def test_everyone_can_get_detail_restaurant_approved(self):
+        expected = self.a1
         response = self.client.get(
             reverse('articles:article-detail', args=[expected.id])
         )
         serialized = ArticleSerializer(expected, many=False)
 
         self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_only_owner_mod_admin_can_get_not_approved(self):
+        # Unauthenticated
+        response = self.client.get(
+            reverse('articles:article-detail', args=[self.a2.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # User not owner
+        self.auth_user(self.USERS[1])
+        response = self.client.get(
+            reverse('articles:article-detail', args=[self.a2.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # User owner
+        self.auth_user(self.USERS[0])
+        response = self.client.get(
+            reverse('articles:article-detail', args=[self.a2.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Moderator
+        self.auth_user(self.MODS[0])
+        response = self.client.get(
+            reverse('articles:article-detail', args=[self.a2.id])
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # User owner
+        self.auth_user(self.ADMINS[0])
+        response = self.client.get(
+            reverse('articles:article-detail', args=[self.a2.id])
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
