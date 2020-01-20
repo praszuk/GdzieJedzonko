@@ -36,9 +36,24 @@ class ArticlePermission(BasePermission):
         elif view.action in ('create', 'destroy', 'partial_update'):
             return IsAuthenticated.has_permission(None, request, view)
 
+    # noinspection PyTypeChecker
     def has_object_permission(self, request, view, obj):
         if view.action == 'retrieve':
-            return True
+            if obj.restaurant.is_approved:
+                return True
+            return bool(
+                IsAuthenticated.has_permission(None, request, view) and
+                bool(
+                    IsAdminUser.has_permission(None, request, view) or
+                    IsModeratorUser.has_permission(None, request, view) or
+                    IsOwnerArticle.has_object_permission(
+                        None,
+                        request,
+                        view,
+                        obj
+                    )
+                )
+            )
 
         elif view.action in ('destroy', 'partial_update'):
 

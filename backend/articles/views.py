@@ -39,7 +39,10 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user_id = self.request.query_params.get('user', None)
-        query_set = Article.objects.all()
+        if self.action == 'list':
+            query_set = Article.objects.filter(restaurant__is_approved=True)
+        else:
+            query_set = Article.objects.all()
 
         if user_id:
             try:
