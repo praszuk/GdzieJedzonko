@@ -40,5 +40,5 @@ class RestaurantSerializer(serializers.ModelSerializer):
         return bleach_clean(address)
 
     def create(self, validated_data):
-        validated_data.pop('is_approved')
+        validated_data.pop('is_approved', None)
         return Restaurant.objects.create(**validated_data)
