@@ -92,8 +92,15 @@ class BaseViewTest(APITestCase):
             name='Restaurant one',
             lat='52.52001',
             lon='13.40494',
-            is_approved=False,
+            is_approved=True,
             city=City.objects.create(name='a', lat='52.52000', lon='13.40495')
+        )
+        self.restaurant2 = Restaurant.objects.create(
+            name='Restaurant two',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=False,
+            city=City.objects.create(name='b', lat='52.52000', lon='13.40495')
         )
 
     @classmethod
@@ -228,9 +235,17 @@ class GetAllArticlesTest(BaseViewTest):
             user=user,
             restaurant=self.restaurant
         )
+        Article.objects.create(
+            title='Test title with not approved restaurant',
+            content=self.article_content,
+            user=user,
+            restaurant=self.restaurant2
+        )
 
     def test_everyone_can_get_list_of_articles(self):
-        expected = Article.objects.order_by('-creation_date')
+        expected = Article.objects.filter(
+            restaurant__is_approved=True
+        ).order_by('-creation_date')
         response = self.client.get(reverse('articles:article-list'))
         serialized = ArticleListSerializer(expected, many=True)
 
