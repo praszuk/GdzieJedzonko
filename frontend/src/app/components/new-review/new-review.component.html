@@ -18,7 +18,7 @@
         </div>
         <div>
           <h3> Restauracja </h3>
-          <button mat-raised-button class="mb-3"
+          <button mat-raised-button class="mb-3" type="button"
                   (click)="openAddRestaurantDialog()"> {{restaurant ? "Zmień restauracje" : "Dodaj restauracje"}} </button>
 
           <div class="col-3">
@@ -32,7 +32,7 @@
             </div>
           </div>
           <div class="col-8">
-            <app-map [coordinates]="coordinates"></app-map>
+            <app-map [height]="300" [coordinates]="coordinates"></app-map>
           </div>
         </div>
 

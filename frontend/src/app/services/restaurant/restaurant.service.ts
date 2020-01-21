@@ -14,15 +14,16 @@ export class RestaurantService {
   }
 
   getAllRestaurants(cityId: number): Observable<Restaurant[]> {
-    const params = new HttpParams().set('city', String(cityId))
+    const params = new HttpParams().set('city', String(cityId));
     return this.http.get<Restaurant[]>(`${environment.apiUrl}${environment.restaurantsUrl}`, {params})
       .pipe(
         catchError(err => throwError(err))
       );
   }
 
-  checkRestaurant(restaurant: Restaurant): Observable<Restaurant> {
-    return this.http.get<Restaurant>(`CHECK RESTAURANT URL`)
+  checkRestaurant(address: string): Observable<Restaurant> {
+    const params = new HttpParams().set('address', address)
+    return this.http.get<Restaurant>(`${environment.apiUrl}${environment.restaurantsUrl}`, {params})
       .pipe(
         catchError(err => throwError(err))
       );

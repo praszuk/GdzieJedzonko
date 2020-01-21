@@ -18,7 +18,7 @@
 
     <h2>{{article.title}}</h2>
     <div id="article-map" class="align-content-center offset-2 col-8">
-      <app-map [coordinates]="coordinates"></app-map>
+      <app-map [height]="300" [coordinates]="coordinates"></app-map>
     </div>
     <quill-view [content]="article.content" format="json" theme="snow"></quill-view>
   </div>
