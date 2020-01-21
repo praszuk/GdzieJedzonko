@@ -1,0 +1,31 @@
+<div #top class="min-height-40 text-center">
+  <div class="custom-min-height"></div>
+  <div class="row no-gutters">
+    <div class="col-9 rounded">
+      <app-map [height]="700"></app-map>
+    </div>
+    <div class="col-3 gradient">
+      <div class="min-height-20"></div>
+      <h2> Polski portal publicystyczny</h2>
+      <h3> z branży gastronomicznej </h3>
+      <h5> Znajdź swoją wymarzoną restaurację!</h5>
+      <div class="min-height-10"></div>
+      <button id="button" mat-stroked-button (click)="scroll(recenzje)"> Przejdź do recenzji</button>
+      <div class="min-height-15"></div>
+      <div #recenzje></div>
+    </div>
+  </div>
+</div>
+<div class="offset-5 mt-4">
+  <mat-chip-list>
+    <mat-chip class="ml-4" *ngFor="let city of cities" (click)="getAllRestaurantsByCity(city); scroll(top)">
+      {{city.name}}
+    </mat-chip>
+  </mat-chip-list>
+</div>
+
+<div class="min-height-5 text-center"></div>
+<div class="text-center">
+  <h1> RECENZJE</h1>
+</div>
+<app-posts-section></app-posts-section>

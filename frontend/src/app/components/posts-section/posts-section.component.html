@@ -1,14 +1,10 @@
-<div class="min-height-40 offset-3 col-6 text-center">
-  <div class="min-height-10"></div>
-  <app-map></app-map>
-</div>
-<div class="min-height-5"></div>
 <div class="min-height-80">
-    <ngx-spinner name="posts-section-loading"  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
-    <div *ngIf="!isLoading">
-      <div class="row">
-        <app-post class="col-3" *ngFor="let post of posts" [post]="post"></app-post>
-      </div>
+  <ngx-spinner name="posts-section-loading" bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small"
+               type="line-scale-pulse-out-rapid"></ngx-spinner>
+  <div *ngIf="!isLoading">
+    <div class="row">
+      <app-post class="col-3" *ngFor="let post of posts" [post]="post"></app-post>
     </div>
   </div>
+</div>
 

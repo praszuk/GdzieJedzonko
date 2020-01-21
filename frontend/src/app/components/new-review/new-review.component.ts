@@ -9,6 +9,7 @@ import {AddRestaurantComponent} from './add-restaurant/add-restaurant.component'
 import {Restaurant} from '../../models/restaurant.model';
 import {RestaurantService} from '../../services/restaurant/restaurant.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {MapComponent} from '../map/map.component';
 
 @Component({
   selector: 'app-new-review',
@@ -17,6 +18,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class NewReviewComponent implements OnInit, OnDestroy {
   @ViewChild(ImageUploadComponent, {static: false}) imageUpload: ImageUploadComponent;
+  @ViewChild(MapComponent, {static: false}) map: MapComponent;
   editorForm: FormGroup;
   titleExists = false;
   subscription: Subscription = null;
@@ -126,11 +128,9 @@ export class NewReviewComponent implements OnInit, OnDestroy {
     addRestaurantDialogRef.afterClosed().subscribe(
       (restaurant: Restaurant) => {
         if (restaurant) {
+          console.log(restaurant);
           this.restaurant = restaurant;
-          this.coordinates = {
-            lon: restaurant.lon,
-            lat: restaurant.lat
-          };
+          this.map.setLocation(restaurant.lat, restaurant.lon);
         }
       }
     );

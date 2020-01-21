@@ -42,7 +42,7 @@ export class AddRestaurantComponent implements OnInit, OnDestroy {
       city: ['', Validators.required],
       street: ['', Validators.required],
       building: ['', Validators.required],
-      website: ['', Validators.required]
+      website: ['']
     });
 
     this.getAllCities();
@@ -71,8 +71,12 @@ export class AddRestaurantComponent implements OnInit, OnDestroy {
   checkRestaurant() {
     this.isLoading = true;
     this.addressError = false;
+    const address: string =
+      this.restaurantForm.get('city').value + '' +
+      this.restaurantForm.get('street').value + ' ' +
+      this.restaurantForm.get('building').value;
 
-    this.checkRestaurantSubscription = this.restaurantService.checkRestaurant(this.restaurantForm.value).subscribe(
+    this.checkRestaurantSubscription = this.restaurantService.checkRestaurant(address).subscribe(
       (restaurant: Restaurant) => {
         this.restaurantForm.get('lat').setValue(restaurant.lat);
         this.restaurantForm.get('lon').setValue(restaurant.lon);
@@ -103,6 +107,7 @@ export class AddRestaurantComponent implements OnInit, OnDestroy {
   }
 
   getAllRestaurantsByCityId(cityId: number) {
+    this.restaurantForm.get('city').setValue(cityId);
     this.getAllRestaurantsSubscription = this.restaurantService.getAllRestaurants(cityId).subscribe(
       (restaurants: Restaurant[]) => {
         this.restaurants = restaurants;
@@ -120,7 +125,6 @@ export class AddRestaurantComponent implements OnInit, OnDestroy {
   }
 
   selectedRestaurant(restaurant: Restaurant) {
-    this.restaurantForm.get('city').setValue(restaurant.city);
     this.restaurantForm.get('name').setValue(restaurant.name);
     this.restaurantForm.get('lat').setValue(restaurant.lat);
     this.restaurantForm.get('lon').setValue(restaurant.lon);
@@ -129,4 +133,8 @@ export class AddRestaurantComponent implements OnInit, OnDestroy {
     // todo change building
   }
 
+  setRestaurant() {
+    console.log(this.restaurantForm.value)
+    this.onSubmit();
+  }
 }

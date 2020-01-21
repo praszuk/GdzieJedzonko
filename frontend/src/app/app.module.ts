@@ -36,6 +36,8 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {MatChipsModule} from "@angular/material/chips";
+import { MainPageComponent } from './components/main-page/main-page.component';
 
 
 @NgModule({
@@ -55,7 +57,8 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
     ImageUploadComponent,
     EditReviewComponent,
     MapComponent,
-    AddRestaurantComponent
+    AddRestaurantComponent,
+    MainPageComponent
   ],
   imports: [
     BrowserModule,
@@ -77,7 +80,8 @@ import {MatProgressBarModule} from "@angular/material/progress-bar";
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatChipsModule
   ],
   entryComponents: [AddRestaurantComponent],
   providers: [{provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig}],

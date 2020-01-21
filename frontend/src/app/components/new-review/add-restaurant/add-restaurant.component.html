@@ -19,7 +19,7 @@
       <mat-form-field *ngIf="restaurants">
         <mat-select>
           <mat-option *ngFor="let restaurant of restaurants" [value]="restaurant"
-                      (onSelectionChange)="selectedRestaurant(restaurant)" )>
+                      (onSelectionChange)="selectedRestaurant(restaurant)">
             {{restaurant.name}}
           </mat-option>
         </mat-select>
@@ -67,6 +67,6 @@
     <button mat-button (click)="close()"> Zamknij</button>
     <button mat-button
             (click)="newRestaurant = !newRestaurant"> {{newRestaurant ? "Wybierz restauracje z listy" : "Dodaj nową restauracje"}}</button>
-    <button mat-button (click)="checkRestaurant()"> Dodaj</button>
+    <button mat-button (click)="newRestaurant? checkRestaurant() : setRestaurant()"> Dodaj</button>
   </div>
 </form>

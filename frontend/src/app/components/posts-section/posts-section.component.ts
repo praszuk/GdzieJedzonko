@@ -1,7 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Post} from '../../models/post.model';
 import {ArticleService} from '../../services/article/article.service';
 import {NgxSpinnerService} from 'ngx-spinner';
+import {CityService} from '../../services/city/city.service';
+import {RestaurantService} from '../../services/restaurant/restaurant.service';
+import {City} from '../../models/city.model';
+import {Restaurant} from '../../models/restaurant.model';
+import {Subscription} from 'rxjs';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {MapComponent} from '../map/map.component';
 
 @Component({
   selector: 'app-posts-section',
@@ -13,7 +20,11 @@ export class PostsSectionComponent implements OnInit {
   posts: Post[] = [];
   isError = false;
   isLoading = true;
-  constructor(private articleService: ArticleService, private loadingService: NgxSpinnerService) {  }
+
+  constructor(private articleService: ArticleService,
+              private loadingService: NgxSpinnerService,
+              ) {
+  }
 
   ngOnInit() {
     // this.loadingService.show('posts-section-loading');
@@ -22,6 +33,8 @@ export class PostsSectionComponent implements OnInit {
     } else {
       this.getAllArticles();
     }
+
+
   }
 
   getUserArticles(userId: number) {
@@ -54,13 +67,13 @@ export class PostsSectionComponent implements OnInit {
         // this.posts = posts;
         let i = 0;
         const timer = setInterval(() => {
-            if (i < posts.length) {
-              this.posts.push(posts[i]);
-              i++;
-            } else {
-              clearInterval(timer);
-            }
-          }, 50);
+          if (i < posts.length) {
+            this.posts.push(posts[i]);
+            i++;
+          } else {
+            clearInterval(timer);
+          }
+        }, 50);
 
         this.isLoading = false;
         // this.loadingService.hide('posts-section-loading');

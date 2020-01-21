@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {PostsSectionComponent} from './components/posts-section/posts-section.component';
 import {PageNotFoundComponent} from './components/page-not-found/page-not-found.component';
 import {ArticleComponent} from './components/article/article.component';
 import {RegisterComponent} from './modules/auth/components/register/register.component';
@@ -17,6 +16,7 @@ import {UserGuard} from './modules/auth/guards/user.guard';
 import {AdminGuard} from './modules/auth/guards/admin.guard';
 import {EditReviewComponent} from './components/edit-review/edit-review.component';
 import {OwnerGuard} from './modules/auth/guards/owner.guard';
+import {MainPageComponent} from './components/main-page/main-page.component';
 
 
 const routes: Routes = [{
@@ -36,7 +36,7 @@ const routes: Routes = [{
     pathMatch: 'full'
   }, {
     path: 'home',
-    component: PostsSectionComponent
+    component: MainPageComponent
   }, {
     path: 'article/:id',
     component: ArticleComponent
