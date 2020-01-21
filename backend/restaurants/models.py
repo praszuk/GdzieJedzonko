@@ -40,7 +40,18 @@ class Restaurant(Location):
             f'address: {self.address}, '
             f'website: {self.website}, '
             f'is_approved: {self.is_approved}, '
+            f'rating: {self.rating}'
             f'City: {self.city}, '
             + Location.__str__(self)
-
         )
+
+    @property
+    def rating(self):
+        """
+        Get average value from all articles,
+        which are belonging to the restaurant
+        :return: float with max 2 decimal places
+        :rtype: float
+        """
+        avg = self.article_set.aggregate(models.Avg('rating'))['rating__avg']
+        return round(avg, 2) if avg else 0
