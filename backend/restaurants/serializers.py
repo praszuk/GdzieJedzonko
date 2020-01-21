@@ -28,6 +28,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
 
 class RestaurantSerializer(serializers.ModelSerializer):
     article_set = ArticleListSerializer(read_only=True, many=True)
+    rating = serializers.ReadOnlyField()
 
     class Meta:
         model = Restaurant
