@@ -17,21 +17,13 @@ import {MapComponent} from '../map/map.component';
 })
 export class PostsSectionComponent implements OnInit {
   @Input() userId?: number;
-  @ViewChild(MapComponent, {static: false}) map: MapComponent;
-
   posts: Post[] = [];
   isError = false;
   isLoading = true;
-  cities: City[];
-  getAllCitiesSubscription: Subscription;
-  restaurants: Restaurant[];
-  getAllRestaurantsSubscription: Subscription;
 
   constructor(private articleService: ArticleService,
               private loadingService: NgxSpinnerService,
-              private cityService: CityService,
-              private restaurantService: RestaurantService,
-              private snackBar: MatSnackBar) {
+              ) {
   }
 
   ngOnInit() {
@@ -42,7 +34,7 @@ export class PostsSectionComponent implements OnInit {
       this.getAllArticles();
     }
 
-    this.getAllCities();
+
   }
 
   getUserArticles(userId: number) {
@@ -92,39 +84,4 @@ export class PostsSectionComponent implements OnInit {
     );
   }
 
-  getAllCities() {
-    this.getAllCitiesSubscription = this.cityService.getAllCities().subscribe(
-      (cities: City[]) => {
-        this.cities = cities;
-        this.map.goToLocation(this.cities[0].lat, this.cities[0].lon);
-        this.getAllRestaurantsByCity(this.cities[0]);
-      },
-      (error) => {
-        this.isLoading = false;
-        this.snackBar.open('Pobranie miast się nie powiodło, spróbuj ponownie otworzyć to okno', '', {
-          duration: 3000
-        });
-      }
-    );
-  }
-
-  getAllRestaurantsByCity(city: City) {
-    this.getAllRestaurantsSubscription = this.restaurantService.getAllRestaurants(city.id).subscribe(
-      (restaurants: Restaurant[]) => {
-        this.restaurants = restaurants;
-        this.map.goToLocation(city.lat, city.lon);
-        this.map.setRestaurantMarkers(restaurants);
-      },
-      (error) => {
-        this.isLoading = false;
-        this.snackBar.open('Pobranie restauracji się nie powiodło, spróbuj ponownie otworzyć to okno', '', {
-          duration: 3000
-        });
-      }
-    );
-  }
-
-  scroll(el: HTMLElement) {
-    el.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'nearest'});
-  }
 }
