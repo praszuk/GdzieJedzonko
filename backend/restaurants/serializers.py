@@ -18,15 +18,17 @@ class CitySerializer(serializers.ModelSerializer):
 
 
 class RestaurantListSerializer(serializers.ModelSerializer):
+    rating = serializers.ReadOnlyField()
 
     class Meta:
         model = Restaurant
         depth = 1
-        fields = ('id', 'name', 'lat', 'lon', 'address')
+        fields = ('id', 'name', 'lat', 'lon', 'address', 'rating')
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
     article_set = ArticleListSerializer(read_only=True, many=True)
+    rating = serializers.ReadOnlyField()
 
     class Meta:
         model = Restaurant

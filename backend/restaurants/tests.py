@@ -4,6 +4,7 @@ from rest_framework.test import APIClient, APITestCase
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
+from articles.models import Article
 from users.models import User, Role
 
 from .models import City, Restaurant
@@ -517,3 +518,38 @@ class TestLocationValidators(APITestCase):
         self.assertIsNone(validate_lon(180.00000))
         self.assertIsNone(validate_lon(0.0))
         self.assertIsNone(validate_lon(-180.00000))
+
+
+class RestaurantRatingTest(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+
+        self.restaurant = Restaurant.objects.create(
+            name='Restaurant one',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=True,
+            city=City.objects.create(name='a', lat='52.52000', lon='13.40495')
+        )
+
+    def test_zero_articles(self):
+        self.assertEqual(self.restaurant.rating, 0.0)
+
+    def test_few_articles_avg(self):
+        user = User.objects.get(email=self.USERS[0]['email'])
+        content = {'ops': [{'insert': 'Test article with '}]}
+
+        rating = [2, 4, 5]
+        for r in rating:
+            Article.objects.create(
+                title=f'Article {r}',
+                content=content,
+                rating=r,
+                user=user,
+                restaurant=self.restaurant
+            )
+
+        self.assertEqual(
+            self.restaurant.rating,
+            round(sum(rating)/len(rating), 2)
+        )
