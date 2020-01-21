@@ -22,6 +22,7 @@ class Article(models.Model):
     )
     content = JSONField()
     creation_date = models.DateTimeField(auto_now=True)
+    rating = models.PositiveSmallIntegerField()
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
@@ -32,7 +33,9 @@ class Article(models.Model):
             f'title: {self.title}, '
             f'creation_date: {self.creation_date}, '
             f'user_id: {self.user.id}, '
+            f'rating: {self.rating}'
             f'content: {self.content}'
+            f'restaurant_id: {self.restaurant.id}'
         )
 
 
