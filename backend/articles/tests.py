@@ -185,12 +185,14 @@ class GetDetailArticleTest(BaseViewTest):
         self.a1 = Article.objects.create(
             title='Test title',
             content=self.article_content,
+            rating=0,
             user=user,
             restaurant=self.restaurant
         )
         self.a2 = Article.objects.create(
             title='Test title2',
             content=self.article_content,
+            rating=0,
             user=user,
             restaurant=self.restaurant2
         )
@@ -256,24 +258,28 @@ class GetAllArticlesTest(BaseViewTest):
         Article.objects.create(
             title='Title',
             content=self.article_content,
+            rating=0,
             user=user,
             restaurant=self.restaurant
         )
         Article.objects.create(
             title='Test title',
             content=self.article_content,
+            rating=0,
             user=user,
             restaurant=self.restaurant
         )
         Article.objects.create(
             title='Test title title',
             content=self.article_content,
+            rating=0,
             user=user,
             restaurant=self.restaurant
         )
         Article.objects.create(
             title='Test title with not approved restaurant',
             content=self.article_content,
+            rating=0,
             user=user,
             restaurant=self.restaurant2
         )
@@ -313,18 +319,21 @@ class GetAllArticlesFilteredByUserTest(BaseViewTest):
         Article.objects.create(
             title='Title1',
             content=self.article_content,
+            rating=0,
             user=self.user1,
             restaurant=self.restaurant
         )
         Article.objects.create(
             title='Test title2',
             content=self.article_content,
+            rating=0,
             user=self.user1,
             restaurant=self.restaurant
         )
         Article.objects.create(
             title='Test title title3',
             content=self.article_content,
+            rating=0,
             user=self.user2,
             restaurant=self.restaurant
         )
@@ -372,6 +381,7 @@ class CreateArticleTest(BaseViewTest):
         article_data = {
             'title': 'Title',
             'content': self.article_content,
+            'rating': 0,
             'restaurant': self.restaurant.id
         }
         response = self.client.post(
@@ -386,6 +396,7 @@ class CreateArticleTest(BaseViewTest):
         article_data = {
             'title': 'Title',
             'content': self.article_content,
+            'rating': 0,
             'restaurant_id': self.restaurant.id
         }
 
@@ -414,6 +425,7 @@ class DeleteArticleTest(BaseViewTest):
         self.article1 = Article.objects.create(
             title='Title1',
             content=self.article_content,
+            rating=0,
             user=User.objects.filter(email=self.USERS[0]['email'])[0],
             restaurant=self.restaurant
         )
@@ -465,6 +477,7 @@ class UpdateArticleTest(BaseViewTest):
         self.article1 = Article.objects.create(
             title='Title1',
             content={'content': self.article_content},
+            rating=0,
             user=User.objects.filter(email=self.USERS[0]['email'])[0],
             restaurant=self.restaurant
         )
@@ -530,12 +543,14 @@ class CreateImageForArticleTest(BaseViewTest):
         self.article1 = Article.objects.create(
             title='Title1',
             content=self.article_content,
+            rating=0,
             user=User.objects.filter(email=self.USERS[0]['email'])[0],
             restaurant=self.restaurant
         )
         self.article2 = Article.objects.create(
             title='Title2',
             content=self.article_content,
+            rating=0,
             user=User.objects.filter(email=self.USERS[1]['email'])[0],
             restaurant=self.restaurant
         )
@@ -631,12 +646,14 @@ class DeleteImageFromArticleTest(BaseViewTest):
         self.article1 = Article.objects.create(
             title='Title1',
             content=self.article_content,
+            rating=0,
             user=User.objects.filter(email=self.USERS[0]['email'])[0],
             restaurant=self.restaurant
         )
         self.article2 = Article.objects.create(
             title='Title2',
             content=self.article_content,
+            rating=0,
             user=User.objects.filter(email=self.USERS[1]['email'])[0],
             restaurant=self.restaurant
         )
@@ -781,6 +798,7 @@ class ArticleValidatorsTest(BaseViewTest):
         article_data = {
             'title': 'Title',
             'content': too_long_content,
+            'rating': 0,
             'restaurant': self.restaurant.id
         }
 
@@ -809,6 +827,7 @@ class ArticleValidatorsTest(BaseViewTest):
         article_data = {
             'title': 'Title',
             'content': max_size_content,
+            'rating': 0,
             'restaurant_id': self.restaurant.id
         }
 
@@ -825,6 +844,7 @@ class ArticleValidatorsTest(BaseViewTest):
         article_data = {
             'title': 'Title1234567890Łążźó!?-.,',
             'content': self.article_content,
+            'rating': 0,
             'restaurant_id': self.restaurant.id
         }
 
@@ -841,6 +861,7 @@ class ArticleValidatorsTest(BaseViewTest):
         article_data = {
             'title': 'Title<script>',
             'content': self.article_content,
+            'rating': 0,
             'restaurant_id': self.restaurant.id
         }
 

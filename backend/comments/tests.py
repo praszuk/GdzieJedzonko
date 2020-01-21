@@ -126,6 +126,7 @@ class BaseViewTest(APITestCase):
             title='Title',
             content=self.article_content,
             user=self.user,
+            rating=0,
             restaurant=self.restaurant
         )
 
