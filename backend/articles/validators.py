@@ -10,6 +10,11 @@ from .constants import (
 )
 
 
+def validate_rating(rating):
+    if rating > 5 or rating < 0:
+        raise ValidationError('Rating must be in range 0-5.')
+
+
 def validate_title(title):
     reg = re.compile('^[\w\,\.\-\!\?\d\s]+$')
     if not reg.match(title):

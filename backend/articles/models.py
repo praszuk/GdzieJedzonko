@@ -12,6 +12,7 @@ from .validators import (
     validate_image_size_limit,
     validate_image_number_limit,
     validate_image_file_extension,
+    validate_rating,
     validate_title
 )
 
@@ -22,7 +23,7 @@ class Article(models.Model):
     )
     content = JSONField()
     creation_date = models.DateTimeField(auto_now=True)
-    rating = models.PositiveSmallIntegerField()
+    rating = models.PositiveSmallIntegerField(validators=(validate_rating, ))
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
