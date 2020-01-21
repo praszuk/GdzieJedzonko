@@ -517,3 +517,26 @@ class TestLocationValidators(APITestCase):
         self.assertIsNone(validate_lon(180.00000))
         self.assertIsNone(validate_lon(0.0))
         self.assertIsNone(validate_lon(-180.00000))
+
+
+class RestaurantRatingTest(BaseViewTest):
+
+
+        # self.r2 = Restaurant.objects.create(
+        #     name='Restaurant two',
+        #     lat='52.52001',
+        #     lon='13.40494',
+        #     is_approved=True,
+        #     city=City.objects.create(name='b', lat='48.86471', lon='2.34901')
+        # )
+
+    def test_zero_articles(self):
+        self.r1 = Restaurant.objects.create(
+            name='Restaurant one',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=True,
+            city=City.objects.create(name='a', lat='52.52000', lon='13.40495')
+        )
+
+        self.assertEqual(self.r1.rating, 0.0)
