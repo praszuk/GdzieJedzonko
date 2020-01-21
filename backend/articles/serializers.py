@@ -105,5 +105,5 @@ class ArticleListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         depth = 1
-        exclude = ('content', 'restaurant')
+        exclude = ('content', 'restaurant', 'rating')
         read_only_fields = ('id', 'creation_date', 'thumbnail')
