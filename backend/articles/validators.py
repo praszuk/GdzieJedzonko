@@ -4,6 +4,8 @@ from django.core.validators import FileExtensionValidator
 import re
 
 from .constants import (
+    MIN_RATING_VALUE,
+    MAX_RATING_VALUE,
     MAX_IMAGES_PER_ARTICLE,
     MAX_IMAGE_FILE_SIZE_MB,
     ALLOWED_IMAGE_EXTENSION

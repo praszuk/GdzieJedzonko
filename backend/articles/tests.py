@@ -13,6 +13,8 @@ import tempfile
 from io import BytesIO
 
 from .constants import (
+    MIN_RATING_VALUE,
+    MAX_RATING_VALUE,
     MAX_IMAGES_PER_ARTICLE,
     ALLOWED_IMAGE_EXTENSION,
     MAX_ARTICLE_SIZE
@@ -507,13 +509,17 @@ class UpdateArticleTest(BaseViewTest):
         new_text = {'insert': 'Updated article'}
         article['ops'].append(new_text)
 
+        self.article1.rating = 2
+        new_rating = 3
+
         response = self.client.patch(
             reverse('articles:article-detail', args=[self.article1.id]),
-            data={'content': article},
+            data={'content': article, 'rating': new_rating},
             format='json'
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn(new_text, response.data['content']['ops'])
+        self.assertEqual(response.data['rating'], new_rating)
 
     def test_mod_not_owner_can(self):
         self.auth_user(self.MODS[0])
@@ -873,6 +879,28 @@ class ArticleValidatorsTest(BaseViewTest):
             format='json'
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_rating_in_range(self):
+        article_data = {
+            'title': 'Title',
+            'content': self.article_content,
+            'rating': MAX_RATING_VALUE,
+            'restaurant_id': self.restaurant.id
+        }
+        url = reverse('articles:article-list')
+        self.auth_user(self.USERS[0])
+
+        article_data['rating'] = MIN_RATING_VALUE - 1
+        response = self.client.post(url, data=article_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        article_data['rating'] = MAX_RATING_VALUE + 1
+        response = self.client.post(url, data=article_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        article_data['rating'] = (MIN_RATING_VALUE + MAX_RATING_VALUE) // 2
+        response = self.client.post(url, data=article_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class ImageValidatorsTest(CreateImageForArticleTest):
