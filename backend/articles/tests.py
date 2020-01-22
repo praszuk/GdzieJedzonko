@@ -313,8 +313,8 @@ class GetAllArticlesFilteredTest(BaseViewTest):
         self.user2 = User.objects.create_user(
             email='filteruser2@gdziejedzonko.pl',
             password='password1234',
-            first_name='John',
-            last_name='Smith',
+            first_name='Mary',
+            last_name='Jones',
             role=Role.USER
         )
 
@@ -355,7 +355,7 @@ class GetAllArticlesFilteredTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_articles_user_not_exists(self):
-        expected = Article.objects.order_by('-creation_date')
+        expected = []
         response = self.client.get(
             reverse('articles:article-list'),
             {'user': 999999}
@@ -366,15 +366,11 @@ class GetAllArticlesFilteredTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_articles_user_incorrect_value(self):
-        expected = Article.objects.order_by('-creation_date')
         response = self.client.get(
             reverse('articles:article-list'),
             {'user': 'incorrect_value'}
         )
-        serialized = ArticleListSerializer(expected, many=True)
-
-        self.assertEqual(response.data, serialized.data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_articles_title_contains_value(self):
         search_title = self.art3.title[:len(self.art3.title) // 2]
@@ -401,6 +397,20 @@ class GetAllArticlesFilteredTest(BaseViewTest):
         response = self.client.get(
             reverse('articles:article-list'),
             {'title': search_title, 'user': self.user1.id}
+        )
+        serialized = ArticleListSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_articles_with_first_name(self):
+        expected = Article.objects.filter(
+            user__first_name=self.art2.user.first_name
+        ).order_by('-creation_date')
+
+        response = self.client.get(
+            reverse('articles:article-list'),
+            {'first_name': self.art2.user.first_name[:-1]}
         )
         serialized = ArticleListSerializer(expected, many=True)
 

@@ -4,7 +4,12 @@ from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 
-from users.models import User
+from django_filters.rest_framework import (
+    CharFilter,
+    DjangoFilterBackend,
+    FilterSet,
+    NumberFilter
+)
 
 from .models import Article, Photo, Thumbnail
 from .permissions import ArticlePermission, ImageArticlePermission
@@ -16,8 +21,27 @@ from .serializers import (
 )
 
 
+class ArticleFilter(FilterSet):
+    user = NumberFilter(field_name='user')
+    title = CharFilter(field_name='title', lookup_expr='contains')
+    first_name = CharFilter(
+        field_name='user__first_name',
+        lookup_expr='startswith'
+    )
+    last_name = CharFilter(
+        field_name='user__last_name',
+        lookup_expr='startswith'
+    )
+
+    class Meta:
+        model = Article
+        fields = []
+
+
 class ArticleViewSet(viewsets.ModelViewSet):
     permission_classes = [ArticlePermission]
+    filter_class = ArticleFilter
+    filter_backends = [DjangoFilterBackend]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -37,43 +61,15 @@ class ArticleViewSet(viewsets.ModelViewSet):
             headers=headers,
         )
 
-    def _check_user(self, user):
-        """
-        :param user: query param which should be user id
-        :return: user_id if exists in db or None
-        """
-        if user:
-            try:
-                user_id = int(user)
-                if User.objects.filter(id=user_id).exists():
-                    return user_id
-
-            except ValueError:
-                pass
-
-        return None
+    def filter_queryset(self, queryset):
+        queryset = super(ArticleViewSet, self).filter_queryset(queryset)
+        return queryset.order_by('-creation_date')
 
     def get_queryset(self):
         if self.action == 'list':
-            query_set = Article.objects.filter(restaurant__is_approved=True)
+            return Article.objects.filter(restaurant__is_approved=True)
         else:
-            query_set = Article.objects.all()
-
-        user_id = self._check_user(self.request.query_params.get('user', None))
-        title = self.request.query_params.get('title', None)
-
-        if user_id and title:
-            query_set = query_set.filter(
-                user__id=user_id,
-                title__contains=title
-            )
-        elif user_id:
-            query_set = query_set.filter(user__id=user_id)
-
-        elif title:
-            query_set = query_set.filter(title__contains=title)
-
-        return query_set.order_by('-creation_date')
+            return Article.objects.all()
 
 
 class ImageViewSet(viewsets.ModelViewSet):

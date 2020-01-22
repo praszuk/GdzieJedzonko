@@ -1,5 +1,11 @@
 from rest_framework import viewsets
 
+from django_filters.rest_framework import (
+    DjangoFilterBackend,
+    FilterSet,
+    NumberFilter
+)
+
 from .models import City, Restaurant
 from .permissions import (
     CityPermission,
@@ -19,24 +25,24 @@ class CityViewSet(viewsets.ModelViewSet):
     permission_classes = (CityPermission, )
 
 
+class CityFilter(FilterSet):
+    city = NumberFilter(field_name='city')
+
+    class Meta:
+        model = Restaurant
+        fields = []
+
+
 class RestaurantViewSet(viewsets.ModelViewSet):
     permission_classes = (RestaurantPermission, )
+    filter_backends = [DjangoFilterBackend]
+    filter_class = CityFilter
 
     def get_queryset(self):
-        query_set = Restaurant.objects.all()
         if self.action == 'list':
-            query_set = query_set.filter(is_approved=True)
-            city_id = self.request.query_params.get('city', None)
-            if city_id:
-                try:
-                    city_id = int(city_id)
-                    if City.objects.filter(id=city_id).exists():
-                        query_set = query_set.filter(city__id=city_id)
-
-                except ValueError:
-                    pass
-
-        return query_set
+            return Restaurant.objects.filter(is_approved=True)
+        else:
+            return Restaurant.objects.all()
 
     def get_serializer_class(self):
         if self.action == 'list':
