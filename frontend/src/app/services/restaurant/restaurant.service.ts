@@ -21,9 +21,16 @@ export class RestaurantService {
       );
   }
 
+  getAllPendingRestaurants(): Observable<Restaurant[]> {
+    return this.http.get<Restaurant[]>(`${environment.apiUrl}${environment.pendingRestaurantsUrl}`)
+      .pipe(
+        catchError(err => throwError(err))
+      );
+  }
+
   checkRestaurant(address: string): Observable<Restaurant> {
     const params = new HttpParams().set('address', address)
-    return this.http.get<Restaurant>(`${environment.apiUrl}${environment.restaurantsUrl}`, {params})
+    return this.http.get<Restaurant>(`${environment.apiUrl}${environment.mapCoordsUrl}`, {params})
       .pipe(
         catchError(err => throwError(err))
       );
@@ -31,6 +38,13 @@ export class RestaurantService {
 
   addRestaurant(restaurant: Restaurant): Observable<Restaurant> {
     return this.http.post<Restaurant>(`${environment.apiUrl}${environment.restaurantsUrl}`, restaurant)
+      .pipe(
+        catchError(err => throwError(err))
+      );
+  }
+
+  updateRestaurant(restaurantId: number, restaurant: Restaurant): Observable<Restaurant> {
+    return this.http.patch<Restaurant>(`${environment.apiUrl}${environment.restaurantsUrl}${restaurantId}/`, restaurant)
       .pipe(
         catchError(err => throwError(err))
       );

@@ -6,6 +6,7 @@ import {UserService} from '../../../../services/user/user.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {Subscription} from 'rxjs';
 import {MatRipple} from '@angular/material/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 
 @Component({
@@ -26,7 +27,8 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   selectedRowIndex: number;
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService,
+              private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.userDataSource = new MatTableDataSource();
@@ -41,7 +43,9 @@ export class UsersComponent implements OnInit, OnDestroy {
         this.userDataSource.data = users;
       },
       (error) => {
-        // todo
+        this.snackBar.open('Pobranie użytkowników nie powiodło się, spróbuj ponownie', '', {
+          duration: 3000
+        });
       }
     );
   }

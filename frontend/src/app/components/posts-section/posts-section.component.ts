@@ -1,14 +1,7 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Post} from '../../models/post.model';
 import {ArticleService} from '../../services/article/article.service';
 import {NgxSpinnerService} from 'ngx-spinner';
-import {CityService} from '../../services/city/city.service';
-import {RestaurantService} from '../../services/restaurant/restaurant.service';
-import {City} from '../../models/city.model';
-import {Restaurant} from '../../models/restaurant.model';
-import {Subscription} from 'rxjs';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {MapComponent} from '../map/map.component';
 
 @Component({
   selector: 'app-posts-section',

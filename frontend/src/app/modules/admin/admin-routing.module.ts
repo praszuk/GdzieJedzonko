@@ -7,6 +7,7 @@ import {BasicInformationComponent} from '../shared/components/edit-profile/basic
 import {ChangePasswordComponent} from '../shared/components/edit-profile/change-password/change-password.component';
 import {ChangeRoleComponent} from '../shared/components/edit-profile/change-role/change-role.component';
 import {DeleteAccountComponent} from '../shared/components/edit-profile/delete-account/delete-account.component';
+import {PendingRestaurantsComponent} from '../shared/components/pending-restaurants/pending-restaurants.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,9 @@ const routes: Routes = [
     component: MainPanelComponent,
     children: [
       {
+        path: 'pending-restaurants',
+        component: PendingRestaurantsComponent,
+      }, {
         path: 'users',
         component: UsersComponent,
       }, {

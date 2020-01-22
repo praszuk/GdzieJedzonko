@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {City} from '../../models/city.model';
 import {Restaurant} from '../../models/restaurant.model';
-import {MapComponent} from '../map/map.component';
+import {MapComponent} from '../../modules/shared/components/map/map.component';
 import {Subscription} from 'rxjs';
 import {CityService} from '../../services/city/city.service';
 import {RestaurantService} from '../../services/restaurant/restaurant.service';

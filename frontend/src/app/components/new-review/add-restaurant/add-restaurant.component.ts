@@ -36,12 +36,12 @@ export class AddRestaurantComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.restaurantForm = this.formBuilder.group({
+      id: [''],
       name: ['', Validators.required],
       lat: [''],
       lon: [''],
       city: ['', Validators.required],
-      street: ['', Validators.required],
-      building: ['', Validators.required],
+      address: ['', Validators.required],
       website: ['']
     });
 
@@ -71,19 +71,20 @@ export class AddRestaurantComponent implements OnInit, OnDestroy {
   checkRestaurant() {
     this.isLoading = true;
     this.addressError = false;
+    const index = this.cities.map(value => value.id).indexOf(this.restaurantForm.get('city').value);
     const address: string =
-      this.restaurantForm.get('city').value + '' +
-      this.restaurantForm.get('street').value + ' ' +
-      this.restaurantForm.get('building').value;
+     this.cities[index].name + ' ' +
+      this.restaurantForm.get('address').value;
 
     this.checkRestaurantSubscription = this.restaurantService.checkRestaurant(address).subscribe(
       (restaurant: Restaurant) => {
-        this.restaurantForm.get('lat').setValue(restaurant.lat);
-        this.restaurantForm.get('lon').setValue(restaurant.lon);
+        this.restaurantForm.get('lat').setValue(restaurant.lat.substring(0, 7));
+        this.restaurantForm.get('lon').setValue(restaurant.lon.substring(0, 8));
+        this.restaurantForm.get('id').setValue(null);
         this.onSubmit();
       },
       (error) => {
-        this.addressError = true;
+        this.addressError = true
         this.isLoading = false;
       }
     );
@@ -125,16 +126,14 @@ export class AddRestaurantComponent implements OnInit, OnDestroy {
   }
 
   selectedRestaurant(restaurant: Restaurant) {
+    this.restaurantForm.get('id').setValue(restaurant.id);
     this.restaurantForm.get('name').setValue(restaurant.name);
     this.restaurantForm.get('lat').setValue(restaurant.lat);
     this.restaurantForm.get('lon').setValue(restaurant.lon);
-    this.restaurantForm.get('street').setValue(restaurant.address);
-    this.restaurantForm.get('building').setValue(restaurant.address);
-    // todo change building
+    this.restaurantForm.get('address').setValue(restaurant.address);
   }
 
   setRestaurant() {
-    console.log(this.restaurantForm.value)
     this.onSubmit();
   }
 }
