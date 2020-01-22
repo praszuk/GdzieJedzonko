@@ -37,21 +37,41 @@ class ArticleViewSet(viewsets.ModelViewSet):
             headers=headers,
         )
 
+    def _check_user(self, user):
+        """
+        :param user: query param which should be user id
+        :return: user_id if exists in db or None
+        """
+        if user:
+            try:
+                user_id = int(user)
+                if User.objects.filter(id=user_id).exists():
+                    return user_id
+
+            except ValueError:
+                pass
+
+        return None
+
     def get_queryset(self):
-        user_id = self.request.query_params.get('user', None)
         if self.action == 'list':
             query_set = Article.objects.filter(restaurant__is_approved=True)
         else:
             query_set = Article.objects.all()
 
-        if user_id:
-            try:
-                user_id = int(user_id)
-                if User.objects.filter(id=user_id).exists():
-                    query_set = query_set.filter(user__id=user_id)
+        user_id = self._check_user(self.request.query_params.get('user', None))
+        title = self.request.query_params.get('title', None)
 
-            except ValueError:
-                pass
+        if user_id and title:
+            query_set = query_set.filter(
+                user__id=user_id,
+                title__contains=title
+            )
+        elif user_id:
+            query_set = query_set.filter(user__id=user_id)
+
+        elif title:
+            query_set = query_set.filter(title__contains=title)
 
         return query_set.order_by('-creation_date')
 
