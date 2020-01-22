@@ -1,0 +1,54 @@
+
+  <div class="row">
+    <mat-form-field class="ml-3 col-3 mt-3">
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtruj">
+    </mat-form-field>
+    <div class="col-8 mt-3 text-center">
+      <button mat-raised-button [disabled]="!selectedRowIndex" class="mt-2" (click)="acceptRestaurant()"> Akceptuj </button>
+      <button mat-raised-button [disabled]="!selectedRowIndex" class="ml-3 mt-2" (click)="rejectRestaurant()"> Odrzuć </button>
+      <button mat-raised-button [disabled]="!selectedRowIndex" class="ml-3 mt-2" (click)="openLocationMap()">Pokaż lokalizację</button>
+      <button mat-raised-button [disabled]="!selectedRowIndex" class="ml-3 mt-2" (click)="editRestaurant()">Edytuj restaurację</button>
+      <button mat-raised-button [disabled]="!selectedRowIndex || !selectedRestaurant?.article_set[0]" class="ml-3 mt-2" [routerLink]="['/article', selectedRestaurant?.article_set[0]?.id]"> Pokaż recenzję </button>
+      <button mat-raised-button [disabled]="!selectedRowIndex || !selectedRestaurant?.article_set[0]" class="ml-3 mt-2" [routerLink]="['/userprofile', selectedRestaurant?.article_set[0]?.user.id]"> Pokaż użytkownika </button>
+    </div>
+  </div>
+
+  <table mat-table matSort matSortActive="id" matSortDirection="asc" [dataSource]="restaurantDataSource" class="ml-2">
+
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> No </mat-header-cell>
+      <mat-cell *matCellDef="let restaurant">{{restaurant.id}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Nazwa </mat-header-cell>
+      <mat-cell *matCellDef="let restaurant">{{restaurant.name}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="city">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Id miasta </mat-header-cell>
+      <mat-cell *matCellDef="let restaurant">{{restaurant.city}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="address">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Adres </mat-header-cell>
+      <mat-cell *matCellDef="let restaurant">{{restaurant.address}}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="authorName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Imie i nazawisko autora </mat-header-cell>
+      <mat-cell *matCellDef="let restaurant">{{restaurant?.article_set[0]?.user.first_name}} {{restaurant?.article_set[0]?.user.last_name}}</mat-cell>
+    </ng-container>
+
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row  matRipple
+              *matRowDef="let row; columns: displayedColumns"
+              (mousedown)="selectRow(row)"
+              [ngClass]="{'highlight': selectedRowIndex == row.id}">
+
+    </mat-row>
+  </table>
+  <mat-paginator [pageSizeOptions]="[10, 15, 20]" showFirstLastButtons></mat-paginator>
+
+
