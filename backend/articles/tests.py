@@ -355,7 +355,7 @@ class GetAllArticlesFilteredTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_articles_user_not_exists(self):
-        expected = Article.objects.order_by('-creation_date')
+        expected = []
         response = self.client.get(
             reverse('articles:article-list'),
             {'user': 999999}
@@ -366,15 +366,11 @@ class GetAllArticlesFilteredTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_articles_user_incorrect_value(self):
-        expected = Article.objects.order_by('-creation_date')
         response = self.client.get(
             reverse('articles:article-list'),
             {'user': 'incorrect_value'}
         )
-        serialized = ArticleListSerializer(expected, many=True)
-
-        self.assertEqual(response.data, serialized.data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_articles_title_contains_value(self):
         search_title = self.art3.title[:len(self.art3.title) // 2]
