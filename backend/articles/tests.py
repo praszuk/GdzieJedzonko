@@ -297,7 +297,7 @@ class GetAllArticlesTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class GetAllArticlesFilteredByUserTest(BaseViewTest):
+class GetAllArticlesFilteredTest(BaseViewTest):
 
     def setUp(self):
         super().setUp()
@@ -318,21 +318,21 @@ class GetAllArticlesFilteredByUserTest(BaseViewTest):
             role=Role.USER
         )
 
-        Article.objects.create(
+        self.art1 = Article.objects.create(
             title='Title1',
             content=self.article_content,
             rating=0,
             user=self.user1,
             restaurant=self.restaurant
         )
-        Article.objects.create(
+        self.art2 = Article.objects.create(
             title='Test title2',
             content=self.article_content,
             rating=0,
             user=self.user1,
             restaurant=self.restaurant
         )
-        Article.objects.create(
+        self.art3 = Article.objects.create(
             title='Test title title3',
             content=self.article_content,
             rating=0,
@@ -370,6 +370,21 @@ class GetAllArticlesFilteredByUserTest(BaseViewTest):
         response = self.client.get(
             reverse('articles:article-list'),
             {'user': 'incorrect_value'}
+        )
+        serialized = ArticleListSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_articles_title_contains_value(self):
+        search_title = self.art3.title[:len(self.art3.title) // 2]
+        expected = Article.objects.filter(
+            title__contains=search_title
+        ).order_by('-creation_date')
+
+        response = self.client.get(
+            reverse('articles:article-list'),
+            {'title': search_title}
         )
         serialized = ArticleListSerializer(expected, many=True)
 
