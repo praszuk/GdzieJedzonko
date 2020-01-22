@@ -1,0 +1,44 @@
+<h1 mat-dialog-title> Dodaj miasto</h1>
+<form [formGroup]="addCityForm">
+  <div mat-dialog-content>
+    <mat-form-field class="col-12">
+      <mat-label>
+        Nazwa
+      </mat-label>
+      <input matInput formControlName="name">
+      <mat-error *ngIf="addCityForm.get('name').hasError('required')">
+        Nazwa miasta jest wymagana
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="col-6">
+      <mat-label>
+        Szerogość geograficzna
+      </mat-label>
+      <input matInput formControlName="lat">
+      <mat-error *ngIf="addCityForm.get('lat').hasError('required')">
+        Szerogość geograficzna jest wymagana
+      </mat-error>
+      <mat-error *ngIf="addCityForm.get('lat').hasError('maxlength')">
+        Maksymalna długość szerogości geograficznej to 8 wraz z kropką
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="col-6">
+      <mat-label>
+        Długość geograficzna
+      </mat-label>
+      <input matInput formControlName="lon">
+      <mat-error *ngIf="addCityForm.get('lon').hasError('required')">
+        Szerogość geograficzna jest wymagana
+      </mat-error>
+      <mat-error *ngIf="addCityForm.get('lon').hasError('maxlength')">
+        Maksymalna długość długości geograficznej to 9 wraz z kropką
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Zamknij</button>
+    <button [disabled]="addCityForm.invalid" mat-button (click)="onSubmit()">Dodaj</button>
+  </div>
+</form>

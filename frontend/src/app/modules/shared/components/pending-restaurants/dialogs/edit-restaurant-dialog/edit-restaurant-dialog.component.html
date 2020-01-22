@@ -7,7 +7,7 @@
       </mat-label>
       <input matInput formControlName="name">
       <mat-error *ngIf="editRestaurantForm.get('name').hasError('required')">
-
+        Nazwa jest wymagana
       </mat-error>
     </mat-form-field>
 
@@ -17,7 +17,7 @@
       </mat-label>
       <input matInput formControlName="address">
       <mat-error *ngIf="editRestaurantForm.get('address').hasError('required')">
-
+      Adres jest wymagany
       </mat-error>
     </mat-form-field>
 
@@ -25,6 +25,9 @@
       <mat-select formControlName="city">
         <mat-option [value]="city.id" *ngFor="let city of cities">{{city.name}}</mat-option>
       </mat-select>
+      <mat-error *ngIf="editRestaurantForm.get('city').hasError('required')">
+        Miasto jest wymagane
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field class="col-4">
@@ -32,9 +35,6 @@
         Szerokość geo.
       </mat-label>
       <input matInput formControlName="lat">
-      <mat-error *ngIf="editRestaurantForm.get('lat').hasError('required')">
-
-      </mat-error>
     </mat-form-field>
 
     <mat-form-field class="col-4">
@@ -42,9 +42,6 @@
         Długość geo.
       </mat-label>
       <input matInput formControlName="lon">
-      <mat-error *ngIf="editRestaurantForm.get('lon').hasError('required')">
-
-      </mat-error>
     </mat-form-field>
 
 
@@ -54,15 +51,12 @@
         Strona internetowa
       </mat-label>
       <input matInput formControlName="website">
-      <mat-error *ngIf="editRestaurantForm.get('website').hasError('required')">
-
-      </mat-error>
     </mat-form-field>
 
 
   </div>
   <div mat-dialog-actions align="end">
     <button mat-button (click)="close()">Zamknij</button>
-    <button mat-button (click)="onSubmit()">Aktualizuj</button>
+    <button [disabled]="editRestaurantForm.invalid" mat-button (click)="onSubmit()">Aktualizuj</button>
   </div>
 </form>

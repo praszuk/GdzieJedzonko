@@ -5,7 +5,7 @@
       <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtruj">
     </mat-form-field>
     <div class="offset-6 col-2 mt-3 text-center">
-      <button [disabled]="!selectedRowIndex" class="btn btn-light mt-2" [routerLink]="['/admin/editprofile', selectedRowIndex]"> Edytuj </button>
+      <button mat-raised-button [disabled]="!selectedRowIndex" class="btn btn-light mt-2" [routerLink]="['/admin/editprofile', selectedRowIndex]"> Edytuj </button>
     </div>
   </div>
 
