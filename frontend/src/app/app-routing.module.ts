@@ -18,6 +18,7 @@ import {EditReviewComponent} from './components/edit-review/edit-review.componen
 import {OwnerGuard} from './modules/auth/guards/owner.guard';
 import {MainPageComponent} from './components/main-page/main-page.component';
 import {ModeratorViewComponent} from './components/moderator-view/moderator-view.component';
+import {ModeratorGuard} from './modules/auth/guards/moderator.guard';
 
 
 const routes: Routes = [{
@@ -43,7 +44,8 @@ const routes: Routes = [{
     component: ArticleComponent
   }, {
     path: 'newreview',
-    component: NewReviewComponent
+    component: NewReviewComponent,
+    canActivate: [UserGuard]
   }, {
     path: 'editprofile',
     component: EditProfileComponent,
@@ -76,7 +78,8 @@ const routes: Routes = [{
     canLoad: [AdminGuard],
   }, {
     path: 'moderator',
-    component: ModeratorViewComponent
+    component: ModeratorViewComponent,
+    canActivate: [ModeratorGuard]
   }, {
     path: '404',
     component: PageNotFoundComponent
