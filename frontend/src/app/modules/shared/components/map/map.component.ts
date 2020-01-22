@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {latLng, tileLayer, Map, marker, icon, Layer, LayerGroup} from 'leaflet';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {Restaurant} from '../../models/restaurant.model';
+import {Restaurant} from '../../../../models/restaurant.model';
 
 @Component({
   selector: 'app-map',
@@ -41,13 +41,6 @@ export class MapComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.coordinates) {
-      this.lat = parseFloat(this.coordinates.lat);
-      this.lon = parseFloat(this.coordinates.lon);
-      this.map.flyTo(latLng(this.lat, this.lon));
-    } else {
-      this.getLocation();
-    }
   }
 
   getLocation() {
@@ -67,6 +60,7 @@ export class MapComponent implements OnInit {
   }
 
   setLocation(lat: string, lon: string) {
+    this.markerLayer.clearLayers();
     this.lat = Number(lat);
     this.lon = Number(lon);
     const position = latLng(this.lat, this.lon);
@@ -78,7 +72,8 @@ export class MapComponent implements OnInit {
         shadowSize: [0, 0],
         iconUrl: 'marker-icon.png'
       })
-    }).addTo(this.map);
+    }).addTo(this.markerLayer);
+    this.markerLayer.addTo(this.map);
     markerPosition.bindPopup('<b>Restaurant infromation!</b>');
   }
 
@@ -105,13 +100,19 @@ export class MapComponent implements OnInit {
 
       markerPosition.bindPopup('<b>Restaurant infromation!</b>', {
         offset: [2, -15]
-    });
+      });
     });
     this.markerLayer.addTo(this.map);
   }
 
   onMapReady(map: Map) {
     this.map = map;
+
+    if (this.coordinates) {
+      this.setLocation(this.coordinates.lat, this.coordinates.lon);
+    } else {
+      this.getLocation();
+    }
   }
 
 }

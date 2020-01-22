@@ -28,17 +28,20 @@ import {CustomHammerConfig} from './models/custom-hammer-config';
 import {EditReviewComponent} from './components/edit-review/edit-review.component';
 import {MatCardModule} from '@angular/material/card';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
-import {MapComponent} from './components/map/map.component';
 import {LeafletModule} from '@asymmetrik/ngx-leaflet';
 import { AddRestaurantComponent } from './components/new-review/add-restaurant/add-restaurant.component';
-import {MatDialogModule} from "@angular/material/dialog";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {MatProgressBarModule} from "@angular/material/progress-bar";
-import {MatChipsModule} from "@angular/material/chips";
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatChipsModule} from '@angular/material/chips';
 import { MainPageComponent } from './components/main-page/main-page.component';
-
+import { ModeratorViewComponent } from './components/moderator-view/moderator-view.component';
+import {MatSortModule} from '@angular/material/sort';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatRippleModule} from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -56,9 +59,9 @@ import { MainPageComponent } from './components/main-page/main-page.component';
     NewReviewComponent,
     ImageUploadComponent,
     EditReviewComponent,
-    MapComponent,
     AddRestaurantComponent,
-    MainPageComponent
+    MainPageComponent,
+    ModeratorViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -81,9 +84,15 @@ import { MainPageComponent } from './components/main-page/main-page.component';
     MatInputModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatChipsModule
+    MatChipsModule,
+    MatSortModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatRippleModule
   ],
-  entryComponents: [AddRestaurantComponent],
+  entryComponents: [
+    AddRestaurantComponent,
+  ],
   providers: [{provide: HAMMER_GESTURE_CONFIG, useClass: CustomHammerConfig}],
   bootstrap: [AppComponent]
 })

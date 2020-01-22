@@ -17,6 +17,7 @@ import {AdminGuard} from './modules/auth/guards/admin.guard';
 import {EditReviewComponent} from './components/edit-review/edit-review.component';
 import {OwnerGuard} from './modules/auth/guards/owner.guard';
 import {MainPageComponent} from './components/main-page/main-page.component';
+import {ModeratorViewComponent} from './components/moderator-view/moderator-view.component';
 
 
 const routes: Routes = [{
@@ -73,6 +74,9 @@ const routes: Routes = [{
     path: 'admin',
     loadChildren: () => import('./modules/admin/admin.module').then(module => module.AdminModule),
     canLoad: [AdminGuard],
+  }, {
+    path: 'moderator',
+    component: ModeratorViewComponent
   }, {
     path: '404',
     component: PageNotFoundComponent

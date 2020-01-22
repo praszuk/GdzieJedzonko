@@ -21,7 +21,7 @@ export class MainPanelComponent implements OnInit {
       url: 'users'
     }, {
       name: 'Oczekujące recenzje',
-      url: 'pending-reviews'
+      url: 'pending-restaurants'
     }];
   }
 

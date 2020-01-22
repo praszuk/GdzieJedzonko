@@ -12,7 +12,9 @@ export const environment = {
   imagesUrl: '/images/',
   commentsUrl: '/comments/',
   restaurantsUrl: '/api/restaurants/',
-  citiesUrl: 'cities/'
+  pendingRestaurantsUrl: '/api/restaurants/pending/',
+  citiesUrl: 'cities/',
+  mapCoordsUrl: '/api/maps/coordinates/'
 };
 
 /*

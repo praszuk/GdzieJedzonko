@@ -9,7 +9,9 @@ import {AddRestaurantComponent} from './add-restaurant/add-restaurant.component'
 import {Restaurant} from '../../models/restaurant.model';
 import {RestaurantService} from '../../services/restaurant/restaurant.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {MapComponent} from '../map/map.component';
+import {MapComponent} from '../../modules/shared/components/map/map.component';
+import {City} from '../../models/city.model';
+import {CityService} from '../../services/city/city.service';
 
 @Component({
   selector: 'app-new-review',
@@ -25,6 +27,9 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   articleLength: number;
   restaurant: Restaurant;
   coordinates = null;
+  getAllCitiesSubscription: Subscription;
+  cities: City[];
+  cityIndex: number;
 
   toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -60,7 +65,8 @@ export class NewReviewComponent implements OnInit, OnDestroy {
               private router: Router,
               private dialog: MatDialog,
               private restaurantService: RestaurantService,
-              private snackBar: MatSnackBar) {
+              private snackBar: MatSnackBar,
+              private cityService: CityService) {
   }
 
   ngOnInit() {
@@ -68,12 +74,14 @@ export class NewReviewComponent implements OnInit, OnDestroy {
       title: ['', [Validators.required, Validators.pattern('^[\\w\\,\\.\\-\\!\\?\\d\\s]+$'), Validators.maxLength(100)]],
       content: ['', [Validators.required, Validators.maxLength(3000)]]
     });
+    this.getAllCities();
   }
 
   ngOnDestroy(): void {
     if (this.subscription != null) {
       this.subscription.unsubscribe();
     }
+    this.getAllCitiesSubscription.unsubscribe();
   }
 
   onSubmit() {
@@ -81,21 +89,23 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   }
 
   saveRestaurant() {
-    this.restaurantService.addRestaurant(this.restaurant).subscribe(
-      (restaurant: Restaurant) => {
-        this.addReview();
-      },
-      (error) => {
-        this.snackBar.open('Zapisanie restauracji się nie powiodło, spróbuj za chwile', '', {
-          duration: 3000
-        });
-      }
-    );
+    this.restaurant.id ? this.addReview(this.restaurant) :
+      this.restaurantService.addRestaurant(this.restaurant).subscribe(
+        (restaurant: Restaurant) => {
+          this.addReview(restaurant);
+        },
+        (error) => {
+          this.snackBar.open('Zapisanie restauracji się nie powiodło, spróbuj za chwile', '', {
+            duration: 3000
+          });
+        }
+      );
   }
 
-  addReview() {
+  addReview(restaurant: Restaurant) {
     const article = this.editorForm.value;
     article.content = JSON.parse(this.editorForm.value.content);
+    article.restaurant_id = restaurant.id;
     this.subscription = this.articleService.newReview(article).subscribe(
       (id) => {
         this.titleExists = false;
@@ -128,10 +138,23 @@ export class NewReviewComponent implements OnInit, OnDestroy {
     addRestaurantDialogRef.afterClosed().subscribe(
       (restaurant: Restaurant) => {
         if (restaurant) {
-          console.log(restaurant);
           this.restaurant = restaurant;
           this.map.setLocation(restaurant.lat, restaurant.lon);
+          this.cityIndex = this.cities.map(value => value.id).indexOf(restaurant.city);
         }
+      }
+    );
+  }
+
+  getAllCities() {
+    this.getAllCitiesSubscription = this.cityService.getAllCities().subscribe(
+      (cities: City[]) => {
+        this.cities = cities;
+      },
+      (error) => {
+        this.snackBar.open('Pobranie miast się nie powiodło, spróbuj ponownie otworzyć to okno', '', {
+          duration: 3000
+        });
       }
     );
   }

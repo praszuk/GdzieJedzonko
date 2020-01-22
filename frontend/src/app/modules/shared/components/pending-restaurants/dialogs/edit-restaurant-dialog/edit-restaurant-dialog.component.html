@@ -1,0 +1,68 @@
+<h1 mat-dialog-title> Edytuj restaurację</h1>
+<form [formGroup]="editRestaurantForm">
+  <div mat-dialog-content>
+    <mat-form-field class="col-7">
+      <mat-label>
+        Nazwa
+      </mat-label>
+      <input matInput formControlName="name">
+      <mat-error *ngIf="editRestaurantForm.get('name').hasError('required')">
+
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="col-5">
+      <mat-label>
+        Adres
+      </mat-label>
+      <input matInput formControlName="address">
+      <mat-error *ngIf="editRestaurantForm.get('address').hasError('required')">
+
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="cities" class="col-4">
+      <mat-select formControlName="city">
+        <mat-option [value]="city.id" *ngFor="let city of cities">{{city.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="col-4">
+      <mat-label>
+        Szerokość geo.
+      </mat-label>
+      <input matInput formControlName="lat">
+      <mat-error *ngIf="editRestaurantForm.get('lat').hasError('required')">
+
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="col-4">
+      <mat-label>
+        Długość geo.
+      </mat-label>
+      <input matInput formControlName="lon">
+      <mat-error *ngIf="editRestaurantForm.get('lon').hasError('required')">
+
+      </mat-error>
+    </mat-form-field>
+
+
+
+    <mat-form-field class="col-11">
+      <mat-label>
+        Strona internetowa
+      </mat-label>
+      <input matInput formControlName="website">
+      <mat-error *ngIf="editRestaurantForm.get('website').hasError('required')">
+
+      </mat-error>
+    </mat-form-field>
+
+
+  </div>
+  <div mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Zamknij</button>
+    <button mat-button (click)="onSubmit()">Aktualizuj</button>
+  </div>
+</form>
