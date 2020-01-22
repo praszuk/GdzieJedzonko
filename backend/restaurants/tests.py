@@ -225,10 +225,17 @@ class GetAllRestaurantsTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_city_filter_incorrect_value(self):
-        expected = Restaurant.objects.filter(is_approved=True)
         response = self.client.get(
             reverse('restaurants:restaurants-list'),
             {'city': '<non int value>'}
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_city_filter_not_exists(self):
+        expected = []
+        response = self.client.get(
+            reverse('restaurants:restaurants-list'),
+            {'city': 9999999}
         )
         serialized = RestaurantListSerializer(expected, many=True)
 
