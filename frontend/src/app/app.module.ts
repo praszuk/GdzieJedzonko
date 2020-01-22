@@ -42,6 +42,7 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatRippleModule} from '@angular/material/core';
+import {StarRatingModule} from 'angular-star-rating';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,8 @@ import {MatRippleModule} from '@angular/material/core';
     MatSortModule,
     MatTableModule,
     MatPaginatorModule,
-    MatRippleModule
+    MatRippleModule,
+    StarRatingModule.forRoot()
   ],
   entryComponents: [
     AddRestaurantComponent,

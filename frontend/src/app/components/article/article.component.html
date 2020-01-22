@@ -1,36 +1,62 @@
 <div class="min-height-15"></div>
-<article class="offset-2 col-9  my-2 rounded gradient min-height-40">
-  <ngx-spinner name="articleLoading"  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
+  <div class="offset-2">
+    <button mat-raised-button (click)="previousPage()"> Wróć</button>
+  </div>
+  <div *ngIf="showOptionButtons" class="offset-9">
+    <button mat-raised-button [routerLink]="['/editreview', articleId]"> Edytuj recenzje</button>
+    <button mat-raised-button class="ml-2" (click)="deleteArticle()"> Usuń recenzje</button>
+  </div>
+<mat-card class="offset-2 col-9 my-2 gradient min-height-40">
+
+  <ngx-spinner name="articleLoading" bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small"
+               type="line-scale-pulse-out-rapid"></ngx-spinner>
+
   <div *ngIf="!isLoading">
-    <div class="row mx-2 mt-2">
-      <div class="col-2 ">
-        <a *ngIf="article.user" class="text-decoration-none text-dark" [routerLink]="['/userprofile', article.user.id]"> <p>{{article.user.first_name}} {{article.user.last_name}}</p> </a>
-      </div>
-      <div class="col-3 ml-2 ">
-        <p *ngIf="!article.user">[deleted]</p>
-        <small class="ml-3 mt-1">{{article.creation_date}}</small>
-      </div>
-      <div *ngIf="showOptionButtons" class="offset-2 col-4  mt-1 text-center">
-        <button mat-raised-button  [routerLink]="['/editreview', articleId]" [state]="{data: 'fsfdsf'}"> Edytuj recenzje </button>
-        <button mat-raised-button class="ml-2" (click)="deleteArticle()"> Usuń recenzje </button>
-      </div>
-    </div>
+    <mat-card-header>
+      <mat-card-title>
+        <div class="display-4">{{article.title}}</div>
 
-    <h2>{{article.title}}</h2>
-    <div id="article-map" class="align-content-center offset-2 col-8">
-      <app-map [height]="300" [coordinates]="coordinates"></app-map>
-    </div>
-    <quill-view [content]="article.content" format="json" theme="snow"></quill-view>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <div class="row">
+          <a *ngIf="article.user" class="text-decoration-none text-dark"
+             [routerLink]="['/userprofile', article.user.id]">
+            <h6>{{article.user.first_name}} {{article.user.last_name}}</h6>
+          </a>
+          <h6 *ngIf="!article.user">[deleted]</h6>
+          <h6 class="ml-4">{{article.creation_date}}</h6>
+        </div>
+      </mat-card-subtitle>
+
+    </mat-card-header>
+    <mat-card-content>
+      <div class="row mt-3 mb-5">
+        <div id="article-map" class="col-8">
+          <app-map [height]="300" [coordinates]="coordinates"></app-map>
+        </div>
+        <div class="col-4">
+          <div class="min-height-5"></div>
+          <h4 class="mt-3 font-weight-light">Nazwa: {{article.restaurant.name}}</h4>
+          <h4 class="mt-3 font-weight-light">Adres: {{article.restaurant.address}}</h4>
+         <h4 class="mt-3 font-weight-light">Strona:  <a [href]="article.restaurant.website">{{article.restaurant.website || '---'}} </a> </h4>
+          <div class="text-center mt-5">
+          <star-rating [readOnly]="true" size="large" [rating]="article.rating"></star-rating>
+          </div>
+        </div>
+      </div>
+
+      <quill-view [content]="article.content" format="json" theme="snow"></quill-view>
+
+      <div class="min-height-5"></div>
+
+      <div *ngIf="showGallery" class="offset-1 col-10 my-5">
+        <div class="text-center">
+          <h2> Galeria </h2>
+          <ngx-gallery class="mt-3" [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+        </div>
+      </div>
+    </mat-card-content>
   </div>
-
-  <div class="min-height-5"></div>
-
-  <div *ngIf="showGallery" class="offset-1 col-10 my-5">
-    <div class="text-center">
-      <h2> Galeria </h2>
-      <ngx-gallery class="mt-3" [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
-    </div>
-  </div>
-</article>
+</mat-card>
 <app-comment-section [articleId]="articleId"></app-comment-section>
 
