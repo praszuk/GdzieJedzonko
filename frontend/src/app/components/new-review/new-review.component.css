@@ -1,0 +1,11 @@
+.no-outline:focus {
+  outline: none !important;
+}
+
+.no-outline {
+  outline: none !important;
+}
+
+star-rating div:focus{
+  outline: white none 0 !important;
+}

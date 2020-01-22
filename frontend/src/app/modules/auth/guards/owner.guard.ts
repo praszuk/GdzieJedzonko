@@ -18,8 +18,6 @@ export class OwnerGuard implements CanActivate {
   constructor(private activatedRoute: ActivatedRoute) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    console.log(route.paramMap.get('id'));
-
     return true;
   }
 

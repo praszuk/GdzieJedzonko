@@ -72,7 +72,8 @@ export class NewReviewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.editorForm = this.formBuilder.group({
       title: ['', [Validators.required, Validators.pattern('^[\\w\\,\\.\\-\\!\\?\\d\\s]+$'), Validators.maxLength(100)]],
-      content: ['', [Validators.required, Validators.maxLength(3000)]]
+      content: ['', [Validators.required, Validators.maxLength(3000)]],
+      rating: ['', [Validators.required]]
     });
     this.getAllCities();
   }
