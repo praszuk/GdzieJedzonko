@@ -391,6 +391,22 @@ class GetAllArticlesFilteredTest(BaseViewTest):
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_get_articles_filtered_user_and_title(self):
+        search_title = self.art2.title[:len(self.art2.title) // 2]
+        expected = Article.objects.filter(
+            title__contains=search_title,
+            user_id=self.user1.id
+        ).filter().order_by('-creation_date')
+
+        response = self.client.get(
+            reverse('articles:article-list'),
+            {'title': search_title, 'user': self.user1.id}
+        )
+        serialized = ArticleListSerializer(expected, many=True)
+
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class CreateArticleTest(BaseViewTest):
 
