@@ -24,6 +24,14 @@ from .serializers import (
 class ArticleFilter(FilterSet):
     user = NumberFilter(field_name='user')
     title = CharFilter(field_name='title', lookup_expr='contains')
+    first_name = CharFilter(
+        field_name='user__first_name',
+        lookup_expr='startswith'
+    )
+    last_name = CharFilter(
+        field_name='user__last_name',
+        lookup_expr='startswith'
+    )
 
     class Meta:
         model = Article
