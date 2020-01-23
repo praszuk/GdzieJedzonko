@@ -44,6 +44,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatRippleModule} from '@angular/material/core';
 import {StarRatingModule} from 'angular-star-rating';
 import { RestaurantViewComponent } from './components/restaurant-view/restaurant-view.component';
+import {MatRadioModule} from '@angular/material/radio';
 
 @NgModule({
   declarations: [
@@ -92,7 +93,8 @@ import { RestaurantViewComponent } from './components/restaurant-view/restaurant
     MatTableModule,
     MatPaginatorModule,
     MatRippleModule,
-    StarRatingModule.forRoot()
+    StarRatingModule.forRoot(),
+    MatRadioModule
   ],
   entryComponents: [
     AddRestaurantComponent,

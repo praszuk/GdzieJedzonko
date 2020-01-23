@@ -33,8 +33,6 @@ export class PostsSectionComponent implements OnInit {
         this.getAllArticles();
       }
     }
-
-
   }
 
   getUserArticles(userId: number) {
