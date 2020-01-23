@@ -1,27 +1,35 @@
-<div class="offset-3 col-6 border rounded min-height-10">
-  <ngx-spinner name="userProfileLoading"  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
+<div class="min-height-15"></div>
+<div class="offset-2 mb-5">
+  <button mat-raised-button (click)="previousPage()"> Wróć </button>
+</div>
+<mat-card class="offset-2 col-8 min-height-10">
+  <ngx-spinner name="userProfileLoading" bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small"
+               type="line-scale-pulse-out-rapid"></ngx-spinner>
   <div *ngIf="!isLoading">
-  <div class="row">
-      <p class="font-weight-bold ml-3 text-center">Imie i nazwisko: </p> <span class="ml-2"> {{user.first_name}} {{user.last_name}} </span>
+    <mat-card-content>
+      <div class="col-12 text-center">
+        <h2 class="font-weight-light text-center">Imie i nazwisko: {{user.first_name}} {{user.last_name}}</h2>
+      </div>
+      <div class="row text-center mt-5">
+        <div class="col-6">
+          <h3 class="font-weight-light">Data urodzenia:  {{user.birth_date}}</h3>
+        </div>
+        <div class="col-6">
+          <h3 class="font-weight-light">Data dołączenia:  {{user.date_joined}}</h3>
+        </div>
+      </div>
+    </mat-card-content>
   </div>
-  <div class="row">
-    <div class="col-6">
-      <span class="font-weight-bold ">Data urodzenia:</span> <span> {{user.birth_date}}</span>
-    </div>
-    <div class="col-6">
-      <span class="font-weight-bold"> Data dołączenia:</span><span> {{user.date_joined}}</span>
-    </div>
+</mat-card>
+<div class="text-center mt-5">
+  <h2 class="display-4"> Recenzje użytkownika: </h2>
+</div>
+<div *ngIf="isLoading" class="container">
+  <div class="offset-2 col-8 border rounded min-height-40">
+    <ngx-spinner bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small"
+                 type="line-scale-pulse-out-rapid"></ngx-spinner>
   </div>
 </div>
-</div>
-<div class="offset-2 col-8 mt-4">
-  <h2 class="text-center"> Recenzje użytkownika: </h2>
-</div>
-  <div *ngIf="isLoading" class="container">
-    <div class="offset-2 col-8 border rounded min-height-40">
-      <ngx-spinner  bdColor="rgba(51,51,51,0.15)" [fullScreen]="false" size="small" type="line-scale-pulse-out-rapid"></ngx-spinner>
-    </div>
-  </div>
-  <app-posts-section *ngIf="!isLoading" class="mt-2" [userId]="userId"></app-posts-section>
+<app-posts-section *ngIf="!isLoading" class="mt-2" [userId]="userId"></app-posts-section>
 
 

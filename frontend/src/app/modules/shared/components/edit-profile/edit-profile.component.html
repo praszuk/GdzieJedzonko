@@ -1,17 +1,15 @@
-<button *ngIf="isAdmin" class="btn btn-outline-dark offset-2" [routerLink]="['/admin']"> Cofnij </button>
+<div class="min-height-20"></div>
+<button *ngIf="isAdmin" class="btn btn-outline-dark offset-2" [routerLink]="['/admin']"> Cofnij</button>
 <h2 class="offset-4 col-3 mb-3"> Edytuj profil</h2>
 
 <div class="row">
 
-<div class="offset-2 col-2">
+  <div class="offset-2 col-2">
     <app-sticky-sidebar [options]="options"></app-sticky-sidebar>
+  </div>
+
+  <div class="col-7">
+    <router-outlet></router-outlet>
+  </div>
 </div>
-
-<div class="col-7">
-  <router-outlet></router-outlet>
-</div>
-
-
-</div>
-
-
+<div class="min-height-20"></div>

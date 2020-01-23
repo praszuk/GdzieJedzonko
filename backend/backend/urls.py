@@ -15,6 +15,12 @@ urlpatterns = [
 
     # Articles
     path('api/articles/', include('articles.urls')),
+
+    # Restaurants
+    path('api/restaurants/', include('restaurants.urls')),
+
+    # Maps - External tool
+    path('api/maps/', include('maps.urls')),
 ]
 
 if settings.DEBUG:

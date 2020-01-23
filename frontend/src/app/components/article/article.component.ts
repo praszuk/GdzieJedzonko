@@ -1,4 +1,5 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Location} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ArticleService} from '../../services/article/article.service';
 import {Article} from '../../models/article.model';
@@ -22,12 +23,14 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
   galleryOptions: Array<NgxGalleryOptions> = [];
   galleryImages: Array<NgxGalleryImage> = [];
+  coordinates: any;
 
   constructor(private activatedroute: ActivatedRoute,
               private articleService: ArticleService,
               private loadingService: NgxSpinnerService,
               private authService: AuthService,
               private router: Router,
+              private location: Location
   ) {
   }
 
@@ -45,7 +48,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
         thumbnailsColumns: 4,
         imageAnimation: NgxGalleryAnimation.Slide
       },
-      // max-width 800
       {
         breakpoint: 800,
         width: '100%',
@@ -70,6 +72,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   getArticle(articleId: number) {
     this.articleService.getArticle(articleId).subscribe(
       (article) => {
+        this.coordinates = {lat: article.restaurant.lat, lon: article.restaurant.lon}
         this.article = article;
         this.isLoading = false;
         this.loadingService.hide('articleLoading');
@@ -124,6 +127,10 @@ export class ArticleComponent implements OnInit, OnDestroy {
       );
       this.showGallery = true;
     }
+  }
+
+  previousPage() {
+    this.location.back();
   }
 }
 

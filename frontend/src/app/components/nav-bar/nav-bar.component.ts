@@ -29,6 +29,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
                                           this.user = user;
                                           this.loggedIn = true;
                                           this.isAdmin = user.role === Role.ADMIN;
+                                          this.isModerator = user.role === Role.MODERATOR;
                                         } else {
                                           if (this.authService.isLoggedIn()) {
                                             this.authService.getCurrentUserById()
@@ -37,12 +38,14 @@ export class NavBarComponent implements OnInit, OnDestroy {
                                                   this.user = user;
                                                   this.loggedIn = true;
                                                   this.isAdmin = user.role === Role.ADMIN;
+                                                  this.isModerator = user.role === Role.MODERATOR;
                                                 }
                                               );
                                           } else {
                                             this.user = null;
                                             this.loggedIn = false;
                                             this.isAdmin = false;
+                                            this.isModerator = false;
                                           }
                                         }
                                       }

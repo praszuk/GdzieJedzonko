@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Location} from '@angular/common';
 import {ActivatedRoute} from '@angular/router';
 import {User} from '../../models/user.model';
 import {NgxSpinnerService} from 'ngx-spinner';
@@ -15,7 +16,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
  userId: number;
  user: User;
  isLoading = true;
-  constructor(private Activatedroute: ActivatedRoute, private loadingService: NgxSpinnerService, private userService: UserService) {  }
+  constructor(private Activatedroute: ActivatedRoute,
+              private loadingService: NgxSpinnerService,
+              private userService: UserService,
+              private location: Location) {  }
 
   ngOnInit() {
     this.loadingService.show('userProfileLoading');
@@ -38,7 +42,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         this.isLoading = true;
       }
     );
+  }
 
+  previousPage() {
+    this.location.back();
   }
 
   ngOnDestroy() {

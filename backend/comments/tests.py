@@ -4,6 +4,7 @@ from rest_framework.test import APIClient, APITestCase
 from django.urls import reverse
 
 from articles.models import Article
+from restaurants.models import Restaurant, City
 from users.models import User, Role
 
 from .constants import MAX_COMMENT_SIZE
@@ -113,10 +114,20 @@ class BaseViewTest(APITestCase):
             role=Role.USER
         )
 
+        self.restaurant = Restaurant.objects.create(
+            name='Restaurant one',
+            lat='52.52001',
+            lon='13.40494',
+            is_approved=False,
+            city=City.objects.create(name='a', lat='52.52000', lon='13.40495')
+        )
+
         self.article = Article.objects.create(
             title='Title',
             content=self.article_content,
-            user=self.user
+            user=self.user,
+            rating=0,
+            restaurant=self.restaurant
         )
 
     def generate_credentials(self, email: str, password: str):

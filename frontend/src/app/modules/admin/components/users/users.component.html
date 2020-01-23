@@ -1,11 +1,11 @@
-<div class="border rounded shadow min-height-50 mb-5" >
+
 
   <div class="row">
     <mat-form-field class="ml-3 col-3 mt-3">
       <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtruj">
     </mat-form-field>
     <div class="offset-6 col-2 mt-3 text-center">
-      <button [disabled]="!selectedRowIndex" class="btn btn-light mt-2" [routerLink]="['/admin/editprofile', selectedRowIndex]"> Edytuj </button>
+      <button mat-raised-button [disabled]="!selectedRowIndex" class="btn btn-light mt-2" [routerLink]="['/admin/editprofile', selectedRowIndex]"> Edytuj </button>
     </div>
   </div>
 
@@ -56,5 +56,5 @@
   </table>
   <mat-paginator [pageSizeOptions]="[10, 15, 20]" showFirstLastButtons></mat-paginator>
 
-</div>
+
 
