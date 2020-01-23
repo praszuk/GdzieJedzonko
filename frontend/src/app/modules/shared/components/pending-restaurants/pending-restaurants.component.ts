@@ -136,7 +136,6 @@ export class PendingRestaurantsComponent implements OnInit, OnDestroy {
   acceptRestaurant() {
     const restaurant: Restaurant = new Restaurant();
     restaurant.is_approved = true;
-    console.log(restaurant);
     this.updateRestaurant(this.selectedRowIndex, restaurant);
   }
 

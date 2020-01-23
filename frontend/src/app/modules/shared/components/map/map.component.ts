@@ -1,7 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {latLng, tileLayer, Map, marker, icon, Layer, LayerGroup} from 'leaflet';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {Restaurant} from '../../../../models/restaurant.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-map',
@@ -37,7 +38,9 @@ export class MapComponent implements OnInit {
     center: latLng([52.229958, 21.012008])
   };
 
-  constructor(private snackBar: MatSnackBar) {
+  constructor(private snackBar: MatSnackBar,
+              private elementRef: ElementRef,
+              private router: Router) {
   }
 
   ngOnInit() {
@@ -74,7 +77,6 @@ export class MapComponent implements OnInit {
       })
     }).addTo(this.markerLayer);
     this.markerLayer.addTo(this.map);
-    markerPosition.bindPopup('<b>Restaurant infromation!</b>');
   }
 
 
@@ -97,8 +99,14 @@ export class MapComponent implements OnInit {
           iconUrl: 'marker-icon.png'
         })
       }).addTo(this.markerLayer);
+      const template = '<div class="text-center"><b> ' + restaurant.name + '</b> </br>' +
+        ' <b> Adres: ' + restaurant.address + '</b> </br> ' +
+        '<b> Ocena: ' + restaurant.rating + '</b> </br> ' +
+        '<b> Więcej: <a href="restaurant/' + restaurant.id + '"> Click </a></b> </div>';
 
-      markerPosition.bindPopup('<b>Restaurant infromation!</b>', {
+      const self = this;
+
+      markerPosition.bindPopup(template, {
         offset: [2, -15]
       });
     });
@@ -109,10 +117,10 @@ export class MapComponent implements OnInit {
     this.map = map;
 
     if (this.coordinates) {
+      console.log(this.coordinates)
       this.setLocation(this.coordinates.lat, this.coordinates.lon);
     } else {
       this.getLocation();
     }
   }
-
 }

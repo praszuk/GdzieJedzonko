@@ -10,21 +10,28 @@ import {NgxSpinnerService} from 'ngx-spinner';
 })
 export class PostsSectionComponent implements OnInit {
   @Input() userId?: number;
+  @Input() restaurantPosts: Post[];
   posts: Post[] = [];
   isError = false;
   isLoading = true;
 
   constructor(private articleService: ArticleService,
               private loadingService: NgxSpinnerService,
-              ) {
+  ) {
   }
 
   ngOnInit() {
     // this.loadingService.show('posts-section-loading');
-    if (this.userId) {
-      this.getUserArticles(this.userId);
+    if (this.restaurantPosts) {
+      this.isError = false;
+      this.isLoading = false;
+      this.posts = this.restaurantPosts;
     } else {
-      this.getAllArticles();
+      if (this.userId) {
+        this.getUserArticles(this.userId);
+      } else {
+        this.getAllArticles();
+      }
     }
 
 
@@ -34,7 +41,6 @@ export class PostsSectionComponent implements OnInit {
     this.articleService.getUserArticles(userId).subscribe(
       (posts) => {
         this.isError = false;
-        // this.posts = posts;
         let i = 0;
         const timer = setInterval(() => {
           if (i < posts.length) {

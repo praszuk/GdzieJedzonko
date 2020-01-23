@@ -43,6 +43,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatRippleModule} from '@angular/material/core';
 import {StarRatingModule} from 'angular-star-rating';
+import { RestaurantViewComponent } from './components/restaurant-view/restaurant-view.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import {StarRatingModule} from 'angular-star-rating';
     AddRestaurantComponent,
     MainPageComponent,
     ModeratorViewComponent,
+    RestaurantViewComponent,
   ],
   imports: [
     BrowserModule,

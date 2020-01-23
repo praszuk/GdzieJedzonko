@@ -19,6 +19,7 @@ import {OwnerGuard} from './modules/auth/guards/owner.guard';
 import {MainPageComponent} from './components/main-page/main-page.component';
 import {ModeratorViewComponent} from './components/moderator-view/moderator-view.component';
 import {ModeratorGuard} from './modules/auth/guards/moderator.guard';
+import {RestaurantViewComponent} from './components/restaurant-view/restaurant-view.component';
 
 
 const routes: Routes = [{
@@ -81,6 +82,10 @@ const routes: Routes = [{
     component: ModeratorViewComponent,
     canActivate: [ModeratorGuard]
   }, {
+      path: 'restaurant/:id',
+      component: RestaurantViewComponent,
+      canActivate: [UserGuard]
+    },{
     path: '404',
     component: PageNotFoundComponent
   }, {

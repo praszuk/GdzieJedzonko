@@ -28,6 +28,13 @@ export class RestaurantService {
       );
   }
 
+  getRestaurant(restaurantId: number): Observable<Restaurant> {
+    return this.http.get<Restaurant>(`${environment.apiUrl}${environment.restaurantsUrl}${restaurantId}/`)
+      .pipe(
+        catchError(err => throwError(err))
+      );
+  }
+
   checkRestaurant(address: string): Observable<Restaurant> {
     const params = new HttpParams().set('address', address)
     return this.http.get<Restaurant>(`${environment.apiUrl}${environment.mapCoordsUrl}`, {params})
