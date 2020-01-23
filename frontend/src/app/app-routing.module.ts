@@ -83,9 +83,8 @@ const routes: Routes = [{
     canActivate: [ModeratorGuard]
   }, {
       path: 'restaurant/:id',
-      component: RestaurantViewComponent,
-      canActivate: [UserGuard]
-    },{
+      component: RestaurantViewComponent
+    }, {
     path: '404',
     component: PageNotFoundComponent
   }, {
