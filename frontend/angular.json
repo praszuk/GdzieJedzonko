@@ -62,7 +62,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
+                  "maximumWarning": "4mb",
                   "maximumError": "5mb"
                 }
               ]
@@ -97,7 +97,7 @@
               {
                 "glob": "**/*",
                 "input": "./node_modules/leaflet/dist/images",
-                "output": "assets/"
+                "output": "./assets/"
               },
               "src/favicon.ico",
               "src/assets"
