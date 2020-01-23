@@ -117,7 +117,6 @@ export class MapComponent implements OnInit {
     this.map = map;
 
     if (this.coordinates) {
-      console.log(this.coordinates)
       this.setLocation(this.coordinates.lat, this.coordinates.lon);
     } else {
       this.getLocation();

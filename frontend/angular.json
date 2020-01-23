@@ -97,7 +97,7 @@
               {
                 "glob": "**/*",
                 "input": "./node_modules/leaflet/dist/images",
-                "output": "leaflet/"
+                "output": "assets/"
               },
               "src/favicon.ico",
               "src/assets"
