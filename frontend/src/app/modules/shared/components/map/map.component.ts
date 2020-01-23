@@ -73,7 +73,7 @@ export class MapComponent implements OnInit {
         iconSize: [25, 41],
         iconAnchor: [13, 41],
         shadowSize: [0, 0],
-        iconUrl: 'marker-icon.png'
+        iconUrl: 'assets/images/marker-icon.png'
       })
     }).addTo(this.markerLayer);
     this.markerLayer.addTo(this.map);
@@ -96,7 +96,7 @@ export class MapComponent implements OnInit {
           iconSize: [30, 46],
           iconAnchor: [13, 41],
           shadowSize: [0, 0],
-          iconUrl: 'marker-icon.png'
+          iconUrl: 'assets/images/marker-icon.png'
         })
       }).addTo(this.markerLayer);
       const template = '<div class="text-center"><b> ' + restaurant.name + '</b> </br>' +
