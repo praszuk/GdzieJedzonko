@@ -32,6 +32,15 @@ export class ArticleService {
       );
   }
 
+  searchForArticles(params: HttpParams): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.apiUrl}${environment.articlesUrl}`, {params})
+      .pipe(
+        catchError(
+          err => throwError(err)
+        )
+      );
+  }
+
   getUserArticles(userId: number): Observable<Post[]> {
     const params = new HttpParams()
       .set('user', String(userId));

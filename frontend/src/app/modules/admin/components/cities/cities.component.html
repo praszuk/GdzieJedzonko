@@ -1,0 +1,42 @@
+<div class="row">
+  <mat-form-field class="ml-3 col-3 mt-3">
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtruj">
+  </mat-form-field>
+  <div class="offset-5 col-3 mt-3 text-center">
+    <button mat-raised-button class="btn btn-light mt-2" (click)="openAddCityDialog()"> Dodaj miasto </button>
+    <button mat-raised-button [disabled]="!selectedRowIndex" class="btn btn-light ml-3 mt-2" (click)="deleteCity(selectedRowIndex)"> Usuń miasto </button>
+  </div>
+</div>
+
+<table mat-table matSort matSortActive="id" matSortDirection="asc" [dataSource]="cityDataSource" class="ml-2">
+
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> No </mat-header-cell>
+    <mat-cell *matCellDef="let city">{{city.id}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Nazwa </mat-header-cell>
+    <mat-cell *matCellDef="let city">{{city.name}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="lat">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Szerokość geograficzna </mat-header-cell>
+    <mat-cell *matCellDef="let city">{{city.lat}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="lon">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Długość geograficzna </mat-header-cell>
+    <mat-cell *matCellDef="let city">{{city.lon}}</mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row  matRipple
+            *matRowDef="let row; columns: displayedColumns"
+            (mousedown)="selectRow(row)"
+            [ngClass]="{'highlight': selectedRowIndex == row.id}">
+
+  </mat-row>
+</table>
+<mat-paginator [pageSizeOptions]="[10, 15, 20]" showFirstLastButtons></mat-paginator>
+

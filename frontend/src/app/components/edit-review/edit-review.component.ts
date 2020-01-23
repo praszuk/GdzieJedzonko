@@ -6,6 +6,13 @@ import {ArticleService} from '../../services/article/article.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Article} from '../../models/article.model';
 import {Image} from '../../models/image.model';
+import {MapComponent} from '../../modules/shared/components/map/map.component';
+import {Restaurant} from '../../models/restaurant.model';
+import {City} from '../../models/city.model';
+import {MatDialog} from '@angular/material/dialog';
+import {RestaurantService} from '../../services/restaurant/restaurant.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {CityService} from '../../services/city/city.service';
 
 @Component({
   selector: 'app-edit-review',
@@ -15,7 +22,7 @@ import {Image} from '../../models/image.model';
 export class EditReviewComponent implements OnInit, OnDestroy {
 
   @ViewChild(ImageUploadComponent, {static: false}) imageUpload: ImageUploadComponent;
-
+  @ViewChild(MapComponent, {static: false}) map: MapComponent;
   uploadedThumbnail: Image = null;
   uploadedImages: Image[] = null;
   editorForm: FormGroup;
@@ -23,23 +30,29 @@ export class EditReviewComponent implements OnInit, OnDestroy {
   subscription: Subscription = null;
   article: Article;
   articleId: number;
+  restaurant: Restaurant;
+  coordinates = null;
+  getAllCitiesSubscription: Subscription;
+  cities: City[];
+  cityIndex: number;
+  articleLength: number;
 
   toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
     ['blockquote', 'code-block'],
 
-    [{ header: 1 }, { header: 2 }],               // custom button values
-    [{ list: 'ordered'}, { list: 'bullet' }],
-    [{ script: 'sub'}, { script: 'super' }],      // superscript/subscript
-    [{ indent: '-1'}, { indent: '+1' }],          // outdent/indent
-    [{ direction: 'rtl' }],                         // text direction
+    [{header: 1}, {header: 2}],               // custom button values
+    [{list: 'ordered'}, {list: 'bullet'}],
+    [{script: 'sub'}, {script: 'super'}],      // superscript/subscript
+    [{indent: '-1'}, {indent: '+1'}],          // outdent/indent
+    [{direction: 'rtl'}],                         // text direction
 
-    [{ size: ['small', false, 'large', 'huge'] }],  // custom dropdown
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    [{size: ['small', false, 'large', 'huge']}],  // custom dropdown
+    [{header: [1, 2, 3, 4, 5, 6, false]}],
 
-    [{ color: [] }, { background: [] }],          // dropdown with defaults from theme
-    [{ font: [] }],
-    [{ align: [] }],
+    [{color: []}, {background: []}],          // dropdown with defaults from theme
+    [{font: []}],
+    [{align: []}],
 
     ['clean']                                         // remove formatting button
   ];
@@ -56,15 +69,19 @@ export class EditReviewComponent implements OnInit, OnDestroy {
   constructor(private formBuilder: FormBuilder,
               private articleService: ArticleService,
               private router: Router,
-              private activatedRoute: ActivatedRoute) { }
+              private activatedRoute: ActivatedRoute,
+              private snackBar: MatSnackBar,
+              private cityService: CityService) {
+  }
 
   ngOnInit() {
     this.editorForm = this.formBuilder.group({
       title: ['', [Validators.required, Validators.pattern('^[\\w\\,\\.\\-\\!\\?\\d\\s]+$'), Validators.maxLength(100)]],
-      content: ['', [Validators.required, Validators.maxLength(3000)]]
+      content: ['', [Validators.required, Validators.maxLength(3000)]],
+      rating: ['', [Validators.required]]
     });
     this.articleId = +this.activatedRoute.snapshot.params.id;
-    this.getArticle(this.articleId);
+    this.getAllCities();
   }
 
   ngOnDestroy(): void {
@@ -91,6 +108,10 @@ export class EditReviewComponent implements OnInit, OnDestroy {
   setArticleContent() {
     this.editorForm.get('title').setValue(this.article.title);
     this.editorForm.get('content').setValue(this.article.content);
+    this.editorForm.get('rating').setValue(this.article.rating);
+    this.restaurant = this.article.restaurant;
+    this.cityIndex = this.cities.map(value => value.id).indexOf(this.restaurant.city);
+    this.coordinates = {lat: this.restaurant.lat, lon: this.restaurant.lon};
 
     if (this.article.thumbnail) {
       this.uploadedThumbnail = this.article.thumbnail;
@@ -108,7 +129,27 @@ export class EditReviewComponent implements OnInit, OnDestroy {
         this.setArticleContent();
       },
       (error) => {
-        // todo show popup error
+        this.snackBar.open(`Pobieranie recenzji do edycji nie powiodło się`, '', {
+          duration: 3000
+        });
+      }
+    );
+  }
+
+  textChanged($event: { content: any; delta: any; editor: any; html: string | null; oldDelta: any; source: string; text: string }) {
+    this.articleLength = $event.editor.getLength() - 1;
+  }
+
+  getAllCities() {
+    this.getAllCitiesSubscription = this.cityService.getAllCities().subscribe(
+      (cities: City[]) => {
+        this.cities = cities;
+        this.getArticle(this.articleId);
+      },
+      (error) => {
+        this.snackBar.open('Pobranie miast się nie powiodło, spróbuj ponownie otworzyć to okno', '', {
+          duration: 3000
+        });
       }
     );
   }

@@ -20,8 +20,11 @@ export class MainPanelComponent implements OnInit {
       name: 'Użytkownicy',
       url: 'users'
     }, {
+      name: 'Miasta',
+      url: 'cities'
+    }, {
       name: 'Oczekujące recenzje',
-      url: 'pending-reviews'
+      url: 'pending-restaurants'
     }];
   }
 

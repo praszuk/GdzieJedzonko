@@ -10,7 +10,11 @@ export const environment = {
   userUrl: '/api/users/',
   articlesUrl: '/api/articles/',
   imagesUrl: '/images/',
-  commentsUrl: '/comments/'
+  commentsUrl: '/comments/',
+  restaurantsUrl: '/api/restaurants/',
+  pendingRestaurantsUrl: '/api/restaurants/pending/',
+  citiesUrl: 'cities/',
+  mapCoordsUrl: '/api/maps/coordinates/'
 };
 
 /*

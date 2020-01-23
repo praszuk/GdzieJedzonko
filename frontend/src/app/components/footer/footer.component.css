@@ -1,15 +1,11 @@
 footer{
-
-  background-color: #ffce98;
+  background-color: #343434;
   /*padding-top: 120px;*/
+  color: white;
   bottom: 0;
-
+  opacity: 0.8;
 }
 
 a :hover{
   color: bisque;
-}
-
-#copyright{
-
 }

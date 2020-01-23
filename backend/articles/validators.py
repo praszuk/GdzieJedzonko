@@ -4,10 +4,17 @@ from django.core.validators import FileExtensionValidator
 import re
 
 from .constants import (
+    MIN_RATING_VALUE,
+    MAX_RATING_VALUE,
     MAX_IMAGES_PER_ARTICLE,
     MAX_IMAGE_FILE_SIZE_MB,
     ALLOWED_IMAGE_EXTENSION
 )
+
+
+def validate_rating(rating):
+    if rating > 5 or rating < 0:
+        raise ValidationError('Rating must be in range 0-5.')
 
 
 def validate_title(title):

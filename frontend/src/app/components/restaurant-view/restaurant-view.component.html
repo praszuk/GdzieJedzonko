@@ -1,0 +1,29 @@
+<div #top class="min-height-40">
+  <div class="custom-min-height"></div>
+  <div class="row no-gutters">
+    <div *ngIf="restaurant" class="col-9 rounded">
+      <app-map [height]="700" [coordinates]="coordinates"></app-map>
+    </div>
+    <div *ngIf="restaurant" class="col-3 gradient text-center">
+      <div class="min-height-20"></div>
+      <h2> Nazwa: {{restaurant.name}}</h2>
+      <h2> Adres: {{restaurant.address}}</h2>
+      <h2 *ngIf="restaurant.website"><a [href]="restaurant.website">{{restaurant.website}}</a></h2>
+      <div class="mt-5">
+        <star-rating size="large" [readOnly]="true" [rating]="restaurant.rating"></star-rating>
+      </div>
+      <div class="min-height-10"></div>
+      <button id="button" mat-stroked-button (click)="scroll(recenzje)"> Przejdź do recenzji restauracji</button>
+      <div class="min-height-15"></div>
+      <div #recenzje></div>
+    </div>
+  </div>
+</div>
+
+<div class="min-height-5 text-center"></div>
+<div *ngIf="restaurant" class="text-center">
+  <h1 class="display-4 font-weight-light"> RECENZJE</h1>
+</div>
+<div *ngIf="restaurant">
+  <app-posts-section [restaurantPosts]="restaurant.article_set"></app-posts-section>
+</div>
